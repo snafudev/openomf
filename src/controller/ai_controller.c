@@ -1,4 +1,5 @@
 #include "controller/ai_controller.h"
+#include "game/ai/ai_decision_engine.h"
 #include "controller/controller.h"
 #include "formats/pilot.h"
 #include "game/game_state.h"
@@ -46,52 +47,7 @@
 #define DOWNFORWARD (o->direction == OBJECT_FACE_RIGHT ? ACT_RIGHT : ACT_LEFT) | ACT_DOWN
 #define UPFORWARD (o->direction == OBJECT_FACE_RIGHT ? ACT_RIGHT : ACT_LEFT) | ACT_UP
 
-typedef struct {
-    int max_hit_dist;
-    int min_hit_dist;
-    int value;
-    int attempts;
-    int consecutive;
-    int last_dist;
-} move_stat;
-
-typedef struct {
-    int tactic_type;
-    int last_tactic;
-    int move_type;
-    int move_timer;
-    int attack_type;
-    int attack_id;
-    int attack_timer;
-    int attack_on;
-    int chain_hit_on;
-    int chain_hit_tactic;
-} tactic_state;
-
-typedef struct {
-    int difficulty;
-    int act_timer;
-    int cur_act;
-    int input_lag; // number of ticks to wait per input
-    int input_lag_timer;
-
-    // move stats
-    af_move *selected_move;
-    int last_move_id;
-    int move_str_pos;
-    move_stat move_stats[70];
-    int blocked;
-    int thrown; // times thrown by enemy
-    int shot;   // times shot by enemy
-
-    // tactical state
-    tactic_state *tactic;
-
-    sd_pilot *pilot;
-
-    // all projectiles currently on screen (vector of projectile object*)
-    vector active_projectiles;
-} ai;
+// Type definitions are in ai_types.h (included via ai_decision_engine.h)
 
 enum
 {
@@ -252,138 +208,11 @@ void chain_controller_cmd(controller *ctrl, int commands[], size_t n_commands, c
 }
 
 /**
- * \brief Convenience method to roll '1 in x' chance.
- *
- * \param roll_x An integer indicating number of numbers in roll.
- *
- * \return A boolean indicating whether the roll passed.
- */
-bool roll_chance(int roll_x) {
-    return roll_x <= 1 ? true : rand_int(roll_x) == 1;
-}
-
-/**
- * \brief Roll chance for pilot preference.
- *
- * \param pref_val The value of the pilot preference (-100 to 100)
- *
- * \return A boolean indicating whether the preference is confirmed.
- */
-bool roll_pref(int pref_val) {
-    int rand_roll = rand_int(200);
-    int pref_thresh = pref_val + 100;
-    return rand_roll <= pref_thresh;
-}
-
-/**
- * \brief Determine whether the AI is smart enough to usually go ahead with an action.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI is smart enough.
- */
-bool smart_usually(const ai *a) {
-    if(a->difficulty >= 6) {
-        // at highest difficulty 92% chance to be smart
-        return !roll_chance(12);
-    } else if(a->difficulty >= 3) {
-        return roll_chance(7 - a->difficulty);
-    } else {
-        return false;
-    }
-}
-
-/**
- * \brief Determine whether the AI is dumb enough to usually go ahead with an action.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI is dumb enough.
- */
-bool dumb_usually(const ai *a) {
-    if(a->difficulty == 1) {
-        // at lowest difficulty 92% chance to be dumb
-        return !roll_chance(12);
-    }
-    if(a->difficulty <= 2) {
-        return roll_chance(a->difficulty + 1);
-    } else {
-        return false;
-    }
-}
-
-/**
- * \brief Determine whether the AI is smart enough to sometimes go ahead with an action.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI is smart enough.
- */
-bool smart_sometimes(const ai *a) {
-    if(a->difficulty >= 2) {
-        return roll_chance(10 - a->difficulty);
-    } else {
-        return false;
-    }
-}
-
-/**
- * \brief Determine whether the AI is dumb enough to sometimes go ahead with an action.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI is dumb enough.
- */
-bool dumb_sometimes(const ai *a) {
-    if(a->difficulty <= 2) {
-        return roll_chance(a->difficulty + 2);
-    } else {
-        return false;
-    }
-}
-
-/**
- * \brief Determine whether AI will proceed with an action using exponentially scaling roll.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI should proceed with an action.
- */
-bool diff_scale(const ai *a) {
-    int roll = rand_int(36);
-    return roll <= (a->difficulty * a->difficulty);
-}
-
-/**
- * \brief Determine whether AI will learn from this moment.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI should learn.
- */
-bool learning_moment(const ai *a) {
-    float roll = (float)rand_int(diff_scale(a) ? 8 : 15);
-    return roll <= a->pilot->learning;
-}
-
-/**
- * \brief Determine whether AI will forget something.
- *
- * \param a The AI instance.
- *
- * \return A boolean indicating whether the AI should forget.
- */
-bool forgetful(const ai *a) {
-    float roll = (float)rand_int(diff_scale(a) ? 3 : 2);
-    return roll <= a->pilot->forget;
-}
-
-/**
  * \brief Determine the current range classification.
  *
  * \param ctrl The AI controller instance.
  *
- * \return A boolean indicating range classification.
+ * \return An enum indicating range classification.
  */
 int get_enemy_range(const controller *ctrl) {
     object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
