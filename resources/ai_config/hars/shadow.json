@@ -11,8 +11,14 @@
   "push_moves": [],
   "projectile_moves": [
     {
-      "name": "shadow_projectile",
-      "sequence": ["D", "DB", "B", "P|K"],
+      "name": "shadow_projectile_punch",
+      "sequence": ["D", "DB", "B", "P"],
+      "range_min": "ANY",
+      "conditions": ["roll_d2"]
+    },
+    {
+      "name": "shadow_projectile_kick",
+      "sequence": ["D", "DB", "B", "K"],
       "range_min": "ANY"
     }
   ]

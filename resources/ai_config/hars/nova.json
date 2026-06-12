@@ -18,12 +18,13 @@
   "projectile_moves": [
     {
       "name": "mini_grenade",
-      "sequence": ["D", "DB", "B+P"],
-      "range_min": "MID"
+      "sequence": ["D", "D", "DB", "B+P"],
+      "range_min": "MID",
+      "conditions": ["roll_d3"]
     },
     {
       "name": "missile",
-      "sequence": ["D", "DF", "F+P"],
+      "sequence": ["D", "D", "DF", "F+P"],
       "range_min": "ANY"
     }
   ]
