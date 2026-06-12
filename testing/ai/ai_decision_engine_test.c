@@ -6,7 +6,7 @@
  */
 
 #include "game/ai/ai_decision_engine.h"
-#include "testing/ai/ai_controller_test.h"
+#include "ai/ai_controller_test.h"
 #include "CUnit/CUnit.h"
 #include <stdint.h>
 

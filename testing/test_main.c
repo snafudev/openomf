@@ -33,6 +33,7 @@ void ai_movement_test_suite(CU_pSuite suite);
 void ai_move_selector_test_suite(CU_pSuite suite);
 void ai_tactic_engine_test_suite(CU_pSuite suite);
 void ai_character_skills_test_suite(CU_pSuite suite);
+void ai_config_mod_overlay_test_suite(CU_pSuite suite);
 
 int main(int argc, char **argv) {
     CU_pSuite suite = NULL;
@@ -210,6 +211,12 @@ int main(int argc, char **argv) {
         goto end;
     }
     ai_character_skills_test_suite(ai_character_skills_suite);
+
+    CU_pSuite ai_config_mod_overlay_suite = CU_add_suite("AI Config Mod Overlays", NULL, NULL);
+    if(ai_config_mod_overlay_suite == NULL) {
+        goto end;
+    }
+    ai_config_mod_overlay_test_suite(ai_config_mod_overlay_suite);
 
     // Run tests
     CU_basic_set_mode(CU_BRM_VERBOSE);

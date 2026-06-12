@@ -84,7 +84,7 @@ bool ai_move_is_valid(const af_move *move, const void *har, bool force_allow_pro
         return false;
     }
 
-    if(move->category == CAT_FIRE_ICE) {
+    if(move->category == CAT_VICTORY) {
         return false;
     }
 

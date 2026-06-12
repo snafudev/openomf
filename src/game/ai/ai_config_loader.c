@@ -4,6 +4,7 @@
 
 #include "game/ai/ai_config_loader.h"
 
+#include "resources/modmanager.h"
 #include "resources/resource_files.h"
 #include "utils/allocator.h"
 #include "utils/path.h"
@@ -201,6 +202,49 @@ static bool apply_pilot_field_float(const char *obj_start, const char *obj_end, 
     return true;
 }
 
+static void apply_pilot_overlay_cb(const char *json_buf, void *userdata) {
+    sd_pilot *pilot = (sd_pilot *)userdata;
+    ai_config_apply_pilot_overlay(pilot, json_buf);
+}
+
+bool ai_config_apply_pilot_overlay(sd_pilot *pilot, const char *json_buf) {
+    if(pilot == NULL || json_buf == NULL) {
+        return false;
+    }
+
+    const char *obj_start = NULL;
+    const char *obj_end = NULL;
+    bool found = find_pilot_object(json_buf, pilot->pilot_id, &obj_start, &obj_end);
+    if(!found) {
+        return false;
+    }
+
+    int fields_loaded = 0;
+    bool ok = true;
+
+    ok &= apply_pilot_field_int(obj_start, obj_end, "att_normal", &fields_loaded, &pilot->att_normal, NULL);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "att_hyper", &fields_loaded, &pilot->att_hyper, NULL);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "att_jump", &fields_loaded, &pilot->att_jump, NULL);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "att_def", &fields_loaded, &pilot->att_def, NULL);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "att_sniper", &fields_loaded, &pilot->att_sniper, NULL);
+
+    ok &= apply_pilot_field_int(obj_start, obj_end, "ap_throw", &fields_loaded, NULL, &pilot->ap_throw);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "ap_special", &fields_loaded, NULL, &pilot->ap_special);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "ap_jump", &fields_loaded, NULL, &pilot->ap_jump);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "ap_high", &fields_loaded, NULL, &pilot->ap_high);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "ap_low", &fields_loaded, NULL, &pilot->ap_low);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "ap_middle", &fields_loaded, NULL, &pilot->ap_middle);
+
+    ok &= apply_pilot_field_int(obj_start, obj_end, "pref_jump", &fields_loaded, NULL, &pilot->pref_jump);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "pref_fwd", &fields_loaded, NULL, &pilot->pref_fwd);
+    ok &= apply_pilot_field_int(obj_start, obj_end, "pref_back", &fields_loaded, NULL, &pilot->pref_back);
+
+    ok &= apply_pilot_field_float(obj_start, obj_end, "learning", &fields_loaded, &pilot->learning);
+    ok &= apply_pilot_field_float(obj_start, obj_end, "forget", &fields_loaded, &pilot->forget);
+
+    return ok && fields_loaded > 0;
+}
+
 bool ai_config_load_pilot_personality(sd_pilot *pilot) {
     if(pilot == NULL) {
         return false;
@@ -251,5 +295,10 @@ bool ai_config_load_pilot_personality(sd_pilot *pilot) {
     ok &= apply_pilot_field_float(obj_start, obj_end, "forget", &fields_loaded, &pilot->forget);
 
     omf_free(json);
-    return ok && fields_loaded > 0;
+
+    if(ok && fields_loaded > 0) {
+        modmanager_apply_json_overlays("ai_config/pilots.json", apply_pilot_overlay_cb, pilot);
+        return true;
+    }
+    return false;
 }
