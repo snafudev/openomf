@@ -263,7 +263,7 @@ void test_modmanager_overlays_disabled(void) {
 
     ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
     uint8_t orig_count = cfg.charge_move_count;
-    bool result = modmanager_apply_json_overlays("ai_config/characters/jaguar.json", NULL, &cfg);
+    bool result = modmanager_apply_json_overlays("ai_config/hars/jaguar.json", NULL, &cfg);
     CU_ASSERT_FALSE(result);
     CU_ASSERT_EQUAL(cfg.charge_move_count, orig_count);
 
