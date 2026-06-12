@@ -1,0 +1,70 @@
+{
+  "tactics": {
+    "ESCAPE": {
+      "id": 1,
+      "enabled": true,
+      "move_type": "MOVE_AVOID",
+      "attack_type": "NONE"
+    },
+    "TURTLE": {
+      "id": 2,
+      "enabled": true,
+      "move_type": "MOVE_BLOCK",
+      "attack_type": "NONE"
+    },
+    "GRAB": {
+      "id": 3,
+      "enabled": true,
+      "move_type": "MOVE_CLOSE",
+      "attack_type": "ATTACK_GRAB"
+    },
+    "SPAM": {
+      "id": 4,
+      "enabled": true,
+      "move_type": "NONE",
+      "attack_type": "ATTACK_ID_OR_LIGHT"
+    },
+    "SHOOT": {
+      "id": 5,
+      "enabled": true,
+      "move_type": "MOVE_AVOID_IF_CRAMPED",
+      "attack_type": "ATTACK_RANGED"
+    },
+    "TRIP": {
+      "id": 6,
+      "enabled": true,
+      "move_type": "MOVE_CLOSE",
+      "attack_type": "ATTACK_TRIP"
+    },
+    "QUICK": {
+      "id": 7,
+      "enabled": true,
+      "move_type": "MOVE_CLOSE",
+      "attack_type": "ATTACK_LIGHT"
+    },
+    "CLOSE": {
+      "id": 8,
+      "enabled": true,
+      "move_type": "MOVE_CLOSE",
+      "attack_type": "ATTACK_RANDOM"
+    },
+    "FLY": {
+      "id": 9,
+      "enabled": true,
+      "move_type": "MOVE_HIGH_JUMP",
+      "attack_type": "ATTACK_JUMP_OR_NONE"
+    },
+    "PUSH": {
+      "id": 10,
+      "enabled": true,
+      "move_type": "NONE",
+      "attack_type": "ATTACK_PUSH_OR_HEAVY"
+    },
+    "COUNTER": {
+      "id": 11,
+      "enabled": true,
+      "move_type": "MOVE_BLOCK_IF_NOT_CRAMPED",
+      "attack_type": "ATTACK_TRIP_OR_HEAVY"
+    }
+  }
+}
