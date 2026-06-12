@@ -1,0 +1,25 @@
+{
+  "id": 3,
+  "name": "pyros",
+  "charge_moves": [
+    {
+      "name": "shadow_thrust",
+      "sequence": ["F", "5", "F", "5", "F+P"],
+      "range_min": "FAR",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "super_thrust",
+      "sequence": ["F", "5", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [
+    {
+      "name": "fire_spin",
+      "sequence": ["D", "P"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": []
+}

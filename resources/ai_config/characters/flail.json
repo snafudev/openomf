@@ -1,0 +1,30 @@
+{
+  "id": 7,
+  "name": "flail",
+  "charge_moves": [
+    {
+      "name": "shadow_punch",
+      "sequence": ["D", "DB", "B", "5", "B+P"],
+      "range_min": "FAR",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "charging_punch",
+      "sequence": ["B", "5", "B+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [
+    {
+      "name": "slow_swing_chains",
+      "sequence": ["D", "K"],
+      "range_min": "ANY"
+    },
+    {
+      "name": "swinging_chains",
+      "sequence": ["D", "P"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": []
+}

@@ -1,0 +1,31 @@
+{
+  "id": 0,
+  "name": "jaguar",
+  "charge_moves": [
+    {
+      "name": "shadow_leap",
+      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "range_min": "MID",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "jaguar_leap",
+      "sequence": ["D", "DF", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [
+    {
+      "name": "high_kick",
+      "sequence": ["B+K"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": [
+    {
+      "name": "concussion_cannon",
+      "sequence": ["D", "DB", "B+P"],
+      "range_min": "ANY"
+    }
+  ]
+}
