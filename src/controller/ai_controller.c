@@ -9,6 +9,7 @@
 #include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_utils.h"
 #include "game/ai/ai_move_selector.h"
+#include "game/ai/ai_core_config.h"
 #include "controller/controller.h"
 #include "formats/pilot.h"
 #include "game/game_state.h"
@@ -25,16 +26,7 @@
 #include "utils/vec.h"
 #include <math.h>
 
-/* base likelihood to change movement action (lower is more likely) */
-#define BASE_ACT_CHANCE 5
-/* base likelihood to jump while moving forwards (lower is more likely) */
-#define BASE_FWD_JUMP_CHANCE 5
-/* base likelihood to jump while moving backwards (lower is more likely) */
-#define BASE_BACK_JUMP_CHANCE 5
-/* base likelihood to jump while standing still (lower is more likely) */
-#define BASE_STILL_JUMP_CHANCE 40
-/* likelihood of attempting a random attack/tactic (lower is more likely) */
-#define RANDOM_ATTACK_CHANCE 10
+
 
 #define BACK (o->direction == OBJECT_FACE_RIGHT ? ACT_LEFT : ACT_RIGHT)
 #define DOWNBACK (o->direction == OBJECT_FACE_RIGHT ? ACT_LEFT : ACT_RIGHT) | ACT_DOWN
@@ -514,7 +506,7 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
     int jump_chance = ai_movement_jump_chance(a);
 
     // Change action after act_timer runs out
-    if(a->act_timer <= 0 && (roll_chance(BASE_ACT_CHANCE) || diff_scale(a))) {
+    if(a->act_timer <= 0 && (roll_chance(ai_core_config_get()->base_act_chance) || diff_scale(a))) {
         int enemy_range = get_enemy_range(ctrl);
         int move_dir = ai_movement_decide(a, enemy_range, h->is_wallhugging, h->id);
 
@@ -522,7 +514,7 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
             case MOVE_DIR_FWD:
                 // walk forward
                 a->cur_act = FORWARD;
-                jump_chance = BASE_FWD_JUMP_CHANCE;
+                jump_chance = ai_core_config_get()->base_fwd_jump_chance;
                 if(diff_scale(a)) {
                     jump_chance -= 2;
                 }
@@ -530,7 +522,7 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
             case MOVE_DIR_BACK:
                 // walk backward
                 a->cur_act = BACK;
-                jump_chance = BASE_BACK_JUMP_CHANCE;
+                jump_chance = ai_core_config_get()->base_back_jump_chance;
                 if(diff_scale(a)) {
                     jump_chance -= 2;
                 }
@@ -544,7 +536,7 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
                 } else {
                     // do nothing
                     a->cur_act = ACT_STOP;
-                    jump_chance = BASE_STILL_JUMP_CHANCE;
+                    jump_chance = ai_core_config_get()->base_still_jump_chance;
                     if(diff_scale(a)) {
                         jump_chance -= 5;
                     }
@@ -1151,7 +1143,7 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     int enemy_range = get_enemy_range(ctrl);
 
     // attempt a random attack
-    if((roll_chance(RANDOM_ATTACK_CHANCE) || diff_scale(a)) && (enemy_range <= RANGE_CLOSE || dumb_sometimes(a)) &&
+    if((roll_chance(ai_core_config_get()->random_attack_chance) || diff_scale(a)) && (enemy_range <= RANGE_CLOSE || dumb_sometimes(a)) &&
        attempt_attack(ctrl, false)) {
         // log_debug("Random attack: %d", h->id);
         // reset movement act timer
@@ -1166,7 +1158,7 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     // log_debug("=== POLL === handle_movement");
 
     // queue a random tactic for next poll
-    if((a->last_move_id == 0 || a->tactic->tactic_type == 0 || (roll_chance(RANDOM_ATTACK_CHANCE) && diff_scale(a))) &&
+    if((a->last_move_id == 0 || a->tactic->tactic_type == 0 || (roll_chance(ai_core_config_get()->random_attack_chance) && diff_scale(a))) &&
        can_move) {
         // log_debug("Attempt to queue random tactic[0m");
         int tacs[] = {TACTIC_SHOOT, TACTIC_CLOSE, TACTIC_FLY, TACTIC_PUSH, TACTIC_TRIP, TACTIC_GRAB, TACTIC_QUICK};
