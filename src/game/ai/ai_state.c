@@ -4,6 +4,7 @@
 
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_config_loader.h"
+#include "game/ai/ai_core_config.h"
 #include "utils/random.h"
 
 void reset_tactic_state(ai *a) {
@@ -206,5 +207,5 @@ void reset_pilot_personality(sd_pilot *pilot) {
 }
 
 void reset_act_timer(ai *a) {
-    a->act_timer = AI_BASE_ACT_TIMER - (a->difficulty * 2) - rand_int(3);
+    a->act_timer = ai_core_config_get()->base_act_timer - (a->difficulty * 2) - rand_int(3);
 }

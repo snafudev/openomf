@@ -3,6 +3,7 @@
  */
 
 #include "game/ai/ai_state.h"
+#include "game/ai/ai_core_config.h"
 #include "CUnit/CUnit.h"
 #include <stdlib.h>
 #include <string.h>
@@ -61,8 +62,9 @@ void test_reset_act_timer_for_difficulty_one(void) {
 
     reset_act_timer(&a);
 
-    CU_ASSERT(a.act_timer <= (AI_BASE_ACT_TIMER - 2));
-    CU_ASSERT(a.act_timer >= (AI_BASE_ACT_TIMER - 4));
+    int base_act_timer = ai_core_config_get()->base_act_timer;
+    CU_ASSERT(a.act_timer <= (base_act_timer - 2));
+    CU_ASSERT(a.act_timer >= (base_act_timer - 4));
 }
 
 void test_reset_pilot_personality_for_crystal(void) {
