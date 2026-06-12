@@ -1,5 +1,6 @@
 #include "controller/ai_controller.h"
 #include "game/ai/ai_decision_engine.h"
+#include "game/ai/ai_movement.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_utils.h"
 #include "controller/controller.h"
@@ -87,12 +88,7 @@ enum
     ATTACK_RANDOM, // random attack
 };
 
-enum
-{
-    MOVE_DIR_STILL,
-    MOVE_DIR_FWD,
-    MOVE_DIR_BACK
-};
+// MOVE_DIR_STILL, MOVE_DIR_FWD, MOVE_DIR_BACK are defined in ai_movement.h
 
 /**
  * \brief Chain an array of controller commands in sequence.
@@ -1113,32 +1109,12 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
     har *h = object_get_userdata(o);
 
     // default mid-action jump chance
-    int jump_chance = 100;
-    if(roll_pref(a->pilot->pref_jump)) {
-        jump_chance -= 10;
-    }
-    if(diff_scale(a)) {
-        jump_chance -= 10;
-    }
+    int jump_chance = ai_movement_jump_chance(a);
 
     // Change action after act_timer runs out
     if(a->act_timer <= 0 && (roll_chance(BASE_ACT_CHANCE) || diff_scale(a))) {
         int enemy_range = get_enemy_range(ctrl);
-
-        int move_dir = MOVE_DIR_STILL;
-        if(!h->is_wallhugging && enemy_range == RANGE_CRAMPED) {
-            // we are face-hugging already so no need to go forward
-            move_dir = roll_pref(a->pilot->pref_back) ? MOVE_DIR_BACK : MOVE_DIR_STILL;
-        } else if(roll_pref(a->pilot->pref_fwd)) {
-            // pilot prefers forward
-            move_dir = MOVE_DIR_FWD;
-        } else if(!h->is_wallhugging && roll_pref(a->pilot->pref_back)) {
-            // pilot prefers backward
-            move_dir = MOVE_DIR_BACK;
-        } else if((h->id == HAR_FLAIL || h->id == HAR_THORN || h->id == HAR_NOVA) && smart_usually(a)) {
-            // brawlers are more likely to face-hug
-            move_dir = MOVE_DIR_FWD;
-        }
+        int move_dir = ai_movement_decide(a, enemy_range, h->is_wallhugging, h->id);
 
         switch(move_dir) {
             case MOVE_DIR_FWD:
