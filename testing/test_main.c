@@ -26,6 +26,7 @@ void sprite_packer_test_suite(CU_pSuite suite);
 void sound_tracker_test_suite(CU_pSuite suite);
 int sound_tracker_suite_init(void);
 int sound_tracker_suite_free(void);
+void ai_decision_engine_test_suite(CU_pSuite suite);
 
 int main(int argc, char **argv) {
     CU_pSuite suite = NULL;
@@ -161,6 +162,12 @@ int main(int argc, char **argv) {
         goto end;
     }
     sound_tracker_test_suite(sound_tracker_suite);
+
+    CU_pSuite ai_decision_engine_suite = CU_add_suite("AI Decision Engine", NULL, NULL);
+    if(ai_decision_engine_suite == NULL) {
+        goto end;
+    }
+    ai_decision_engine_test_suite(ai_decision_engine_suite);
 
     // Run tests
     CU_basic_set_mode(CU_BRM_VERBOSE);
