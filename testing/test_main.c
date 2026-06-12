@@ -34,6 +34,9 @@ void ai_move_selector_test_suite(CU_pSuite suite);
 void ai_tactic_engine_test_suite(CU_pSuite suite);
 void ai_character_skills_test_suite(CU_pSuite suite);
 void ai_config_mod_overlay_test_suite(CU_pSuite suite);
+void ai_learning_test_suite(CU_pSuite suite);
+void ai_event_test_suite(CU_pSuite suite);
+void ai_integration_test_suite(CU_pSuite suite);
 
 int main(int argc, char **argv) {
     CU_pSuite suite = NULL;
@@ -217,6 +220,24 @@ int main(int argc, char **argv) {
         goto end;
     }
     ai_config_mod_overlay_test_suite(ai_config_mod_overlay_suite);
+
+    CU_pSuite ai_learning_suite = CU_add_suite("AI Learning", NULL, NULL);
+    if(ai_learning_suite == NULL) {
+        goto end;
+    }
+    ai_learning_test_suite(ai_learning_suite);
+
+    CU_pSuite ai_event_suite = CU_add_suite("AI Event Handlers", NULL, NULL);
+    if(ai_event_suite == NULL) {
+        goto end;
+    }
+    ai_event_test_suite(ai_event_suite);
+
+    CU_pSuite ai_integration_suite = CU_add_suite("AI Integration", NULL, NULL);
+    if(ai_integration_suite == NULL) {
+        goto end;
+    }
+    ai_integration_test_suite(ai_integration_suite);
 
     // Run tests
     CU_basic_set_mode(CU_BRM_VERBOSE);
