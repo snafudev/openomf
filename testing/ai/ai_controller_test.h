@@ -40,11 +40,11 @@ static void test_pilot_free(test_pilot_fixture *fix) {
     omf_free(fix);
 }
 
-static void test_pilot_set_learning(test_pilot_fixture *fix, float learning) {
+static void __attribute__((unused)) test_pilot_set_learning(test_pilot_fixture *fix, float learning) {
     fix->pilot_data.learning = learning;
 }
 
-static void test_pilot_set_forget(test_pilot_fixture *fix, float forget) {
+static void __attribute__((unused)) test_pilot_set_forget(test_pilot_fixture *fix, float forget) {
     fix->pilot_data.forget = forget;
 }
 
