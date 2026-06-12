@@ -1,0 +1,25 @@
+{
+  "id": 2,
+  "name": "thorn",
+  "charge_moves": [
+    {
+      "name": "spike_charge",
+      "sequence": ["F", "5", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [
+    {
+      "name": "shadow_kick",
+      "sequence": ["B", "DB", "D", "DF", "F", "K"],
+      "range_min": "CLOSE",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "speed_kick",
+      "sequence": ["D", "DF", "F+K"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": []
+}

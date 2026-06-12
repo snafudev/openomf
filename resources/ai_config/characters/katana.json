@@ -1,0 +1,42 @@
+{
+  "id": 5,
+  "name": "katana",
+  "charge_moves": [
+    {
+      "name": "trip_slide",
+      "sequence": ["DB+K"],
+      "range_min": "ANY",
+      "conditions": ["low_preferred"]
+    },
+    {
+      "name": "forward_razor_spin",
+      "sequence": ["D", "DF", "F+K"],
+      "range_min": "MID"
+    },
+    {
+      "name": "triple_blade",
+      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "range_min": "CLOSE",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "rising_blade",
+      "sequence": ["D", "DF", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [
+    {
+      "name": "triple_blade",
+      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "range_min": "CLOSE",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "rising_blade",
+      "sequence": ["D", "DF", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": []
+}

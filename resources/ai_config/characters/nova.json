@@ -1,0 +1,30 @@
+{
+  "id": 10,
+  "name": "nova",
+  "charge_moves": [],
+  "push_moves": [
+    {
+      "name": "earthquake_slam",
+      "sequence": ["D", "5", "D+P"],
+      "range_min": "ANY",
+      "conditions": ["high_difficulty"]
+    },
+    {
+      "name": "heavy_kick",
+      "sequence": ["B+K"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": [
+    {
+      "name": "mini_grenade",
+      "sequence": ["D", "DB", "B+P"],
+      "range_min": "MID"
+    },
+    {
+      "name": "missile",
+      "sequence": ["D", "DF", "F+P"],
+      "range_min": "ANY"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": 4,
+  "name": "electra",
+  "charge_moves": [
+    {
+      "name": "super_rolling_thunder",
+      "sequence": ["B", "DB", "D", "DF", "F", "F+P"],
+      "range_min": "MID",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "rolling_thunder",
+      "sequence": ["F", "5", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [
+    {
+      "name": "electric_shards",
+      "sequence": ["D", "DF", "F+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "projectile_moves": [
+    {
+      "name": "ball_lightning",
+      "sequence": ["D", "DB", "B+P"],
+      "range_min": "ANY"
+    }
+  ]
+}

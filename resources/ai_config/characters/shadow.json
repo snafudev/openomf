@@ -1,0 +1,19 @@
+{
+  "id": 1,
+  "name": "shadow",
+  "charge_moves": [
+    {
+      "name": "shadow_grab",
+      "sequence": ["D", "5", "D+P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [],
+  "projectile_moves": [
+    {
+      "name": "shadow_projectile",
+      "sequence": ["D", "DB", "B", "P|K"],
+      "range_min": "ANY"
+    }
+  ]
+}

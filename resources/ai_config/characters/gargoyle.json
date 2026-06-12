@@ -1,0 +1,25 @@
+{
+  "id": 8,
+  "name": "gargoyle",
+  "charge_moves": [
+    {
+      "name": "wing_charge",
+      "sequence": ["F", "5", "F", "P"],
+      "range_min": "FAR",
+      "conditions": ["jump_preferred", "high_difficulty"]
+    },
+    {
+      "name": "shadow_talon",
+      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "range_min": "MID",
+      "conditions": ["special_preferred", "high_difficulty"]
+    },
+    {
+      "name": "flying_talon",
+      "sequence": ["D", "DF", "F", "P"],
+      "range_min": "ANY"
+    }
+  ],
+  "push_moves": [],
+  "projectile_moves": []
+}
