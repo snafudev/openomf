@@ -221,6 +221,9 @@ ai_move_condition ai_parse_condition_string(const char *cond) {
     if(strcmp(cond, "enemy_not_stunned") == 0) {
         return MOVE_COND_ENEMY_NOT_STUNNED;
     }
+    if(strcmp(cond, "enemy_stunned") == 0) {
+        return MOVE_COND_ENEMY_STUNNED;
+    }
     return MOVE_COND_NONE;
 }
 

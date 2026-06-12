@@ -87,6 +87,9 @@ static bool eval_move_conditions(controller *ctrl, ai *a, ai_move_condition cond
     if((conditions & MOVE_COND_ENEMY_NOT_STUNNED) && enemy_is_stunned_or_stasis(ctrl)) {
         return false;
     }
+    if((conditions & MOVE_COND_ENEMY_STUNNED) && !enemy_is_stunned_or_stasis(ctrl)) {
+        return false;
+    }
     return true;
 }
 

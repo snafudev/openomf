@@ -27,6 +27,7 @@ typedef enum {
     MOVE_COND_ROLL_D4           = 1 << 7, // roll_chance(4)
     MOVE_COND_ROLL_D10          = 1 << 8, // roll_chance(10)
     MOVE_COND_ROLL_D20          = 1 << 9, // roll_chance(20)
+    MOVE_COND_ENEMY_STUNNED     = 1 << 10, // enemy_is_stunned_or_stasis
 } ai_move_condition;
 
 typedef enum {
