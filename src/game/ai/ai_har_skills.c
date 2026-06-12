@@ -2,7 +2,7 @@
  * AI character skills implementation
  */
 
-#include "game/ai/ai_character_skills.h"
+#include "game/ai/ai_har_skills.h"
 
 #include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_tactic_engine.h"

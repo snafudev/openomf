@@ -206,7 +206,7 @@ static void load_har_config(int har_id) {
     }
 
     char rel_path[128];
-    snprintf(rel_path, sizeof(rel_path), "ai_config/characters/%s.json", name);
+    snprintf(rel_path, sizeof(rel_path), "ai_config/hars/%s.json", name);
 
     path cfg_file = get_resource_filename(rel_path);
     size_t file_size = 0;

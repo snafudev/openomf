@@ -32,7 +32,7 @@ void ai_state_test_suite(CU_pSuite suite);
 void ai_movement_test_suite(CU_pSuite suite);
 void ai_move_selector_test_suite(CU_pSuite suite);
 void ai_tactic_engine_test_suite(CU_pSuite suite);
-void ai_character_skills_test_suite(CU_pSuite suite);
+void ai_har_skills_test_suite(CU_pSuite suite);
 void ai_config_mod_overlay_test_suite(CU_pSuite suite);
 void ai_learning_test_suite(CU_pSuite suite);
 void ai_event_test_suite(CU_pSuite suite);
@@ -209,11 +209,11 @@ int main(int argc, char **argv) {
     }
     ai_tactic_engine_test_suite(ai_tactic_engine_suite);
 
-    CU_pSuite ai_character_skills_suite = CU_add_suite("AI Character Skills", NULL, NULL);
-    if(ai_character_skills_suite == NULL) {
+    CU_pSuite ai_har_skills_suite = CU_add_suite("AI HAR Skills", NULL, NULL);
+    if(ai_har_skills_suite == NULL) {
         goto end;
     }
-    ai_character_skills_test_suite(ai_character_skills_suite);
+    ai_har_skills_test_suite(ai_har_skills_suite);
 
     CU_pSuite ai_config_mod_overlay_suite = CU_add_suite("AI Config Mod Overlays", NULL, NULL);
     if(ai_config_mod_overlay_suite == NULL) {

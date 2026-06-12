@@ -3,7 +3,7 @@
  */
 
 #include "game/ai/ai_skills_config_loader.h"
-#include "game/ai/ai_character_skills.h"
+#include "game/ai/ai_har_skills.h"
 #include "game/common_defines.h"
 #include "resources/resource_files.h"
 #include "resources/resource_paths.h"
@@ -203,7 +203,7 @@ void test_ai_skills_config_expected_default_flags(void) {
 void test_ai_skills_config_cache_reset_rereads_file(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -245,7 +245,7 @@ void test_ai_skills_config_cache_reset_rereads_file(void) {
 void test_ai_skills_config_mismatched_id_falls_back_to_defaults(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -279,7 +279,7 @@ void test_ai_skills_config_mismatched_id_falls_back_to_defaults(void) {
 void test_ai_skills_config_missing_id_falls_back_to_defaults(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -312,7 +312,7 @@ void test_ai_skills_config_missing_id_falls_back_to_defaults(void) {
 void test_ai_skills_config_non_numeric_id_falls_back_to_defaults(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -346,7 +346,7 @@ void test_ai_skills_config_non_numeric_id_falls_back_to_defaults(void) {
 void test_ai_skills_config_cache_is_isolated_per_har(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -385,7 +385,7 @@ void test_ai_skills_config_cache_is_isolated_per_har(void) {
 void test_ai_skills_config_missing_arrays_parses_with_zero_counts(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -448,7 +448,7 @@ void test_ai_skills_config_nova_charge_zero_entry(void) {
 void test_ai_skills_config_count_ignores_brackets_inside_strings(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -487,7 +487,7 @@ void test_ai_skills_config_count_ignores_brackets_inside_strings(void) {
 void test_ai_skills_config_count_ignores_braces_inside_strings(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -522,7 +522,7 @@ void test_ai_skills_config_count_ignores_braces_inside_strings(void) {
 void test_ai_skills_config_malformed_array_reports_zero_entries(void) {
     CU_ASSERT_TRUE_FATAL(resource_path_init());
 
-    path jaguar_path = get_resource_filename("ai_config/characters/jaguar.json");
+    path jaguar_path = get_resource_filename("ai_config/hars/jaguar.json");
 
     char original[16384] = {0};
     size_t original_size = 0;
@@ -584,7 +584,7 @@ void test_ai_skills_config_sequence_entries_match_expected_per_har_files(void) {
 
     for(size_t i = 0; i < sizeof(expected) / sizeof(expected[0]); i++) {
         char rel[256] = {0};
-        snprintf(rel, sizeof(rel), "ai_config/characters/%s", expected[i].filename);
+        snprintf(rel, sizeof(rel), "ai_config/hars/%s", expected[i].filename);
 
         path cfg_path = get_resource_filename(rel);
         char content[16384] = {0};
@@ -604,7 +604,7 @@ void test_ai_skills_config_range_min_entries_match_sequence_entries(void) {
 
     for(size_t i = 0; i < sizeof(files) / sizeof(files[0]); i++) {
         char rel[256] = {0};
-        snprintf(rel, sizeof(rel), "ai_config/characters/%s", files[i]);
+        snprintf(rel, sizeof(rel), "ai_config/hars/%s", files[i]);
 
         path cfg_path = get_resource_filename(rel);
         char content[16384] = {0};
@@ -616,7 +616,7 @@ void test_ai_skills_config_range_min_entries_match_sequence_entries(void) {
     }
 }
 
-void ai_character_skills_test_suite(CU_pSuite suite) {
+void ai_har_skills_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "skills config: invalid har", test_ai_skills_config_invalid_har_returns_null) == NULL) return;
     if(CU_add_test(suite, "skills config: all hars", test_ai_skills_config_returns_entries_for_all_hars) == NULL) return;
     if(CU_add_test(suite, "skills config: expected flags", test_ai_skills_config_expected_default_flags) == NULL) return;

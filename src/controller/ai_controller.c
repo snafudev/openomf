@@ -1,6 +1,6 @@
 #include "controller/ai_controller.h"
 #include "game/ai/ai_decision_engine.h"
-#include "game/ai/ai_character_skills.h"
+#include "game/ai/ai_har_skills.h"
 #include "game/ai/ai_event.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_movement.h"
