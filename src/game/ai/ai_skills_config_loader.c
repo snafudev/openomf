@@ -6,6 +6,7 @@
 
 #include "game/ai/ai_utils.h"
 #include "game/common_defines.h"
+#include "resources/modmanager.h"
 #include "resources/resource_files.h"
 #include "utils/allocator.h"
 #include "utils/path.h"
@@ -182,6 +183,8 @@ static uint8_t json_array_entry_count(const char *json, const char *field_name) 
     return count;
 }
 
+static void ai_skills_overlay_cb(const char *json_buf, void *userdata);
+
 static void load_har_config(int har_id) {
     if(har_id < 0 || har_id >= NUMBER_OF_HAR_TYPES || g_loaded[har_id]) {
         return;
@@ -233,6 +236,44 @@ static void load_har_config(int har_id) {
     g_configs[har_id].has_projectile_moves = g_configs[har_id].projectile_move_count > 0;
 
     omf_free(json);
+
+    modmanager_apply_json_overlays(rel_path, ai_skills_overlay_cb, &g_configs[har_id]);
+}
+
+bool ai_skills_config_apply_overlay(ai_char_config *cfg, const char *json_buf) {
+    if(cfg == NULL || json_buf == NULL) {
+        return false;
+    }
+
+    bool changed = false;
+
+    uint8_t charge_count = json_array_entry_count(json_buf, "charge_moves");
+    if(strstr(json_buf, "\"charge_moves\"") != NULL) {
+        cfg->charge_move_count = charge_count;
+        cfg->has_charge_moves = charge_count > 0;
+        changed = true;
+    }
+
+    uint8_t push_count = json_array_entry_count(json_buf, "push_moves");
+    if(strstr(json_buf, "\"push_moves\"") != NULL) {
+        cfg->push_move_count = push_count;
+        cfg->has_push_moves = push_count > 0;
+        changed = true;
+    }
+
+    uint8_t projectile_count = json_array_entry_count(json_buf, "projectile_moves");
+    if(strstr(json_buf, "\"projectile_moves\"") != NULL) {
+        cfg->projectile_move_count = projectile_count;
+        cfg->has_projectile_moves = projectile_count > 0;
+        changed = true;
+    }
+
+    return changed;
+}
+
+static void ai_skills_overlay_cb(const char *json_buf, void *userdata) {
+    ai_char_config *cfg = (ai_char_config *)userdata;
+    ai_skills_config_apply_overlay(cfg, json_buf);
 }
 
 const ai_char_config *ai_skills_config_get(int har_id) {

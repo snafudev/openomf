@@ -28,6 +28,14 @@ typedef struct ai_char_config {
 const ai_char_config *ai_skills_config_get(int har_id);
 
 /**
+ * Apply a character config overlay from a raw JSON buffer.
+ * Only move arrays present in json_buf are updated; missing arrays are unchanged.
+ *
+ * Returns true if at least one array field was applied.
+ */
+bool ai_skills_config_apply_overlay(ai_char_config *cfg, const char *json_buf);
+
+/**
  * Reset cached character skill config state.
  */
 void ai_skills_config_reset_cache(void);

@@ -61,6 +61,7 @@ int find_scale_factor(void) {
 
 static hashmap mod_resources;
 static bool mods_allowed = true;
+static bool modmanager_initialized = false;
 
 void modmanager_set_allowed(bool allowed) {
     mods_allowed = allowed;
@@ -348,6 +349,7 @@ static void mod_sort(hashmap *mod_registry, list *sorted_list) {
 bool modmanager_init(void) {
 
     hashmap_create(&mod_resources);
+    modmanager_initialized = true;
     list dir_list;
     list_create(&dir_list);
     mod_find(&dir_list);
@@ -484,6 +486,29 @@ bool modmanager_init(void) {
                         strncpy(ini_buf, entry_buf, entry_size);
 
                         buf->buf = (unsigned char *)ini_buf;
+
+                        if(!hashmap_get_str(&mod_resources, str_c(&filename), (void **)&l, &len)) {
+                            list_append(l, buf, sizeof(mod_asset));
+                        } else {
+                            l = omf_calloc(1, sizeof(list));
+                            list_create_cb(l, free_mod_asset);
+                            list_append(l, buf, sizeof(mod_asset));
+                            hashmap_put_str(&mod_resources, str_c(&filename), l, sizeof(list));
+                            omf_free(l);
+                        }
+                        omf_free(buf);
+                    } else if(str_equal_c(&ext, ".json")) {
+                        list *l;
+                        unsigned int len;
+                        char *json_buf = omf_calloc(1, entry_size + 1);
+                        mod_asset *buf = omf_calloc(1, sizeof(mod_asset));
+                        buf->size = entry_size + 1;
+                        buf->type = MOD_BUFFER;
+
+                        strncpy(json_buf, entry_buf, entry_size);
+                        json_buf[entry_size] = '\0';
+
+                        buf->buf = (unsigned char *)json_buf;
 
                         if(!hashmap_get_str(&mod_resources, str_c(&filename), (void **)&l, &len)) {
                             list_append(l, buf, sizeof(mod_asset));
@@ -1760,6 +1785,7 @@ void modmanager_shutdown(void) {
         str_free(&key);
     }
     hashmap_free(&mod_resources);
+    modmanager_initialized = false;
 }
 
 bool modmanager_get_player_pics(sd_pic_file *players) {
@@ -1814,4 +1840,32 @@ bool modmanager_get_player_pics(sd_pic_file *players) {
     }
 
     return result;
+}
+
+bool modmanager_apply_json_overlays(const char *rel_path, modmanager_json_overlay_fn fn, void *userdata) {
+    if(!mods_allowed || !modmanager_initialized || !rel_path || !fn) {
+        return false;
+    }
+
+    str filename;
+    str_from_c(&filename, rel_path);
+    str_tolower(&filename);
+
+    list *l;
+    unsigned int len = 0;
+    bool found = false;
+
+    if(!hashmap_get_str(&mod_resources, str_c(&filename), (void **)&l, &len)) {
+        iterator it;
+        list_iter_begin(l, &it);
+        mod_asset *obuf;
+        foreach(it, obuf) {
+            assert(obuf->type == MOD_BUFFER);
+            fn((const char *)obuf->buf, userdata);
+            found = true;
+        }
+    }
+
+    str_free(&filename);
+    return found;
 }

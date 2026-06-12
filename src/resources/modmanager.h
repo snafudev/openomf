@@ -29,4 +29,16 @@ bool modmanager_get_tournament_mod(const char *tournament_name, sd_tournament_fi
 bool modmanager_parse_photo_mod(const char *buf, sd_pic_photo *photo);
 bool modmanager_get_player_pics(sd_pic_file *pic);
 
+/**
+ * Apply JSON overlay buffers from mods for a given relative AI config path.
+ *
+ * Calls fn(json_buf, userdata) once for each mod overlay buffer found,
+ * in mod load order. The path should use forward slashes and match the
+ * path used inside the mod zip (e.g. "ai_config/pilots.json").
+ *
+ * Returns true if at least one overlay was applied.
+ */
+typedef void (*modmanager_json_overlay_fn)(const char *json_buf, void *userdata);
+bool modmanager_apply_json_overlays(const char *rel_path, modmanager_json_overlay_fn fn, void *userdata);
+
 #endif // MODMANAGER_H

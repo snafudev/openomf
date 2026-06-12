@@ -9,7 +9,7 @@
 #include "game/ai/ai_utils.h"
 #include "game/ai/ai_decision_engine.h"
 #include "game/common_defines.h"
-#include "testing/ai/ai_controller_test.h"
+#include "ai/ai_controller_test.h"
 #include "CUnit/CUnit.h"
 #include "utils/str.h"
 #include <string.h>
