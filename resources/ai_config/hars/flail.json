@@ -18,7 +18,8 @@
     {
       "name": "slow_swing_chains",
       "sequence": ["D", "K"],
-      "range_min": "ANY"
+      "range_min": "ANY",
+      "conditions": ["roll_d3"]
     },
     {
       "name": "swinging_chains",

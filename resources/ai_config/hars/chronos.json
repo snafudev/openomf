@@ -6,7 +6,8 @@
       "name": "teleportation",
       "sequence": ["D", "P"],
       "range_min": "MID",
-      "conditions": ["special_preferred", "high_difficulty"]
+      "conditions": ["special_preferred", "high_difficulty"],
+      "follow_up_tactics": ["grab", "push", "shoot", "spam", "trip"]
     },
     {
       "name": "trip_slide",
@@ -20,7 +21,7 @@
       "name": "stasis",
       "sequence": ["D", "DB", "B+P"],
       "range_min": "MID",
-      "conditions": ["enemy_not_stunned_or_stasis"]
+      "conditions": ["enemy_not_stunned"]
     }
   ]
 }

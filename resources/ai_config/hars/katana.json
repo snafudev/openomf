@@ -6,12 +6,13 @@
       "name": "trip_slide",
       "sequence": ["DB+K"],
       "range_min": "ANY",
-      "conditions": ["low_preferred"]
+      "conditions": ["roll_d2", "low_preferred"]
     },
     {
       "name": "forward_razor_spin",
       "sequence": ["D", "DF", "F+K"],
-      "range_min": "MID"
+      "range_min": "MID",
+      "conditions": ["roll_d2"]
     },
     {
       "name": "triple_blade",
