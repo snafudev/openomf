@@ -645,8 +645,8 @@ bool attempt_charge_attack(controller *ctrl, ctrl_event **ev) {
     }
 
     har *h = object_get_userdata(o);
-    const ai_char_config *char_cfg = ai_skills_config_get(h->id);
-    return ai_char_execute_charge(ctrl, char_cfg, ev);
+    const ai_har_config *char_cfg = ai_skills_config_get(h->id);
+    return ai_har_execute_charge(ctrl, char_cfg, ev);
 }
 
 /**
@@ -664,8 +664,8 @@ bool attempt_push_attack(controller *ctrl, ctrl_event **ev) {
     }
 
     har *h = object_get_userdata(o);
-    const ai_char_config *char_cfg = ai_skills_config_get(h->id);
-    return ai_char_execute_push(ctrl, char_cfg, ev);
+    const ai_har_config *char_cfg = ai_skills_config_get(h->id);
+    return ai_har_execute_push(ctrl, char_cfg, ev);
 }
 
 /**
@@ -683,8 +683,8 @@ bool attempt_trip_attack(controller *ctrl, ctrl_event **ev) {
     }
 
     har *h = object_get_userdata(o);
-    const ai_char_config *char_cfg = ai_skills_config_get(h->id);
-    return ai_char_execute_trip(ctrl, char_cfg, ev);
+    const ai_har_config *char_cfg = ai_skills_config_get(h->id);
+    return ai_har_execute_trip(ctrl, char_cfg, ev);
 }
 
 /**
@@ -702,8 +702,8 @@ bool attempt_projectile_attack(controller *ctrl, ctrl_event **ev) {
     }
 
     har *h = object_get_userdata(o);
-    const ai_char_config *char_cfg = ai_skills_config_get(h->id);
-    return ai_char_execute_projectile(ctrl, char_cfg, ev);
+    const ai_har_config *char_cfg = ai_skills_config_get(h->id);
+    return ai_har_execute_projectile(ctrl, char_cfg, ev);
 }
 
 /**

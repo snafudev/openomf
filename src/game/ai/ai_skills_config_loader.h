@@ -47,7 +47,7 @@ typedef struct {
     uint8_t           follow_up_tactic_count;
 } ai_move_def;
 
-typedef struct ai_char_config {
+typedef struct ai_har_config {
     int     har_id;
     bool    loaded_from_file;
     bool    has_charge_moves;
@@ -59,13 +59,13 @@ typedef struct ai_char_config {
     ai_move_def charge_moves[AI_MAX_MOVES_PER_TYPE];
     ai_move_def push_moves[AI_MAX_MOVES_PER_TYPE];
     ai_move_def projectile_moves[AI_MAX_MOVES_PER_TYPE];
-} ai_char_config;
+} ai_har_config;
 
 /**
  * Return cached character config for the given HAR id.
  * Falls back to built-in defaults when config is unavailable.
  */
-const ai_char_config *ai_skills_config_get(int har_id);
+const ai_har_config *ai_skills_config_get(int har_id);
 
 /**
  * Apply a character config overlay from a raw JSON buffer.
@@ -73,7 +73,7 @@ const ai_char_config *ai_skills_config_get(int har_id);
  *
  * Returns true if at least one array field was applied.
  */
-bool ai_skills_config_apply_overlay(ai_char_config *cfg, const char *json_buf);
+bool ai_skills_config_apply_overlay(ai_har_config *cfg, const char *json_buf);
 
 /**
  * Reset cached character skill config state.

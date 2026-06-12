@@ -20,7 +20,7 @@
 #include <string.h>
 
 static bool g_loaded[NUMBER_OF_HAR_TYPES] = {false};
-static ai_char_config g_configs[NUMBER_OF_HAR_TYPES] = {{0}};
+static ai_har_config g_configs[NUMBER_OF_HAR_TYPES] = {{0}};
 
 static const char *har_config_name(int har_id) {
     switch(har_id) {
@@ -631,7 +631,7 @@ static void load_har_config(int har_id) {
     modmanager_apply_json_overlays(rel_path, ai_skills_overlay_cb, &g_configs[har_id]);
 }
 
-bool ai_skills_config_apply_overlay(ai_char_config *cfg, const char *json_buf) {
+bool ai_skills_config_apply_overlay(ai_har_config *cfg, const char *json_buf) {
     if(cfg == NULL || json_buf == NULL) {
         return false;
     }
@@ -663,11 +663,11 @@ bool ai_skills_config_apply_overlay(ai_char_config *cfg, const char *json_buf) {
 }
 
 static void ai_skills_overlay_cb(const char *json_buf, void *userdata) {
-    ai_char_config *cfg = (ai_char_config *)userdata;
+    ai_har_config *cfg = (ai_har_config *)userdata;
     ai_skills_config_apply_overlay(cfg, json_buf);
 }
 
-const ai_char_config *ai_skills_config_get(int har_id) {
+const ai_har_config *ai_skills_config_get(int har_id) {
     if(har_id < 0 || har_id >= NUMBER_OF_HAR_TYPES) {
         return NULL;
     }

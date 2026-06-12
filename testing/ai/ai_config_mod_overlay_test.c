@@ -145,9 +145,9 @@ void test_pilot_overlay_multiple_pilots_picks_correct(void) {
 
 /* ---- Char skills overlay tests ---- */
 
-static ai_char_config make_test_char_config(int har_id) {
-    ai_char_config cfg;
-    memset(&cfg, 0, sizeof(ai_char_config));
+static ai_har_config make_test_char_config(int har_id) {
+    ai_har_config cfg;
+    memset(&cfg, 0, sizeof(ai_har_config));
     cfg.har_id = har_id;
     cfg.loaded_from_file = true;
     cfg.has_charge_moves = true;
@@ -165,13 +165,13 @@ void test_char_overlay_null_cfg(void) {
 }
 
 void test_char_overlay_null_json(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     CU_ASSERT_FALSE(ai_skills_config_apply_overlay(&cfg, NULL));
     CU_ASSERT_EQUAL(cfg.charge_move_count, 2);
 }
 
 void test_char_overlay_empty_json_no_change(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     bool result = ai_skills_config_apply_overlay(&cfg, "{}");
     CU_ASSERT_FALSE(result);
     CU_ASSERT_EQUAL(cfg.charge_move_count, 2);
@@ -180,7 +180,7 @@ void test_char_overlay_empty_json_no_change(void) {
 }
 
 void test_char_overlay_clears_charge_moves(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     const char *json = "{\"id\":0,\"charge_moves\":[]}";
     bool result = ai_skills_config_apply_overlay(&cfg, json);
     CU_ASSERT_TRUE(result);
@@ -191,7 +191,7 @@ void test_char_overlay_clears_charge_moves(void) {
 }
 
 void test_char_overlay_adds_charge_moves(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     cfg.charge_move_count = 0;
     cfg.has_charge_moves = false;
 
@@ -203,7 +203,7 @@ void test_char_overlay_adds_charge_moves(void) {
 }
 
 void test_char_overlay_partial_only_updates_present_arrays(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     const char *json = "{\"id\":0,\"push_moves\":[{\"x\":1}]}";
     bool result = ai_skills_config_apply_overlay(&cfg, json);
     CU_ASSERT_TRUE(result);
@@ -213,7 +213,7 @@ void test_char_overlay_partial_only_updates_present_arrays(void) {
 }
 
 void test_char_overlay_all_arrays(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     const char *json =
         "{\"id\":0,"
         "\"charge_moves\":[{\"a\":1}],"
@@ -230,7 +230,7 @@ void test_char_overlay_all_arrays(void) {
 }
 
 void test_char_overlay_sequential_last_wins(void) {
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
 
     const char *overlay1 = "{\"charge_moves\":[{\"a\":1},{\"b\":2},{\"c\":3}]}";
     ai_skills_config_apply_overlay(&cfg, overlay1);
@@ -261,7 +261,7 @@ void test_modmanager_no_overlays_when_no_mods(void) {
 void test_modmanager_overlays_disabled(void) {
     modmanager_set_allowed(false);
 
-    ai_char_config cfg = make_test_char_config(HAR_JAGUAR);
+    ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
     uint8_t orig_count = cfg.charge_move_count;
     bool result = modmanager_apply_json_overlays("ai_config/hars/jaguar.json", NULL, &cfg);
     CU_ASSERT_FALSE(result);
