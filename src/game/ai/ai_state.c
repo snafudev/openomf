@@ -3,6 +3,7 @@
  */
 
 #include "game/ai/ai_state.h"
+#include "game/ai/ai_config_loader.h"
 #include "utils/random.h"
 
 void reset_tactic_state(ai *a) {
@@ -18,7 +19,7 @@ void reset_tactic_state(ai *a) {
     a->tactic->chain_hit_tactic = 0;
 }
 
-void reset_pilot_personality(sd_pilot *pilot) {
+static void reset_pilot_personality_defaults(sd_pilot *pilot) {
     switch(pilot->pilot_id) {
         case 0:
             pilot->att_normal = 30;
@@ -194,6 +195,14 @@ void reset_pilot_personality(sd_pilot *pilot) {
             pilot->forget = 0.25f;
             break;
     }
+}
+
+void reset_pilot_personality(sd_pilot *pilot) {
+    if(ai_config_load_pilot_personality(pilot)) {
+        return;
+    }
+
+    reset_pilot_personality_defaults(pilot);
 }
 
 void reset_act_timer(ai *a) {

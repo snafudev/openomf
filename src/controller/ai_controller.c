@@ -2,6 +2,7 @@
 #include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_movement.h"
 #include "game/ai/ai_state.h"
+#include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_utils.h"
 #include "game/ai/ai_move_selector.h"
 #include "controller/controller.h"
@@ -34,10 +35,6 @@
 #define BASE_STILL_JUMP_CHANCE 40
 /* number of move ticks before bailing on tactic */
 #define TACTIC_MOVE_TIMER_MAX 30
-/* number of attack attempt ticks before bailing on tactic */
-#define TACTIC_ATTACK_TIMER_MAX 3
-/* number of jump attack attempt ticks before bailing on tactic */
-#define TACTIC_JUMP_ATTACK_TIMER_MAX 12
 /* likelihood of attempting a random attack/tactic (lower is more likely) */
 #define RANDOM_ATTACK_CHANCE 10
 
@@ -50,44 +47,6 @@
 #define UPFORWARD (o->direction == OBJECT_FACE_RIGHT ? ACT_RIGHT : ACT_LEFT) | ACT_UP
 
 // Type definitions are in ai_types.h (included via ai_decision_engine.h)
-
-enum
-{
-    TACTIC_ESCAPE = 1, // escape from enemy
-    TACTIC_TURTLE,     // block attacks
-    TACTIC_GRAB,       // charge and grab enemy
-    TACTIC_SPAM,       // spam the same attack
-    TACTIC_SHOOT,      // shoot a projectile
-    TACTIC_TRIP,       // trip enemy
-    TACTIC_QUICK,      // quick attack
-    TACTIC_CLOSE,      // close with the enemy
-    TACTIC_FLY,        // fly towards the enemy
-    TACTIC_PUSH,       // spam power moves to push them back
-    TACTIC_COUNTER     // block then attack
-};
-
-enum
-{
-    MOVE_CLOSE = 1, // close distance
-    MOVE_AVOID,     // gain distance
-    MOVE_JUMP,      // jump towards
-    MOVE_HIGH_JUMP, // high-jump towards
-    MOVE_BLOCK      // hold block
-};
-
-enum
-{
-    ATTACK_ID = 1, // attack by id
-    ATTACK_TRIP,   // trip attack
-    ATTACK_GRAB,   // grab/throw attack
-    ATTACK_LIGHT,  // light/quick attack
-    ATTACK_HEAVY,  // heavy/power attack
-    ATTACK_JUMP,   // jumping attack
-    ATTACK_RANGED, // ranged attack
-    ATTACK_CHARGE, // charge attack
-    ATTACK_PUSH,   // push attack
-    ATTACK_RANDOM, // random attack
-};
 
 // MOVE_DIR_STILL, MOVE_DIR_FWD, MOVE_DIR_BACK are defined in ai_movement.h
 
@@ -117,94 +76,7 @@ void chain_controller_cmd(controller *ctrl, int commands[], size_t n_commands, c
  * \return Boolean indicating whether the AI would like to use the tactic..
  */
 bool likes_tactic(const controller *ctrl, int tactic_type) {
-    ai *a = ctrl->data;
-
-    object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
-    har *h = object_get_userdata(o);
-    sd_pilot *pilot = a->pilot;
-
-    if((a->tactic->last_tactic == tactic_type && roll_chance(2)) || h->state == STATE_JUMPING) {
-        return false;
-    }
-
-    bool enemy_close = h->close;
-    int enemy_range = get_enemy_range(ctrl);
-    bool wall_close = h->is_wallhugging;
-
-    switch(tactic_type) {
-        case TACTIC_SHOOT:
-            if(har_has_projectiles(h->id) && roll_pref(pilot->att_sniper) && enemy_range > RANGE_CRAMPED &&
-               (h->id != HAR_SHREDDER || ((enemy_range <= RANGE_MID && smart_usually(a)) ||
-                                          dumb_sometimes(a)) // shredder prefers to be close-mid range
-                )) {
-                return true;
-            }
-            break;
-        case TACTIC_CLOSE:
-            if(enemy_range > RANGE_CRAMPED && (har_has_charge(h->id) || roll_chance(4)) &&
-               roll_pref(pilot->att_hyper)) {
-                return true;
-            }
-            break;
-        case TACTIC_QUICK:
-            if(enemy_range > RANGE_CRAMPED && enemy_range < RANGE_FAR &&
-               ((roll_pref(pilot->att_sniper) && roll_chance(3)) || (roll_pref(pilot->att_hyper) && roll_chance(6)) ||
-                (roll_pref(pilot->att_normal) && roll_chance(8)))) {
-                return true;
-            }
-            break;
-        case TACTIC_GRAB:
-            if((a->thrown <= MAX_TIMES_THROWN || roll_chance(2)) &&
-               ((roll_pref(pilot->att_hyper) && roll_chance(3)) ||
-                ((h->id == HAR_FLAIL || h->id == HAR_THORN) && roll_chance(3)))) {
-                return true;
-            }
-            break;
-        case TACTIC_TURTLE:
-            if(a->thrown <= MAX_TIMES_THROWN && ((roll_pref(pilot->att_def) && roll_chance(3)))) {
-                return true;
-            }
-            break;
-        case TACTIC_COUNTER:
-            if(a->thrown < MAX_TIMES_THROWN && roll_pref(pilot->att_def) && roll_chance(3)) {
-                return true;
-            }
-            break;
-        case TACTIC_ESCAPE:
-            if((roll_pref(pilot->att_jump) && roll_chance(3)) || (roll_pref(pilot->att_def) && roll_chance(5))) {
-                return true;
-            }
-            break;
-        case TACTIC_FLY:
-            if((roll_pref(a->pilot->att_jump) || (a->shot > MAX_TIMES_SHOT && learning_moment(a)) ||
-                (h->id == HAR_GARGOYLE || h->id == HAR_PYROS)) &&
-               ((wall_close && roll_chance(2)) || roll_chance(4))) {
-                return true;
-            }
-            break;
-        case TACTIC_PUSH:
-            if((enemy_range <= RANGE_CLOSE ||
-                ((h->id == HAR_THORN || h->id == HAR_KATANA) && enemy_range <= RANGE_MID)) &&
-               ((har_has_push(h->id) && smart_usually(a)) &&
-                ((roll_pref(pilot->att_hyper) && roll_chance(2)) || (roll_pref(pilot->att_def) && roll_chance(4)) ||
-                 (wall_close && roll_chance(5))))) {
-                return true;
-            }
-            break;
-        case TACTIC_TRIP:
-            if(enemy_range <= RANGE_MID &&
-               ((roll_pref(pilot->att_def) && roll_chance(4)) || (roll_pref(pilot->att_sniper) && roll_chance(6)))) {
-                return true;
-            }
-            break;
-        case TACTIC_SPAM:
-            if((enemy_close || dumb_usually(a)) && (wall_close || roll_chance(6)) && roll_pref(pilot->att_normal)) {
-                return true;
-            }
-            break;
-    }
-
-    return false;
+    return ai_tactic_likes_it(ctrl, tactic_type);
 }
 
 /**
@@ -216,189 +88,7 @@ bool likes_tactic(const controller *ctrl, int tactic_type) {
  * \return Void.
  */
 void queue_tactic(controller *ctrl, int tactic_type) {
-    ai *a = ctrl->data;
-    object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
-    har *h = object_get_userdata(o);
-
-    a->tactic->last_tactic = a->tactic->tactic_type > 0 ? a->tactic->tactic_type : 0;
-    a->tactic->tactic_type = tactic_type;
-
-    // log when we queue a tactic
-    switch(tactic_type) {
-        case TACTIC_GRAB:
-            log_debug("HAR %d queued tactic: GRAB", h->id);
-            break;
-        case TACTIC_TRIP:
-            log_debug("HAR %d queued tactic: TRIP", h->id);
-            break;
-        case TACTIC_QUICK:
-            log_debug("HAR %d queued tactic: QUICK", h->id);
-            break;
-        case TACTIC_CLOSE:
-            log_debug("HAR %d queued tactic: CLOSE", h->id);
-            break;
-        case TACTIC_FLY:
-            log_debug("HAR %d queued tactic: FLY", h->id);
-            break;
-        case TACTIC_SHOOT:
-            log_debug("HAR %d queued tactic: SHOOT", h->id);
-            break;
-        case TACTIC_PUSH:
-            log_debug("HAR %d queued tactic: PUSH", h->id);
-            break;
-        case TACTIC_SPAM:
-            log_debug("HAR %d queued tactic: SPAM", h->id);
-            break;
-        case TACTIC_ESCAPE:
-            log_debug("HAR %d queued tactic: ESCAPE", h->id);
-            break;
-        case TACTIC_TURTLE:
-            log_debug("HAR %d queued tactic: TURTLE", h->id);
-            break;
-        case TACTIC_COUNTER:
-            log_debug("HAR %d queued tactic: COUNTER", h->id);
-            break;
-    }
-
-    bool enemy_close = h->close;
-    bool wall_close = h->is_wallhugging;
-    int enemy_range = get_enemy_range(ctrl);
-
-    bool do_charge = false;
-
-    // set move tactic
-    switch(tactic_type) {
-        // aggressive tactics
-        case TACTIC_GRAB:
-        case TACTIC_TRIP:
-        case TACTIC_QUICK:
-        case TACTIC_CLOSE:
-            if(enemy_close) {
-                a->tactic->move_type = 0;
-            } else if((tactic_type == TACTIC_CLOSE || (tactic_type == TACTIC_QUICK && roll_chance(3))) &&
-                      smart_usually(a) && har_has_charge(h->id)) {
-                // smart AI will try to use charge attacks
-                a->tactic->move_type = 0;
-                do_charge = true;
-            } else if(smart_usually(a) && roll_pref(a->pilot->pref_jump)) {
-                // smart AI that likes to jump will close via jump
-                a->tactic->move_type = MOVE_JUMP;
-            } else {
-                a->tactic->move_type = MOVE_CLOSE;
-            }
-            break;
-        // jumping tactics
-        case TACTIC_FLY:
-            a->tactic->move_type = MOVE_HIGH_JUMP;
-            break;
-        // ranged tactics
-        case TACTIC_SHOOT:
-            a->tactic->move_type = (enemy_range == RANGE_CRAMPED && !wall_close) ? MOVE_AVOID : 0;
-            break;
-        // stalling tactics
-        case TACTIC_PUSH:
-        case TACTIC_SPAM:
-            a->tactic->move_type = 0;
-            break;
-        // evasive tactics
-        case TACTIC_ESCAPE:
-            a->tactic->move_type = wall_close ? MOVE_JUMP : MOVE_AVOID;
-            break;
-        // goading tactics
-        case TACTIC_TURTLE:
-            if(enemy_range == RANGE_CRAMPED) {
-                // at this range they might grab/throw so we need to use escape tactic
-                a->tactic->move_type = wall_close ? MOVE_JUMP : MOVE_AVOID;
-            } else {
-                a->tactic->move_type = MOVE_BLOCK;
-            }
-            break;
-        case TACTIC_COUNTER:
-            a->tactic->move_type = enemy_range > RANGE_CRAMPED ? MOVE_BLOCK : 0;
-            break;
-    }
-
-    // set tactic move timer
-    if(a->tactic->move_type > 0) {
-        a->tactic->move_timer = TACTIC_MOVE_TIMER_MAX;
-    }
-
-    if(do_charge) {
-        // set charge attack
-        a->tactic->attack_type = ATTACK_CHARGE;
-        a->tactic->attack_id = 0;
-    } else {
-        // set attack tactics
-        switch(tactic_type) {
-            // aggressive tactics
-            case TACTIC_GRAB:
-                a->tactic->attack_type = ATTACK_GRAB;
-                a->tactic->attack_id = 0;
-                break;
-            case TACTIC_TRIP:
-                a->tactic->attack_type = ATTACK_TRIP;
-                a->tactic->attack_id = 0;
-                // if we are jumping we wait for land to trip
-                if(a->tactic->move_type == MOVE_JUMP) {
-                    a->tactic->attack_on = HAR_EVENT_LAND;
-                }
-                break;
-            case TACTIC_QUICK:
-                a->tactic->attack_type = ATTACK_LIGHT;
-                a->tactic->attack_id = 0;
-                break;
-            case TACTIC_FLY:
-                // smart AI will try for a jumping attack
-                a->tactic->attack_type = smart_usually(a) ? ATTACK_JUMP : 0;
-                a->tactic->attack_id = 0;
-                break;
-            case TACTIC_SHOOT:
-                a->tactic->attack_type = ATTACK_RANGED;
-                a->tactic->attack_id = 0;
-                break;
-            case TACTIC_PUSH:
-                if(har_has_push(h->id)) { // && smart_sometimes(a)
-                    a->tactic->attack_type = ATTACK_PUSH;
-                } else {
-                    a->tactic->attack_type = ATTACK_HEAVY;
-                }
-                a->tactic->attack_id = 0;
-                break;
-            case TACTIC_SPAM:
-                if(a->last_move_id > 0) {
-                    a->tactic->attack_type = ATTACK_ID;
-                    a->tactic->attack_id = a->last_move_id;
-                } else {
-                    a->tactic->attack_type = ATTACK_LIGHT;
-                    a->tactic->attack_id = 0;
-                }
-                break;
-            case TACTIC_COUNTER:
-                a->tactic->attack_type = roll_chance(3) ? ATTACK_TRIP : ATTACK_HEAVY;
-                // we only wait for block if they're not in range to grab/throw
-                if(enemy_range > RANGE_CRAMPED) {
-                    a->tactic->attack_on = HAR_EVENT_BLOCK;
-                }
-                break;
-            case TACTIC_CLOSE:
-                a->tactic->attack_type = ATTACK_RANDOM;
-                a->tactic->attack_id = 0;
-                break;
-            case TACTIC_ESCAPE:
-            case TACTIC_TURTLE:
-                a->tactic->attack_type = 0;
-                a->tactic->attack_id = 0;
-        }
-    }
-
-    // set tactic attack timer
-    if(a->tactic->attack_type > 0) {
-        if(a->tactic->move_type == MOVE_JUMP || a->tactic->move_type == MOVE_HIGH_JUMP) {
-            a->tactic->attack_timer = TACTIC_JUMP_ATTACK_TIMER_MAX;
-        } else {
-            a->tactic->attack_timer = TACTIC_ATTACK_TIMER_MAX;
-        }
-    }
+    ai_tactic_queue(ctrl, tactic_type);
 }
 
 /**
@@ -410,12 +100,7 @@ void queue_tactic(controller *ctrl, int tactic_type) {
  * \return Void.
  */
 void chain_consider_tactics(controller *ctrl, int tactics[], size_t n_tactics) {
-    for(size_t i = 0; i < n_tactics; i++) {
-        if(likes_tactic(ctrl, tactics[i])) {
-            queue_tactic(ctrl, tactics[i]);
-            return;
-        }
-    }
+    ai_tactic_consider_list(ctrl, tactics, n_tactics);
 }
 
 
