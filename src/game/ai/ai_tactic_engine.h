@@ -118,4 +118,7 @@ bool ai_tactic_is_enabled(int tactic_type);
  */
 void ai_tactic_reset_config_cache(void);
 
+/** Maximum ticks a queued tactic's move timer is allowed to run. */
+#define TACTIC_MOVE_TIMER_MAX 30
+
 #endif // AI_TACTIC_ENGINE_H

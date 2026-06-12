@@ -5,6 +5,7 @@
 #include "game/ai/ai_tactic_engine.h"
 
 #include "game/ai/ai_decision_engine.h"
+#include "game/ai/ai_learning.h"
 #include "game/ai/ai_utils.h"
 #include "game/game_state.h"
 #include "game/objects/har.h"
@@ -18,9 +19,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_TIMES_THROWN 3
-#define MAX_TIMES_SHOT 4
-#define TACTIC_MOVE_TIMER_MAX 30
 #define TACTIC_ATTACK_TIMER_MAX 3
 #define TACTIC_JUMP_ATTACK_TIMER_MAX 12
 

@@ -1,6 +1,8 @@
 #include "controller/ai_controller.h"
 #include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_character_skills.h"
+#include "game/ai/ai_event.h"
+#include "game/ai/ai_learning.h"
 #include "game/ai/ai_movement.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_skills_config_loader.h"
@@ -23,10 +25,6 @@
 #include "utils/vec.h"
 #include <math.h>
 
-/* times thrown before we AI learns its lesson */
-#define MAX_TIMES_THROWN 3
-/* times shot before we AI learns its lesson */
-#define MAX_TIMES_SHOT 4
 /* base likelihood to change movement action (lower is more likely) */
 #define BASE_ACT_CHANCE 5
 /* base likelihood to jump while moving forwards (lower is more likely) */
@@ -35,8 +33,6 @@
 #define BASE_BACK_JUMP_CHANCE 5
 /* base likelihood to jump while standing still (lower is more likely) */
 #define BASE_STILL_JUMP_CHANCE 40
-/* number of move ticks before bailing on tactic */
-#define TACTIC_MOVE_TIMER_MAX 30
 /* likelihood of attempting a random attack/tactic (lower is more likely) */
 #define RANDOM_ATTACK_CHANCE 10
 
@@ -162,49 +158,8 @@ bool move_too_powerful(const ai *a, const af_move *move) {
 
 int ai_har_event(controller *ctrl, har_event event) {
     ai *a = ctrl->data;
-    object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
-    har *h = object_get_userdata(o);
-    sd_pilot *pilot = a->pilot;
-    move_stat *ms;
 
-    bool has_queued_tactic = a->tactic->tactic_type > 0;
-
-    if(has_queued_tactic) {
-        switch(event.type) {
-            case HAR_EVENT_BLOCK:
-            case HAR_EVENT_BLOCK_PROJECTILE:
-                if(a->tactic->tactic_type != TACTIC_COUNTER && a->tactic->tactic_type != TACTIC_TURTLE &&
-                   a->tactic->tactic_type != TACTIC_TRIP && a->tactic->tactic_type != TACTIC_PUSH &&
-                   a->tactic->tactic_type != TACTIC_SPAM && a->tactic->tactic_type != TACTIC_FLY &&
-                   (a->tactic->tactic_type != TACTIC_GRAB || roll_chance(2)) &&
-                   (a->tactic->chain_hit_on == 0 || a->tactic->chain_hit_on != event.move->category)) {
-                    reset_tactic_state(a);
-                    has_queued_tactic = false;
-                    log_debug("\033[90mReset tactic queue: EVENT_BLOCK");
-                }
-                break;
-            case HAR_EVENT_TAKE_HIT:
-                if(a->tactic->tactic_type == TACTIC_CLOSE || a->tactic->tactic_type == TACTIC_FLY ||
-                   a->tactic->tactic_type == TACTIC_COUNTER ||
-                   (a->tactic->tactic_type == TACTIC_TURTLE && !pilot->att_def)) {
-                    reset_tactic_state(a);
-                    has_queued_tactic = false;
-                    log_debug("\033[90mReset tactic queue: EVENT_TAKE_HIT");
-                }
-                break;
-            case HAR_EVENT_ENEMY_STUN: {
-                if(a->tactic->tactic_type == TACTIC_GRAB || a->tactic->tactic_type == TACTIC_CLOSE ||
-                   a->tactic->tactic_type == TACTIC_TRIP) {
-                    log_debug("Extend tactic move timer to capitalize on stun");
-                    a->tactic->move_timer = TACTIC_MOVE_TIMER_MAX;
-                } else if(a->tactic->tactic_type != TACTIC_SHOOT) {
-                    reset_tactic_state(a);
-                    has_queued_tactic = false;
-                    log_debug("\033[90mReset tactic queue: EVENT_ENEMY_STUN");
-                }
-            } break;
-        }
-    }
+    bool has_queued_tactic = ai_event_check_cancel_tactic(ctrl, event);
 
     switch(event.type) {
         case HAR_EVENT_ATTACK:
@@ -214,264 +169,45 @@ int ai_har_event(controller *ctrl, har_event event) {
         case HAR_EVENT_LAND_HIT_PROJECTILE:
             a->selected_move = NULL;
             break;
+        default:
+            break;
     }
 
     switch(event.type) {
         case HAR_EVENT_LAND_HIT:
-        case HAR_EVENT_LAND_HIT_PROJECTILE: {
-            ms = &a->move_stats[event.move->id];
-
-            // in the heat of the moment they might forget what they have learnt
-            if(roll_chance(2) && forgetful(a)) {
-                reset_pilot_personality(pilot);
-                a->blocked = 0;
-                a->thrown = 0;
-                a->shot = 0;
-                // log_debug("HAR %d forgot their learning.", h->id);
-            }
-
-            if(ms->max_hit_dist == -1 || ms->last_dist > ms->max_hit_dist) {
-                ms->max_hit_dist = ms->last_dist;
-            }
-
-            if(ms->min_hit_dist == -1 || ms->last_dist < ms->min_hit_dist) {
-                ms->min_hit_dist = ms->last_dist;
-            }
-
-            ms->value++;
-            if(ms->value > 10) {
-                ms->value = 10;
-            }
-
-            a->last_move_id = event.move->id;
-
-            if(a->tactic->chain_hit_on == event.move->category) {
-                log_debug("Queueing chained tactic");
-                queue_tactic(ctrl, a->tactic->chain_hit_tactic);
-                break;
-            }
-
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            if(event.type == HAR_EVENT_LAND_HIT_PROJECTILE) {
-                // we hit with a projectile
-                int tacs[] = {TACTIC_FLY, TACTIC_TURTLE, TACTIC_CLOSE, TACTIC_SHOOT};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            } else {
-                // we hit with a HAR attack
-                int tacs[] = {TACTIC_QUICK, TACTIC_TRIP,  TACTIC_GRAB,   TACTIC_PUSH,
-                              TACTIC_CLOSE, TACTIC_SHOOT, TACTIC_TURTLE, TACTIC_SPAM};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            }
-        } break;
-
+        case HAR_EVENT_LAND_HIT_PROJECTILE:
+            ai_event_on_land_hit(ctrl, event, has_queued_tactic);
+            break;
         case HAR_EVENT_ENEMY_BLOCK:
-        case HAR_EVENT_ENEMY_BLOCK_PROJECTILE: {
-            ms = &a->move_stats[event.move->id];
-            if(!a->blocked) {
-                a->blocked = 1;
-                ms->value--;
-
-                a->last_move_id = event.move->id;
-
-                if(has_queued_tactic || !smart_usually(a)) {
-                    break;
-                }
-
-                if(event.type == HAR_EVENT_ENEMY_BLOCK_PROJECTILE) {
-                    // enemy blocked our projectile
-                    int tacs[] = {TACTIC_FLY, TACTIC_ESCAPE, TACTIC_TURTLE, TACTIC_CLOSE, TACTIC_SHOOT};
-                    chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-                } else {
-                    // enemy blocked our HAR attack
-                    int tacs[] = {TACTIC_GRAB,   TACTIC_TRIP, TACTIC_PUSH,  TACTIC_COUNTER, TACTIC_TURTLE,
-                                  TACTIC_ESCAPE, TACTIC_FLY,  TACTIC_QUICK, TACTIC_SPAM};
-                    chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-                }
-            }
-
-        } break;
-
+        case HAR_EVENT_ENEMY_BLOCK_PROJECTILE:
+            ai_event_on_enemy_block(ctrl, event, has_queued_tactic);
+            break;
         case HAR_EVENT_BLOCK:
-        case HAR_EVENT_BLOCK_PROJECTILE: {
-
-            if(has_queued_tactic && a->tactic->attack_on == HAR_EVENT_BLOCK) {
-                // do the attack now
-                log_debug("\033[94mAttempting counter move");
-                a->tactic->move_timer = 0;
-                break;
-            }
-
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            if(event.type == HAR_EVENT_BLOCK_PROJECTILE) {
-                // count this as being shot to respond to spam quicker
-                a->shot++;
-                // we blocked a projectile
-                int tacs[] = {TACTIC_FLY, TACTIC_SHOOT, TACTIC_CLOSE, TACTIC_TURTLE};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            } else {
-                // we blocked a HAR attack
-                int tacs[] = {TACTIC_TRIP,   TACTIC_PUSH,  TACTIC_TURTLE, TACTIC_GRAB,
-                              TACTIC_ESCAPE, TACTIC_QUICK, TACTIC_SPAM};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            }
-
-        } break;
-
-        case HAR_EVENT_LAND: {
-
-            if(has_queued_tactic && a->tactic->attack_on == HAR_EVENT_LAND && h->state == STATE_STANDING) {
-                // do the attack now
-                log_debug("\033[94mAttempting landing move");
-                a->tactic->move_timer = 0;
-                a->tactic->attack_on = 0;
-                break;
-            } else {
-                a->act_timer = 0;
-
-                if(!has_queued_tactic && smart_usually(a)) {
-                    int tacs[] = {TACTIC_TRIP,  TACTIC_QUICK,   TACTIC_PUSH,   TACTIC_GRAB,
-                                  TACTIC_SHOOT, TACTIC_COUNTER, TACTIC_TURTLE, TACTIC_CLOSE};
-                    chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-                }
-            }
-
-        } break;
-
+        case HAR_EVENT_BLOCK_PROJECTILE:
+            ai_event_on_block(ctrl, event, has_queued_tactic);
+            break;
+        case HAR_EVENT_LAND:
+            ai_event_on_land(ctrl, event, has_queued_tactic);
+            break;
         case HAR_EVENT_ATTACK:
             a->tactic->move_timer = 0;
             break;
-
-        case HAR_EVENT_HIT_WALL: {
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            int tacs[] = {TACTIC_SHOOT, TACTIC_PUSH,   TACTIC_TURTLE,  TACTIC_TRIP,
-                          TACTIC_FLY,   TACTIC_ESCAPE, TACTIC_COUNTER, TACTIC_CLOSE};
-            chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-        } break;
+        case HAR_EVENT_HIT_WALL:
+            ai_event_on_hit_wall(ctrl, event, has_queued_tactic);
+            break;
         case HAR_EVENT_TAKE_HIT:
-        case HAR_EVENT_TAKE_HIT_PROJECTILE: {
-
-            // if enemy is cheesing the AI will try to adjust
-            if(event.move->category == CAT_CLOSE) {
-                // keep track of how many times we have been thrown
-                a->thrown++;
-                if(learning_moment(a) && a->thrown >= MAX_TIMES_THROWN) {
-                    log_debug("AI adjusting in response to repeated throws.");
-                    // avoid defensive tactics
-                    if(pilot->att_def > 90) {
-                        pilot->att_def = 10;
-                    }
-                    // favor sniper tactics
-                    if(pilot->att_sniper < 90) {
-                        pilot->att_sniper += 10;
-                    }
-                    // favor jumping tactics
-                    if(pilot->att_jump < 90) {
-                        pilot->att_jump += 10;
-                    }
-                    // favor jumping movement
-                    if(pilot->pref_jump < 90) {
-                        pilot->pref_jump += 10;
-                    }
-                    // favor backwards movement
-                    if(pilot->pref_back < 90) {
-                        pilot->pref_back += 10;
-                    }
-                    if(pilot->pref_fwd > 90) {
-                        pilot->pref_fwd -= 10;
-                    }
-                }
-            } else if(event.type == HAR_EVENT_TAKE_HIT_PROJECTILE) {
-                // keep track of how many times we have been shot
-                a->shot++;
-                if(learning_moment(a) && a->shot >= MAX_TIMES_SHOT) {
-                    log_debug("AI adjusting in response to repeated projectiles.");
-                    // avoid defensive tactics
-                    if(pilot->att_def > 90) {
-                        pilot->att_def = 10;
-                    }
-                    // favor shooting tactics
-                    if(pilot->att_sniper < 90) {
-                        pilot->att_sniper = 10;
-                    }
-                    // favor aggressive tactics
-                    if(pilot->att_hyper < 90) {
-                        pilot->att_hyper = 10;
-                    }
-                    // favor jumping tactics
-                    if(pilot->att_jump < 20) {
-                        pilot->att_jump += 20;
-                    }
-                    if(pilot->pref_jump < 90) {
-                        pilot->pref_jump += 10;
-                    }
-                    // favor forwards movement
-                    if(pilot->pref_fwd < 90) {
-                        pilot->pref_fwd += 10;
-                    }
-                    if(pilot->pref_back > 90) {
-                        pilot->pref_back -= 10;
-                    }
-                }
-            }
-
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            if(event.move->category == CAT_CLOSE) {
-                // distance gaining tactics
-                int tacs[] = {TACTIC_ESCAPE, TACTIC_PUSH, TACTIC_FLY};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            } else if(event.type == HAR_EVENT_TAKE_HIT_PROJECTILE) {
-                // aggressive tactics
-                int tacs[] = {TACTIC_CLOSE, TACTIC_FLY, TACTIC_SHOOT, TACTIC_GRAB};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            } else {
-                // defensive tactics
-                int tacs[] = {TACTIC_COUNTER, TACTIC_TURTLE, TACTIC_ESCAPE, TACTIC_PUSH,
-                              TACTIC_TRIP,    TACTIC_QUICK,  TACTIC_SPAM};
-                chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-            }
-
-        } break;
-        case HAR_EVENT_RECOVER: {
-
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            int tacs[] = {TACTIC_SHOOT, TACTIC_COUNTER, TACTIC_TURTLE, TACTIC_ESCAPE};
-            chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-        } break;
-        case HAR_EVENT_ENEMY_HAZARD_HIT: {
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            log_debug("HAR capitalize on hazard: %d", h->id);
-
-            int tacs[] = {TACTIC_GRAB, TACTIC_TRIP, TACTIC_QUICK, TACTIC_CLOSE, TACTIC_SHOOT};
-            chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-        } break;
-        case HAR_EVENT_ENEMY_STUN: {
-            if(has_queued_tactic || !smart_usually(a)) {
-                break;
-            }
-
-            log_debug("HAR capitalize on stun: %d", h->id);
-
-            int tacs[] = {TACTIC_GRAB, TACTIC_CLOSE, TACTIC_TRIP, TACTIC_SHOOT};
-            chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
-        } break;
+        case HAR_EVENT_TAKE_HIT_PROJECTILE:
+            ai_event_on_take_hit(ctrl, event, has_queued_tactic);
+            break;
+        case HAR_EVENT_RECOVER:
+            ai_event_on_recover(ctrl, event, has_queued_tactic);
+            break;
+        case HAR_EVENT_ENEMY_HAZARD_HIT:
+            ai_event_on_enemy_hazard_hit(ctrl, event, has_queued_tactic);
+            break;
+        case HAR_EVENT_ENEMY_STUN:
+            ai_event_on_enemy_stun(ctrl, event, has_queued_tactic);
+            break;
         default:
             break;
     }
