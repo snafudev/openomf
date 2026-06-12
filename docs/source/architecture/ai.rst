@@ -1,14 +1,6 @@
 AI Controller Architecture
 ==========================
 
-OpenOMF's AI system has been refactored into a modular, config-driven architecture that provides
-testability, moddability, and performance while maintaining 100% backward compatibility with the
-public API. All behavior is driven by configuration files rather than hardcoded logic.
-
-**Date:** 2026-06-12  
-**Status:** Complete (8 phases)  
-**Design Approach:** Modular, config-driven, fully testable
-
 Overview
 --------
 
@@ -19,10 +11,8 @@ module and do not affect any other game systems.
 
 **Key Properties:**
 
-* ✅ 100% backward compatible — no breaking changes to public API
-* ✅ Fully moddable — all behavior configurable via JSON (pilots, tactics, character moves)
+* ✅ Fully moddable — behavior configurable via JSON/YAML/INI (pilots, tactics, HAR moves, core runtime knobs)
 * ✅ Highly testable — modular components with 550+ unit tests, 85%+ code coverage
-* ✅ Deterministic — identical AI behavior when given same random seed
 
 Architecture Overview
 ---------------------
@@ -156,7 +146,7 @@ Select next movement action based on game state and controller preferences.
 Move Selector (ai_move_selector.c/h)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Select a specific move (punch, kick, throw, etc.) based on range, conditions, and character
+Select a specific move (punch, kick, throw, etc.) based on range, conditions, and HAR
 capabilities.
 
 **Core Algorithm:**
@@ -168,7 +158,7 @@ capabilities.
    - All boolean conditions pass (bitmask evaluation)
 4. Return first move that passes all checks, or fallback
 
-**Key Property:** Entirely data-driven. No hardcoded per-character logic—all character moves
+**Key Property:** Entirely data-driven. No hardcoded per-HAR logic—all HAR moves
 are defined in config.
 
 **Tests:** 45+ unit tests covering all ranges, conditions, and move selections.
@@ -183,7 +173,7 @@ Manage tactic state machine and control when tactics change.
 
 **Core Behavior:**
 
-* Each controller instance has current tactic + timer
+* Each AI controller instance has current tactic + timer
 * Tactic executes move sequences via ``ai_move_selector``
 * Timers control tactic duration and move timing
 * On tactic end, automatically transition to next tactic
@@ -209,10 +199,10 @@ config.
 * ``bool ai_har_execute_push(controller *c, game_state *gs, const ai_move_def *move)``
 * ``bool ai_har_execute_projectile(controller *c, game_state *gs, const ai_move_def *move)``
 
-**Key Property:** No per-character switch cases. All move sequences are in config files under
-``resources/ai_config/characters/``.
+**Key Property:** No per-HAR switch cases. All move sequences are in config files under
+``resources/ai_config/hars/``.
 
-**Tests:** 42 unit tests covering all 11 character types and all move types.
+**Tests:** 42 unit tests covering all 11 HAR types and all move types.
 
 Support Modules
 ---------------
@@ -262,19 +252,32 @@ Config System
 ~~~~~~~~~~~~~
 
 Config Loader (ai_config_loader.c/h)
-  Parse and cache configuration data at startup. Coordinates loading pilots, tactics, character
-  moves, and difficulty data.
+  Parse and cache configuration data at startup. Coordinates loading pilots, tactics, HAR
+   moves, and difficulty data.
 
   **Exported Functions:**
 
   * ``const ai_pilot_profile *ai_config_get_pilot(int pilot_id)`` — lookup pilot by ID
   * ``const ai_tactic_data *ai_config_get_tactic(int tactic_id)`` — lookup tactic by ID
-  * ``const ai_har_config *ai_skills_config_get(int har_id)`` — lookup character config by HAR ID
+  * ``const ai_har_config *ai_skills_config_get(int har_id)`` — lookup HAR config by HAR ID
 
   **Key Property:** Configuration is loaded once at startup, not re-parsed every frame. Supports
   overlay system for mods.
 
   **Tests:** 8 unit tests.
+
+AI Core Runtime Config (ai_core_config.c/h)
+   Load low-level runtime tuning parameters from ``resources/ai_config/ai_core.ini``
+   (for example action/jump timing and random attack thresholds).
+
+   **Exported Functions:**
+
+   * ``const ai_core_config *ai_core_config_get(void)`` — fetch singleton core config
+   * ``bool ai_core_config_reload(void)`` — reload config values from disk
+   * ``void ai_core_config_free(void)`` — release singleton config instance
+
+   **Key Property:** Defaults are embedded in code, then overridden by ``ai_core.ini``
+   when present.
 
 Config Overlay System
   Allow mods to override configuration without modifying base files.
@@ -318,23 +321,30 @@ Defines 11 pilot personalities with move preferences and learning rates.
 Tactic Configuration (resources/ai_config/tactics.json)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Defines 11 tactics (Pathfinding, Evasion, Rushing, etc.) with move sequences and conditions.
+Defines 11 named tactics (ESCAPE, TURTLE, GRAB, etc.) as high-level behavior recipes.
+Each tactic maps to a movement mode and an attack mode; per-move sequences and conditions are
+defined in HAR config files.
 
 .. code-block:: json
 
-   {
-     "tactics": [
-       {
-         "id": 0,
-         "name": "Pathfinding",
-         "description": "Default aggressive tactic",
-         "duration_min": 60,
-         "duration_max": 120
+    {
+       "tactics": {
+          "GRAB": {
+             "id": 3,
+             "enabled": true,
+             "move_type": "MOVE_CLOSE",
+             "attack_type": "ATTACK_GRAB"
+          },
+          "SHOOT": {
+             "id": 5,
+             "enabled": true,
+             "move_type": "MOVE_AVOID_IF_CRAMPED",
+             "attack_type": "ATTACK_RANGED"
+          }
        }
-     ]
-   }
+    }
 
-Character Configs (resources/ai_config/characters/<name>.json)
+HAR Configs (resources/ai_config/hars/<name>.json)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Per-HAR move definitions for charge, push, and projectile moves.
@@ -349,15 +359,85 @@ Per-HAR move definitions for charge, push, and projectile moves.
          "sequence": ["F", "P"],
          "range_min": "close",
          "range_max": "mid",
-         "conditions": ["roll_half"]
+         "conditions": ["roll_d2"]
        }
      ]
    }
+
+Editing HAR Behavior via Conditions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+HAR behavior can be tuned without code changes by editing each move's ``conditions`` array in
+``resources/ai_config/hars/*.json``.
+
+How condition gating works at runtime:
+
+1. The engine evaluates charge/push/projectile moves in file order
+2. A move is eligible only if range checks pass
+3. If ``conditions`` is present, all listed conditions must pass (logical AND)
+4. The first eligible move is executed
+
+Practical tuning examples:
+
+* Make a move happen less often: add ``"roll_d4"`` or ``"roll_d10"``
+* Make a move happen more often: use ``"roll_d2"`` instead of a rarer roll
+* Restrict strong moves to hard AI: add ``"high_difficulty"``
+* Avoid using a move on stunned targets: add ``"enemy_not_stunned"``
+
+Before (more frequent):
+
+.. code-block:: json
+
+   {
+     "name": "shadow_projectile_punch",
+     "sequence": ["D", "DB", "B", "P"],
+     "range_min": "ANY",
+     "conditions": ["roll_d2"]
+   }
+
+After (rarer and difficulty-gated):
+
+.. code-block:: json
+
+   {
+     "name": "shadow_projectile_punch",
+     "sequence": ["D", "DB", "B", "P"],
+     "range_min": "ANY",
+     "conditions": ["roll_d10", "high_difficulty"]
+   }
+
+Supported condition strings:
+
+* ``high_difficulty``
+* ``special_preferred``
+* ``low_preferred``
+* ``jump_preferred``
+* ``roll_d2``
+* ``roll_d3``
+* ``roll_d4``
+* ``roll_d10``
+* ``roll_d20``
+* ``enemy_not_stunned``
+* ``enemy_stunned``
 
 Difficulty Configuration (resources/ai_config/difficulty.yaml)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Difficulty curves and scaling per difficulty level (0-10).
+
+Core Runtime Configuration (resources/ai_config/ai_core.ini)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Base AI timing/chance knobs loaded at runtime.
+
+.. code-block:: ini
+
+   base_act_chance = 5
+   base_fwd_jump_chance = 5
+   base_back_jump_chance = 5
+   base_still_jump_chance = 40
+   random_attack_chance = 10
+   base_act_timer = 28
 
 Data Structures
 ---------------
@@ -385,13 +465,17 @@ ai_move_condition — Condition Bitmask
 
    typedef enum {
        MOVE_COND_NONE              = 0,
-       MOVE_COND_DIFF_SCALE        = 1 << 0,  // success depends on difficulty
+         MOVE_COND_HIGH_DIFFICULTY   = 1 << 0,  // diff_scale(a)
        MOVE_COND_SPECIAL_PREF      = 1 << 1,  // requires special move preference roll
        MOVE_COND_LOW_PREFERRED     = 1 << 2,  // requires low move preference roll
        MOVE_COND_JUMP_PREFERRED    = 1 << 3,  // requires jump preference roll
-       MOVE_COND_RANDOM_HALF       = 1 << 4,  // 50% chance
-       MOVE_COND_RANDOM_THIRD      = 1 << 5,  // 33% chance
+         MOVE_COND_ROLL_D2           = 1 << 4,  // roll_chance(2)
+         MOVE_COND_ROLL_D3           = 1 << 5,  // roll_chance(3)
        MOVE_COND_ENEMY_NOT_STUNNED = 1 << 6,  // fails if enemy stunned/stasis
+         MOVE_COND_ROLL_D4           = 1 << 7,  // roll_chance(4)
+         MOVE_COND_ROLL_D10          = 1 << 8,  // roll_chance(10)
+         MOVE_COND_ROLL_D20          = 1 << 9,  // roll_chance(20)
+            MOVE_COND_ENEMY_STUNNED     = 1 << 10, // requires enemy stunned/stasis
    } ai_move_condition;
 
 ai_move_range — Range Classification
@@ -472,7 +556,7 @@ How the System Works
        node [shape=box, fontname="monospace"]
 
        init [label="ai_controller_init()", shape=ellipse]
-       load_config [label="Load pilots.json\ntactics.json\ncharacters/*.json"]
+       load_config [label="Load pilots.json\ntactics.json\nhars/*.json"]
        cache [label="Cache in memory"]
        frame [label="Per-frame:\nai_controller_get_action()", shape=ellipse]
        check_timer [label="Tactic timer\nexpired?", shape=diamond]
@@ -497,8 +581,8 @@ How the System Works
 **Initialization**
 
 1. ``ai_controller_init(c, pilot_id, har_id)`` called once per match
-2. Config loader reads ``pilots.json``, ``tactics.json``, ``characters/*.json``
-3. Pilot profile and character move definitions are cached
+2. Config loader reads ``pilots.json``, ``tactics.json``, ``hars/*.json``, and ``ai_core.ini``
+3. Pilot profile and har move definitions are cached
 4. Tactic state initialized to first tactic
 5. Timers reset
 
@@ -509,7 +593,7 @@ How the System Works
 3. If expired: transition to next tactic
 4. Get current tactic's move list from config
 5. Call move selector to pick best move given enemy range and conditions
-6. Execute move (chain inputs) via character skills executor
+6. Execute move (chain inputs) via har skills executor
 7. Return ACT_* bitmask to game
 
 **Event Processing**
@@ -537,7 +621,7 @@ Utility            Predicate functions and state checks
 Movement Selector  Distance classification and action selection
 Move Selector      Range/condition matching and move selection
 Tactic Engine      Tactic transitions and timers
-Character Skills   Per-HAR move execution
+HAR Skills         Per-HAR move execution
 Event              Event handling and interrupts
 Learning           Preference adjustments
 Config             Loading and caching
@@ -593,6 +677,7 @@ Core AI Modules
 * ``src/game/ai/ai_learning.c/h``
 * ``src/game/ai/ai_event.c/h``
 * ``src/game/ai/ai_config_loader.c/h``
+* ``src/game/ai/ai_core_config.c/h``
 * ``src/game/ai/ai_skills_config_loader.c/h``
 
 Configuration Files
@@ -600,8 +685,9 @@ Configuration Files
 
 * ``resources/ai_config/pilots.json``
 * ``resources/ai_config/tactics.json``
-* ``resources/ai_config/characters/chr_*.json`` (11 files, one per HAR)
+* ``resources/ai_config/hars/*.json`` (11 files, one per HAR)
 * ``resources/ai_config/difficulty.yaml``
+* ``resources/ai_config/ai_core.ini``
 
 Tests
 ~~~~~
@@ -612,7 +698,7 @@ Tests
 * ``testing/ai/ai_movement_selector_test.c``
 * ``testing/ai/ai_move_selector_test.c``
 * ``testing/ai/ai_tactic_engine_test.c``
-* ``testing/ai/ai_har_skills.c``
+* ``testing/ai/ai_har_skills_test.c``
 * ``testing/ai/ai_learning_test.c``
 * ``testing/ai/ai_event_test.c``
 * ``testing/ai/ai_config_test.c``
