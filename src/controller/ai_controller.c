@@ -3,6 +3,7 @@
 #include "game/ai/ai_movement.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_utils.h"
+#include "game/ai/ai_move_selector.h"
 #include "controller/controller.h"
 #include "formats/pilot.h"
 #include "game/game_state.h"
@@ -902,54 +903,32 @@ bool assign_move_by_cat(controller *ctrl, int category, bool highest_damage) {
     object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
     har *h = object_get_userdata(o);
 
-    af_move *selected_move = NULL;
-    int top_value = 0;
+    // Build candidate moves list for this category
+    af_move *candidate_moves[70];
+    int candidate_count = 0;
 
-    // Attack
     for(int i = 0; i < 70; i++) {
-        af_move *move = NULL;
-        if((move = af_get_move(h->af_data, i))) {
-            // category filter
-            if(category != move->category) {
-                continue;
-            }
-
-            move_stat *ms = &a->move_stats[i];
-            if(is_valid_move(move, h, true)) {
-                int value;
-                if(highest_damage) {
-                    // evaluate the move based purely on damage
-                    value = (int)move->damage * 10;
-                } else {
-                    // evaluate the move based on learning reinforcement
-                    value = ms->value + rand_int(10);
-                    if(learning_moment(a) && ms->min_hit_dist != -1) {
-                        if(ms->last_dist < ms->max_hit_dist + 5 && ms->last_dist > ms->min_hit_dist + 5) {
-                            value += 2;
-                        } else if(ms->last_dist > ms->max_hit_dist + 10) {
-                            value -= 3;
-                        }
-                    }
-
-                    // smart AI will slightly favor high damage moves
-                    if(smart_usually(a)) {
-                        value += ((int)move->damage / 3);
-                    }
-
-                    value -= ms->attempts / 2;
-                    value -= ms->consecutive * 2;
-                }
-
-                if(selected_move == NULL) {
-                    selected_move = move;
-                    top_value = value;
-                } else if(value > top_value) {
-                    selected_move = move;
-                    top_value = value;
-                }
-            }
+        af_move *move = af_get_move(h->af_data, i);
+        if(move && category == move->category) {
+            candidate_moves[candidate_count++] = move;
         }
     }
+
+    // Set up evaluation context
+    move_stat_context ctx = {
+        .move_stats = a->move_stats,
+        .har = h,
+        .highest_damage = highest_damage,
+        .difficulty = a->difficulty,
+        .pilot = *a->pilot,
+        .enemy_range = 0,  // Not used in assign_move_by_cat
+        .last_move_id = a->last_move_id,
+        .damage_divisor = 3,  // assign_move_by_cat uses damage/3
+        .force_allow_projectile = true,  // assign_move_by_cat force-allows projectiles
+    };
+
+    // Select best move from candidates
+    af_move *selected_move = ai_move_select_best(candidate_moves, candidate_count, &ctx);
 
     if(selected_move) {
         for(int i = 0; i < 70; i++) {
@@ -1186,81 +1165,41 @@ bool attempt_attack(controller *ctrl, bool highest_damage) {
     object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
     har *h = object_get_userdata(o);
 
-    int enemy_range = get_enemy_range(ctrl);
-    bool in_attempt_range = (enemy_range <= RANGE_CLOSE || (enemy_range == RANGE_MID && dumb_sometimes(a)));
+    // Build candidate moves list (all 70 moves)
+    af_move *candidate_moves[70];
+    int candidate_count = 0;
 
-    af_move *selected_move = NULL;
-    int top_value = 0;
-
-    // Attack
     for(int i = 0; i < 70; i++) {
-        af_move *move = NULL;
-        if((move = af_get_move(h->af_data, i))) {
-            move_stat *ms = &a->move_stats[i];
-            if(is_valid_move(move, h, false)) {
-                // smart AI will bail out unless close enough to hit
-                if(!in_attempt_range && (move->category == CAT_BASIC || move->category == CAT_LOW ||
-                                         move->category == CAT_MEDIUM || move->category == CAT_HIGH)) {
-                    continue;
-                }
-
-                int value;
-                if(highest_damage) {
-                    // evaluate the move based purely on damage
-                    value = (int)move->damage * 10;
-                } else {
-                    // evaluate the move based on learning reinforcement
-                    value = ms->value + rand_int(10);
-                    if(learning_moment(a) && ms->min_hit_dist != -1) {
-                        if(ms->last_dist < ms->max_hit_dist + 5 && ms->last_dist > ms->min_hit_dist + 5) {
-                            value += 2;
-                        } else if(ms->last_dist > ms->max_hit_dist + 10) {
-                            value -= 3;
-                        }
-                    }
-
-                    // AI is less likely to use exact same move as last attack
-                    if(a->last_move_id > 0 && a->last_move_id == move->id) {
-                        value -= rand_int(10);
-                    }
-
-                    // smart AI will slightly favor high damage moves
-                    if(smart_usually(a)) {
-                        value += ((int)move->damage / 4);
-                    }
-
-                    // AI is less likely to use disliked moves
-                    if(dislikes_move(a, move)) {
-                        value -= rand_int(10);
-                    }
-
-                    value -= ms->attempts / 2;
-                    value -= ms->consecutive * 2;
-
-                    // sometimes skip move if it is too powerful for difficulty
-                    if(move_too_powerful(a, move)) {
-                        log_debug("skipping move %s because of difficulty", str_c(&move->move_string));
-                        continue;
-                    }
-                }
-
-                if(selected_move == NULL) {
-                    selected_move = move;
-                    top_value = value;
-                } else if(value > top_value) {
-                    selected_move = move;
-                    top_value = value;
-                }
-            }
+        af_move *move = af_get_move(h->af_data, i);
+        if(move) {
+            candidate_moves[candidate_count++] = move;
         }
     }
+
+    // Get enemy range for filtering
+    int enemy_range = get_enemy_range(ctrl);
+
+    // Set up evaluation context
+    move_stat_context ctx = {
+        .move_stats = a->move_stats,
+        .har = h,
+        .highest_damage = highest_damage,
+        .difficulty = a->difficulty,
+        .pilot = *a->pilot,
+        .enemy_range = enemy_range,
+        .last_move_id = a->last_move_id,
+        .damage_divisor = 4,  // attempt_attack uses damage/4
+        .force_allow_projectile = false,  // attempt_attack does not force-allow projectiles
+    };
+
+    // Select best move from candidates
+    af_move *selected_move = ai_move_select_best(candidate_moves, candidate_count, &ctx);
 
     if(selected_move) {
         for(int i = 0; i < 70; i++) {
             a->move_stats[i].consecutive /= 2;
         }
 
-        // log_debug("Random attack %d", selected_move->id);
         set_selected_move(ctrl, selected_move);
         return true;
     }
