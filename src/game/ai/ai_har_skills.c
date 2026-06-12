@@ -90,7 +90,7 @@ static bool eval_move_conditions(controller *ctrl, ai *a, ai_move_condition cond
     return true;
 }
 
-static bool ai_char_execute_move_list(controller *ctrl, object *o, ai *a, const ai_move_def *moves,
+static bool ai_har_execute_move_list(controller *ctrl, object *o, ai *a, const ai_move_def *moves,
                                       uint8_t move_count, int enemy_range, ctrl_event **ev) {
     for(uint8_t i = 0; i < move_count; i++) {
         const ai_move_def *move = &moves[i];
@@ -123,7 +123,7 @@ static bool ai_char_execute_move_list(controller *ctrl, object *o, ai *a, const 
     return false;
 }
 
-bool ai_char_execute_charge(controller *ctrl, const ai_char_config *char_cfg, ctrl_event **ev) {
+bool ai_har_execute_charge(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev) {
     if(ctrl == NULL) {
         return false;
     }
@@ -144,11 +144,11 @@ bool ai_char_execute_charge(controller *ctrl, const ai_char_config *char_cfg, ct
     }
 
     int enemy_range = get_enemy_range(ctrl);
-    return ai_char_execute_move_list(ctrl, o, a, char_cfg->charge_moves, char_cfg->charge_move_count, enemy_range,
+    return ai_har_execute_move_list(ctrl, o, a, char_cfg->charge_moves, char_cfg->charge_move_count, enemy_range,
                                      ev);
 }
 
-bool ai_char_execute_push(controller *ctrl, const ai_char_config *char_cfg, ctrl_event **ev) {
+bool ai_har_execute_push(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev) {
     if(ctrl == NULL) {
         return false;
     }
@@ -169,10 +169,10 @@ bool ai_char_execute_push(controller *ctrl, const ai_char_config *char_cfg, ctrl
     }
 
     int enemy_range = get_enemy_range(ctrl);
-    return ai_char_execute_move_list(ctrl, o, a, char_cfg->push_moves, char_cfg->push_move_count, enemy_range, ev);
+    return ai_har_execute_move_list(ctrl, o, a, char_cfg->push_moves, char_cfg->push_move_count, enemy_range, ev);
 }
 
-bool ai_char_execute_trip(controller *ctrl, const ai_char_config *char_cfg, ctrl_event **ev) {
+bool ai_har_execute_trip(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev) {
     if(ctrl == NULL) {
         return false;
     }
@@ -194,7 +194,7 @@ bool ai_char_execute_trip(controller *ctrl, const ai_char_config *char_cfg, ctrl
     return true;
 }
 
-bool ai_char_execute_projectile(controller *ctrl, const ai_char_config *char_cfg, ctrl_event **ev) {
+bool ai_har_execute_projectile(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev) {
     if(ctrl == NULL) {
         return false;
     }
@@ -224,6 +224,6 @@ bool ai_char_execute_projectile(controller *ctrl, const ai_char_config *char_cfg
         controller_cmd(ctrl, ACT_STOP, ev);
     }
 
-    return ai_char_execute_move_list(ctrl, o, a, char_cfg->projectile_moves, char_cfg->projectile_move_count,
+    return ai_har_execute_move_list(ctrl, o, a, char_cfg->projectile_moves, char_cfg->projectile_move_count,
                                      enemy_range, ev);
 }

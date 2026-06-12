@@ -205,9 +205,9 @@ config.
 
 **Exported Functions:**
 
-* ``bool ai_char_execute_charge(controller *c, game_state *gs, const ai_move_def *move)``
-* ``bool ai_char_execute_push(controller *c, game_state *gs, const ai_move_def *move)``
-* ``bool ai_char_execute_projectile(controller *c, game_state *gs, const ai_move_def *move)``
+* ``bool ai_har_execute_charge(controller *c, game_state *gs, const ai_move_def *move)``
+* ``bool ai_har_execute_push(controller *c, game_state *gs, const ai_move_def *move)``
+* ``bool ai_har_execute_projectile(controller *c, game_state *gs, const ai_move_def *move)``
 
 **Key Property:** No per-character switch cases. All move sequences are in config files under
 ``resources/ai_config/characters/``.
@@ -269,7 +269,7 @@ Config Loader (ai_config_loader.c/h)
 
   * ``const ai_pilot_profile *ai_config_get_pilot(int pilot_id)`` — lookup pilot by ID
   * ``const ai_tactic_data *ai_config_get_tactic(int tactic_id)`` — lookup tactic by ID
-  * ``const ai_char_config *ai_skills_config_get(int har_id)`` — lookup character config by HAR ID
+  * ``const ai_har_config *ai_skills_config_get(int har_id)`` — lookup character config by HAR ID
 
   **Key Property:** Configuration is loaded once at startup, not re-parsed every frame. Supports
   overlay system for mods.
