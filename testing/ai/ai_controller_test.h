@@ -48,6 +48,12 @@ static void __attribute__((unused)) test_pilot_set_forget(test_pilot_fixture *fi
     fix->pilot_data.forget = forget;
 }
 
+static void __attribute__((unused)) test_pilot_set_difficulty(test_pilot_fixture *fix, int difficulty) {
+    (void)fix;
+    (void)difficulty;
+    // Difficulty is set on the AI, not the pilot
+}
+
 static test_ai_fixture *test_ai_create(int difficulty, test_pilot_fixture *pilot_fix) {
     test_ai_fixture *fix = omf_calloc(1, sizeof(test_ai_fixture));
     fix->ai_data.difficulty = difficulty;
@@ -59,7 +65,7 @@ static void test_ai_free(test_ai_fixture *fix) {
     omf_free(fix);
 }
 
-static void test_seed_random(uint32_t seed) {
+static void __attribute__((unused)) test_seed_random(uint32_t seed) {
     srand(seed);
 }
 
