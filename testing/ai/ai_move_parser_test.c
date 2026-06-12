@@ -39,6 +39,10 @@ void test_condition_special_pref(void) {
     CU_ASSERT_EQUAL(ai_parse_condition_string("special_preferred"), MOVE_COND_SPECIAL_PREF);
 }
 
+void test_condition_enemy_stunned(void) {
+    CU_ASSERT_EQUAL(ai_parse_condition_string("enemy_stunned"), MOVE_COND_ENEMY_STUNNED);
+}
+
 void test_condition_unknown(void) {
     CU_ASSERT_EQUAL(ai_parse_condition_string("not_real"), MOVE_COND_NONE);
 }
@@ -93,6 +97,7 @@ void ai_move_parser_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "parser: token unknown", test_token_unknown) == NULL) return;
     if(CU_add_test(suite, "parser: condition diff_scale", test_condition_diff_scale) == NULL) return;
     if(CU_add_test(suite, "parser: condition special_preferred", test_condition_special_pref) == NULL) return;
+    if(CU_add_test(suite, "parser: condition enemy_stunned", test_condition_enemy_stunned) == NULL) return;
     if(CU_add_test(suite, "parser: condition unknown", test_condition_unknown) == NULL) return;
     if(CU_add_test(suite, "parser: tactic grab", test_tactic_grab) == NULL) return;
     if(CU_add_test(suite, "parser: tactic unknown", test_tactic_unknown) == NULL) return;
