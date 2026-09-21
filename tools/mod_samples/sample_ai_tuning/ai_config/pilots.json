@@ -1,0 +1,20 @@
+{
+  "pilots": [
+    {
+      "id": 0,
+      "att_hyper": 60,
+      "ap_special": 120,
+      "pref_fwd": 35,
+      "learning": 2.0,
+      "forget": 0.15
+    },
+    {
+      "id": 9,
+      "att_normal": 15,
+      "att_hyper": 80,
+      "ap_throw": 50,
+      "pref_fwd": 40,
+      "pref_back": -2
+    }
+  ]
+}

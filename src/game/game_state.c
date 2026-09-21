@@ -364,18 +364,28 @@ int game_state_create(game_state *gs, const engine_init_flags *init_flags) {
         }
     } else {
         // Select correct starting scene and load resources
-        nscene = (init_flags->net_mode == NET_MODE_NONE ? SCENE_OPENOMF : SCENE_MENU);
+        // DEBUG: Quick demo launcher - uncomment to skip menus
+        nscene = SCENE_ARENA0;
         gs->this_id = nscene;
         gs->next_id = nscene;
+        gs->run_demo = 1;
 
         if(scene_create(gs->sc, gs, nscene)) {
             log_error("Error while loading scene %d.", nscene);
             goto error_0;
         }
         if(init_flags->net_mode == NET_MODE_NONE) {
-            if(openomf_create(gs->sc)) {
-                log_error("Error while creating intro scene.");
-                goto error_1;
+            if(gs->run_demo) {
+                game_state_init_demo(gs);
+                if(arena_create(gs->sc)) {
+                    log_error("Error while creating arena scene.");
+                    goto error_1;
+                }
+            } else {
+                if(openomf_create(gs->sc)) {
+                    log_error("Error while creating intro scene.");
+                    goto error_1;
+                }
             }
         } else {
             // if connecting to the server or listening, jump straight to the menu
@@ -1201,20 +1211,47 @@ void reconfigure_controller(game_state *gs) {
     _setup_keyboard(gs, 1, 1);
 }
 
+static int _demo_override_or_random(const engine_init_flags *init_flags, int value, int fallback, int min, int max,
+                                   const char *label) {
+    if(init_flags == NULL) {
+        return fallback;
+    }
+    if(value < min || value > max) {
+        if(value >= 0) {
+            log_warn("Ignoring invalid %s=%d; using %d instead.", label, value, fallback);
+        }
+        return fallback;
+    }
+    return value;
+}
+
 void game_state_init_demo(game_state *gs) {
     // Set up player controller
+    int default_pilot = rand_int(NUMBER_OF_PLAYABLE_PILOT_TYPES);
+    int default_har = rand_int(NUMBER_OF_HAR_TYPES);
+    int default_difficulty = 4;
+
     for(int i = 0; i < game_state_num_players(gs); i++) {
         game_player *player = game_state_get_player(gs, i);
         controller *ctrl = omf_calloc(1, sizeof(controller));
         controller_init(ctrl, gs);
         sd_pilot *pl = game_player_get_pilot(player);
-        ai_controller_create(ctrl, 4, pl, player->pilot->pilot_id);
+
+        int demo_pilot = _demo_override_or_random(gs->init_flags, gs->init_flags ? gs->init_flags->demo_pilot : -1,
+                                                 default_pilot, 0, NUMBER_OF_PILOT_TYPES - 1, "demo pilot");
+        int demo_har = _demo_override_or_random(gs->init_flags, gs->init_flags ? gs->init_flags->demo_har : -1,
+                                               default_har, 0, NUMBER_OF_HAR_TYPES - 1, "demo HAR");
+        int demo_difficulty = _demo_override_or_random(gs->init_flags, gs->init_flags ? gs->init_flags->demo_difficulty : -1,
+                                                     default_difficulty, AI_DIFFICULTY_PUNCHING_BAG,
+                                                     NUMBER_OF_AI_DIFFICULTY_TYPES - 1, "demo AI difficulty");
+
+        // select configured or random pilot and har
+        player->pilot->pilot_id = demo_pilot;
+        player->pilot->har_id = demo_har;
+        ai_controller_create(ctrl, demo_difficulty, pl, player->pilot->pilot_id);
         game_player_set_ctrl(player, ctrl);
         game_player_set_selectable(player, 0);
 
-        // select random pilot and har
-        player->pilot->pilot_id = rand_int(NUMBER_OF_PLAYABLE_PILOT_TYPES);
-        player->pilot->har_id = rand_int(NUMBER_OF_HAR_TYPES);
         chr_score_reset(&player->score, 1);
 
         // set proper color

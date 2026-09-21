@@ -63,6 +63,18 @@ int main(int argc, char *argv[]) {
     unsigned short listen_port = 0;
     engine_init_flags init_flags;
     memset(&init_flags, 0, sizeof(init_flags));
+#ifndef OPENOMF_DEFAULT_DEMO_HAR
+#define OPENOMF_DEFAULT_DEMO_HAR (-1)
+#endif
+#ifndef OPENOMF_DEFAULT_DEMO_PILOT
+#define OPENOMF_DEFAULT_DEMO_PILOT (-1)
+#endif
+#ifndef OPENOMF_DEFAULT_DEMO_DIFFICULTY
+#define OPENOMF_DEFAULT_DEMO_DIFFICULTY (-1)
+#endif
+    init_flags.demo_har = OPENOMF_DEFAULT_DEMO_HAR;
+    init_flags.demo_pilot = OPENOMF_DEFAULT_DEMO_PILOT;
+    init_flags.demo_difficulty = OPENOMF_DEFAULT_DEMO_DIFFICULTY;
 
     struct arg_lit *help = arg_lit0("h", "help", "print this help and exit");
     struct arg_lit *vers = arg_lit0("v", "version", "print version information and exit");
@@ -80,10 +92,18 @@ int main(int argc, char *argv[]) {
     struct arg_file *rec = arg_file0("R", "rec", "<file>", "Record a new recfile");
     struct arg_lit *warp = arg_lit0(NULL, "warp", "run the game at warp speed");
     struct arg_int *speed = arg_int0(NULL, "speed", "<speed>", "game speed to use: 1-10");
+    struct arg_int *demo_har = arg_int0(NULL, "demo-har", "<har-id>", "Override the HAR used in the startup demo");
+    struct arg_int *demo_pilot = arg_int0(NULL, "demo-pilot", "<pilot-id>", "Override the pilot used in the startup demo");
+    struct arg_int *demo_difficulty =
+        arg_int0(NULL, "demo-difficulty", "<difficulty>", "Override the AI difficulty used in the startup demo");
     struct arg_str *log_level = arg_str0(NULL, "log-level", "<level>", "Log level (DEBUG, INFO, WARN, ERROR)");
+    struct arg_str *log_modules =
+        arg_str0(NULL, "log-modules", "<modules>", "Comma-separated log modules to enable "
+                                                   "(ai,tactic,har,rec,move,movement,learning,config,all)");
     struct arg_end *end = arg_end(30);
-    void *argtable[] = {help,  vers, listen, lobby, lobbyarg, connect, force_audio_backend, force_renderer,
-                        trace, port, play,   rec,   warp,     speed,   log_level,           end};
+    void *argtable[] = {help,       vers, listen, lobby, lobbyarg, connect, force_audio_backend, force_renderer,
+                        trace,      port, play,   rec,   warp,     speed,   demo_har,            demo_pilot,
+                        demo_difficulty, log_level, log_modules, end};
     const char *progname = "openomf";
 
     // Make sure everything got allocated
@@ -154,6 +174,15 @@ int main(int argc, char *argv[]) {
     } else {
         init_flags.speed = -1;
     }
+    if(demo_har->count > 0) {
+        init_flags.demo_har = demo_har->ival[0];
+    }
+    if(demo_pilot->count > 0) {
+        init_flags.demo_pilot = demo_pilot->ival[0];
+    }
+    if(demo_difficulty->count > 0) {
+        init_flags.demo_difficulty = demo_difficulty->ival[0];
+    }
 
     if(force_renderer->count > 0) {
         strncpy_or_truncate(init_flags.force_renderer, force_renderer->sval[0], sizeof(init_flags.force_renderer));
@@ -190,6 +219,9 @@ int main(int argc, char *argv[]) {
             goto exit_0;
         }
         log_set_level(log_level_text_to_enum(log_level->sval[0], LOG_INFO));
+    }
+    if(log_modules->count > 0) {
+        log_set_module_filter(log_modules_from_string(log_modules->sval[0]));
     }
 
     // Load file paths

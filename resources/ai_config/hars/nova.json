@@ -5,26 +5,55 @@
   "push_moves": [
     {
       "name": "earthquake_slam",
-      "sequence": ["D", "5", "D+P"],
+      "sequence": [
+        "D",
+        "5",
+        "D+P"
+      ],
       "range_min": "ANY",
-      "conditions": ["high_difficulty"]
+      "conditions": [
+        "high_difficulty"
+      ]
     },
     {
       "name": "heavy_kick",
-      "sequence": ["B+K"],
+      "sequence": [
+        "B+K"
+      ],
       "range_min": "ANY"
     }
   ],
   "projectile_moves": [
     {
       "name": "mini_grenade",
-      "sequence": ["D", "D", "DB", "B+P"],
+      "sequence": [
+        "D",
+        "D",
+        "DB",
+        "B+P"
+      ],
       "range_min": "MID",
-      "conditions": ["roll_d3"]
+      "conditions": [
+        "roll_d3"
+      ]
     },
     {
       "name": "missile",
-      "sequence": ["D", "D", "DF", "F+P"],
+      "sequence": [
+        "D",
+        "D",
+        "DF",
+        "F+P"
+      ],
+      "range_min": "ANY"
+    }
+  ],
+  "trip_moves": [
+    {
+      "name": "trip",
+      "sequence": [
+        "DB+K"
+      ],
       "range_min": "ANY"
     }
   ]

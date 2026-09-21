@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "charge_moves": [
+    {
+      "name": "sample_shadow_leap_aggressive",
+      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "range_min": "MID",
+      "conditions": ["special_preferred", "diff_scale", "random_half"],
+      "follow_up_tactics": ["grab", "push", "trip"]
+    },
+    {
+      "name": "sample_fast_leap",
+      "sequence": ["D", "DF", "F+P"],
+      "range_min": "ANY",
+      "conditions": ["random_half"]
+    }
+  ]
+}

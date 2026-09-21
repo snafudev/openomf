@@ -5,7 +5,69 @@
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_config_loader.h"
 #include "game/ai/ai_core_config.h"
+#include "game/common_defines.h"
 #include "utils/random.h"
+
+static void apply_special_pilot_profile_overrides(sd_pilot *pilot) {
+    if(pilot == NULL) {
+        return;
+    }
+
+    if(pilot->pilot_id == PILOT_KREISSACK) {
+        pilot->att_normal = 55;
+        pilot->att_hyper = 90;
+        pilot->att_jump = 35;
+        pilot->att_def = 18;
+        pilot->att_sniper = 30;
+        pilot->ap_throw = 100;
+        pilot->ap_special = 140;
+        pilot->ap_jump = 80;
+        pilot->ap_high = 65;
+        pilot->ap_low = 45;
+        pilot->ap_middle = 55;
+        pilot->pref_jump = 20;
+        pilot->pref_fwd = 40;
+        pilot->pref_back = -8;
+        pilot->learning = 4.0f;
+        pilot->forget = 0.18f;
+    } else if(pilot->pilot_id == PILOT_RAVEN) {
+        pilot->att_normal = 50;
+        pilot->att_hyper = 65;
+        pilot->att_jump = 25;
+        pilot->att_def = 10;
+        pilot->att_sniper = 35;
+        pilot->ap_throw = 100;
+        pilot->ap_special = 120;
+        pilot->ap_jump = 20;
+        pilot->ap_high = 10;
+        pilot->ap_low = 10;
+        pilot->ap_middle = 15;
+        pilot->pref_jump = 10;
+        pilot->pref_fwd = 35;
+        pilot->pref_back = -12;
+        pilot->learning = 3.0f;
+        pilot->forget = 0.35f;
+    }
+
+    if(pilot->har_id == HAR_NOVA && pilot->pilot_id != PILOT_RAVEN && pilot->pilot_id != PILOT_KREISSACK) {
+        pilot->att_normal = 30;
+        pilot->att_hyper = 60;
+        pilot->att_jump = 20;
+        pilot->att_def = 12;
+        pilot->att_sniper = 30;
+        pilot->ap_throw = 100;
+        pilot->ap_special = 130;
+        pilot->ap_jump = 60;
+        pilot->ap_high = 45;
+        pilot->ap_low = 30;
+        pilot->ap_middle = 35;
+        pilot->pref_jump = 12;
+        pilot->pref_fwd = 35;
+        pilot->pref_back = -7;
+        pilot->learning = 3.2f;
+        pilot->forget = 0.45f;
+    }
+}
 
 void reset_tactic_state(ai *a) {
     a->tactic->last_tactic = a->tactic->tactic_type ? a->tactic->tactic_type : 0;
@@ -172,40 +234,55 @@ static void reset_pilot_personality_defaults(sd_pilot *pilot) {
             pilot->forget = 0.2f;
             break;
         case 9:
-            pilot->att_normal = 30;
-            pilot->att_hyper = 40;
+            pilot->att_normal = 50;
+            pilot->att_hyper = 65;
+            pilot->att_jump = 25;
+            pilot->att_def = 10;
+            pilot->att_sniper = 35;
             pilot->ap_throw = 100;
-            pilot->ap_special = 100;
-            pilot->ap_jump = 100;
-            pilot->ap_high = 100;
-            pilot->ap_low = 100;
-            pilot->ap_middle = 100;
-            pilot->pref_jump = 12;
-            pilot->pref_fwd = 30;
-            pilot->pref_back = -7;
+            pilot->ap_special = 120;
+            pilot->ap_jump = 20;
+            pilot->ap_high = 10;
+            pilot->ap_low = 10;
+            pilot->ap_middle = 15;
+            pilot->pref_jump = 10;
+            pilot->pref_fwd = 35;
+            pilot->pref_back = -12;
             pilot->learning = 3.0f;
-            pilot->forget = 0.5f;
+            pilot->forget = 0.35f;
             break;
         case 10:
-            pilot->att_normal = 30;
-            pilot->att_hyper = 75;
-            pilot->att_sniper = 25;
+            pilot->att_normal = 55;
+            pilot->att_hyper = 90;
+            pilot->att_jump = 35;
+            pilot->att_def = 18;
+            pilot->att_sniper = 30;
             pilot->ap_throw = 100;
-            pilot->ap_special = 100;
-            pilot->learning = 3.0f;
-            pilot->forget = 0.25f;
+            pilot->ap_special = 140;
+            pilot->ap_jump = 80;
+            pilot->ap_high = 65;
+            pilot->ap_low = 45;
+            pilot->ap_middle = 55;
+            pilot->pref_jump = 20;
+            pilot->pref_fwd = 40;
+            pilot->pref_back = -8;
+            pilot->learning = 4.0f;
+            pilot->forget = 0.18f;
             break;
     }
 }
 
 void reset_pilot_personality(sd_pilot *pilot) {
     if(ai_config_load_pilot_personality(pilot)) {
+        apply_special_pilot_profile_overrides(pilot);
         return;
     }
 
     reset_pilot_personality_defaults(pilot);
+    apply_special_pilot_profile_overrides(pilot);
 }
 
 void reset_act_timer(ai *a) {
-    a->act_timer = ai_core_config_get()->base_act_timer - (a->difficulty * 2) - rand_int(3);
+    const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
+    a->act_timer = config->base_act_timer - (a->difficulty * 2) - rand_int(3);
 }

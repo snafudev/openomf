@@ -9,6 +9,7 @@
 
 #include "controller/controller.h"
 #include "formats/pilot.h"
+#include "game/ai/ai_types.h"
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -106,6 +107,9 @@ bool ai_tactic_config_condition_token_supported(const char *condition);
  */
 bool ai_tactic_conditions_match_context(int tactic_type, int har_id, int enemy_range, int thrown, int shot,
                                         const sd_pilot *pilot);
+
+bool ai_tactic_should_use_shoot(const ai *a, const har *h, int enemy_range, bool needs_projectiles_check,
+                               bool needs_sniper_pref_check, bool needs_enemy_not_cramped_check);
 
 /**
  * Return whether a tactic is currently enabled by config.

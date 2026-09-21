@@ -38,6 +38,16 @@ Build
 -----
 For compiling from sources, please see [BUILD.md](BUILD.md).
 
+AI pilot tuning
+---------------
+Deterministic AI pilot test runs are intentionally opt-in. They are for local AI tuning work and are not part of the normal CI suite.
+
+To enable them while actively working on AI behavior:
+
+```bash
+OPENOMF_RUN_DETERMINISTIC_TESTS=1 python3 -m pytest pytest/test_rec_assertions.py -q
+```
+
 License
 -------
 OpenOMF is developed under the MIT License. Please read [LICENSE](LICENSE)

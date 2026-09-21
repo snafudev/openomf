@@ -158,31 +158,43 @@
       "learning": 0.7,
       "forget": 0.2
     },
-    "nova": {
+    "raven": {
       "id": 9,
-      "att_normal": 30,
-      "att_hyper": 40,
+      "att_normal": 50,
+      "att_hyper": 65,
+      "att_jump": 25,
+      "att_def": 10,
+      "att_sniper": 35,
       "ap_throw": 100,
-      "ap_special": 100,
-      "ap_jump": 100,
-      "ap_high": 100,
-      "ap_low": 100,
-      "ap_middle": 100,
-      "pref_jump": 12,
-      "pref_fwd": 30,
-      "pref_back": -7,
+      "ap_special": 120,
+      "ap_jump": 20,
+      "ap_high": 10,
+      "ap_low": 10,
+      "ap_middle": 15,
+      "pref_jump": 10,
+      "pref_fwd": 35,
+      "pref_back": -12,
       "learning": 3.0,
-      "forget": 0.5
+      "forget": 0.35
     },
     "kreissack": {
       "id": 10,
-      "att_normal": 30,
-      "att_hyper": 75,
-      "att_sniper": 25,
+      "att_normal": 55,
+      "att_hyper": 90,
+      "att_jump": 35,
+      "att_def": 18,
+      "att_sniper": 30,
       "ap_throw": 100,
-      "ap_special": 100,
-      "learning": 3.0,
-      "forget": 0.25
+      "ap_special": 140,
+      "ap_jump": 80,
+      "ap_high": 65,
+      "ap_low": 45,
+      "ap_middle": 55,
+      "pref_jump": 20,
+      "pref_fwd": 40,
+      "pref_back": -8,
+      "learning": 4.0,
+      "forget": 0.18
     }
   }
 }

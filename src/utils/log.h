@@ -26,6 +26,26 @@ typedef enum log_level
 } log_level;
 
 /**
+ * @brief Log module tags, used for per-module filtering of debug output.
+ * @details Messages logged with log_debug_m() and friends are only emitted when all the
+ *          module bits are present in the active module filter (see
+ *          log_set_module_filter()). Messages with no module tag (log_debug() etc.) are
+ *          always emitted, subject to the configured level; when a specific module filter
+ *          is set, untagged DEBUG messages are suppressed while INFO/WARN/ERROR remain.
+ */
+typedef uint64_t log_module;
+#define LOG_MODULE_NONE ((log_module)0)
+#define LOG_MODULE_AI ((log_module)1 << 0)
+#define LOG_MODULE_TACTIC ((log_module)1 << 1)
+#define LOG_MODULE_HAR ((log_module)1 << 2)
+#define LOG_MODULE_REC ((log_module)1 << 3)
+#define LOG_MODULE_MOVE ((log_module)1 << 4)
+#define LOG_MODULE_MOVEMENT ((log_module)1 << 5)
+#define LOG_MODULE_LEARNING ((log_module)1 << 6)
+#define LOG_MODULE_CONFIG ((log_module)1 << 7)
+#define LOG_MODULE_ALL (~((log_module)0))
+
+/**
  * @brief Log a debug message.
  * @param ... Printf-style format string and arguments
  */
@@ -48,6 +68,79 @@ typedef enum log_level
  * @param ... Printf-style format string and arguments
  */
 #define log_error(...) log_msg(LOG_ERROR, __VA_ARGS__)
+
+/**
+ * @brief Log a debug message tagged with a module.
+ * @param module Module bitmask to tag the message with.
+ * @param ... Printf-style format string and arguments
+ */
+#define log_debug_m(module, ...) log_msg_module(module, LOG_DEBUG, __VA_ARGS__)
+
+/**
+ * @brief Log an informational message tagged with a module.
+ * @param module Module bitmask to tag the message with.
+ * @param ... Printf-style format string and arguments
+ */
+#define log_info_m(module, ...) log_msg_module(module, LOG_INFO, __VA_ARGS__)
+
+/**
+ * @brief Log a warning message tagged with a module.
+ * @param module Module bitmask to tag the message with.
+ * @param ... Printf-style format string and arguments
+ */
+#define log_warn_m(module, ...) log_msg_module(module, LOG_WARN, __VA_ARGS__)
+
+/**
+ * @brief Log an error message tagged with a module.
+ * @param module Module bitmask to tag the message with.
+ * @param ... Printf-style format string and arguments
+ */
+#define log_error_m(module, ...) log_msg_module(module, LOG_ERROR, __VA_ARGS__)
+
+/**
+ * @brief Set the module filter for tagged log messages.
+ * @details Only messages whose module bits are all present in the filter are emitted.
+ *          Pass LOG_MODULE_ALL (or LOG_MODULE_NONE) to enable all modules.
+ * @param modules Bitmask of modules to enable.
+ */
+void log_set_module_filter(log_module modules);
+
+/**
+ * @brief Get the current module filter.
+ * @return The active module bitmask.
+ */
+log_module log_get_module_filter(void);
+
+/**
+ * @brief Check whether a tagged module is currently enabled.
+ * @param module Module bitmask to check.
+ * @return true if the module's bits are all enabled, false otherwise.
+ */
+bool log_module_enabled(log_module module);
+
+/**
+ * @brief Whether the logging system has been initialized.
+ */
+bool log_is_initialized(void);
+
+/**
+ * @brief Parse a comma-separated list of module names into a bitmask.
+ * @details Recognized names: ai, tactic, har, rec, move, movement, learning, config, all.
+ *          Unknown names are ignored. "all", empty, or NULL yields LOG_MODULE_ALL.
+ * @param modules Comma-separated module name list.
+ * @return The combined module bitmask.
+ */
+log_module log_modules_from_string(const char *modules);
+
+/**
+ * @brief Log a message at the specified level, tagged with a module.
+ * @details Prefer using the log_debug_m/info_m/warn_m/error_m macros instead.
+ * @param module Module bitmask to tag the message with.
+ * @param level Severity level
+ * @param fmt Printf-style format string
+ * @param ... Format arguments
+ */
+void log_msg_module(log_module module, log_level level, const char *fmt, ...);
 
 /**
  * @brief Initialize the logging system.

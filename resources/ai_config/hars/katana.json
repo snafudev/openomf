@@ -4,40 +4,88 @@
   "charge_moves": [
     {
       "name": "trip_slide",
-      "sequence": ["DB+K"],
+      "sequence": [
+        "DB+K"
+      ],
       "range_min": "ANY",
-      "conditions": ["roll_d2", "low_preferred"]
+      "conditions": [
+        "roll_d2",
+        "low_preferred"
+      ]
     },
     {
       "name": "forward_razor_spin",
-      "sequence": ["D", "DF", "F+K"],
+      "sequence": [
+        "D",
+        "DF",
+        "F+K"
+      ],
       "range_min": "MID",
-      "conditions": ["roll_d2"]
+      "conditions": [
+        "roll_d2"
+      ]
     },
     {
       "name": "triple_blade",
-      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "sequence": [
+        "B",
+        "DB",
+        "D",
+        "DF",
+        "F",
+        "P"
+      ],
       "range_min": "CLOSE",
-      "conditions": ["special_preferred", "high_difficulty"]
+      "conditions": [
+        "special_preferred",
+        "high_difficulty"
+      ]
     },
     {
       "name": "rising_blade",
-      "sequence": ["D", "DF", "F+P"],
+      "sequence": [
+        "D",
+        "DF",
+        "F+P"
+      ],
       "range_min": "ANY"
     }
   ],
   "push_moves": [
     {
       "name": "triple_blade",
-      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "sequence": [
+        "B",
+        "DB",
+        "D",
+        "DF",
+        "F",
+        "P"
+      ],
       "range_min": "CLOSE",
-      "conditions": ["special_preferred", "high_difficulty"]
+      "conditions": [
+        "special_preferred",
+        "high_difficulty"
+      ]
     },
     {
       "name": "rising_blade",
-      "sequence": ["D", "DF", "F+P"],
+      "sequence": [
+        "D",
+        "DF",
+        "F+P"
+      ],
       "range_min": "ANY"
     }
   ],
-  "projectile_moves": []
+  "projectile_moves": [],
+  "trip_moves": [
+    {
+      "name": "trip",
+      "sequence": [
+        "DB+K"
+      ],
+      "range_min": "ANY"
+    }
+  ]
 }
