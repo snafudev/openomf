@@ -511,8 +511,11 @@ bool ai_tactic_should_use_shoot(const ai *a, const har *h, int enemy_range, bool
         return true;
     }
 
-    if(has_projectile_move && sniper_pref_ok && has_range &&
-       (h->id != HAR_SHREDDER || ((enemy_range <= RANGE_MID && smart_usually(a)) || dumb_sometimes(a)))) {
+    if(h->id == HAR_SHREDDER) {
+        return has_projectile_move && enemy_range > RANGE_CRAMPED && enemy_range <= RANGE_MID;
+    }
+
+    if(has_projectile_move && sniper_pref_ok && has_range) {
         return true;
     }
 
@@ -727,6 +730,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
 
     switch(tactic_type) {
         case TACTIC_SHOOT: {
+            if(!ai_projectile_is_allowed(a)) {
+                return false;
+            }
+
             // Avoid double-gating when an equivalent condition token is configured.
             bool needs_projectiles_check = !ai_tactic_config_has_condition(TACTIC_SHOOT, "has_projectiles");
             bool needs_sniper_pref_check = !ai_tactic_config_has_condition(TACTIC_SHOOT, "pref_sniper");
@@ -863,6 +870,9 @@ void ai_tactic_queue(controller *ctrl, int tactic_type) {
     }
 
     ai *a = ctrl->data;
+    if(tactic_type == TACTIC_SHOOT && !ai_projectile_is_allowed(a)) {
+        return;
+    }
     object *o = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
     har *h = object_get_userdata(o);
 
