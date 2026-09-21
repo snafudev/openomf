@@ -37,6 +37,46 @@ void ai_learning_adjust_from_throw(ai *a);
 void ai_learning_adjust_from_projectile(ai *a);
 
 /**
+ * \brief Return the maximum projectile burst size for a given difficulty.
+ */
+int ai_projectile_max_streak(int difficulty);
+
+/**
+ * \brief Tick the projectile cooldown timer and clear burst pressure once it expires.
+ */
+void ai_projectile_tick(ai *a);
+
+/**
+ * \brief Check whether the AI is allowed to fire another projectile now.
+ */
+bool ai_projectile_is_allowed(const ai *a);
+
+/**
+ * \brief Register a projectile use and apply the burst cooldown.
+ */
+void ai_projectile_use(ai *a);
+
+/**
+ * \brief Return the maximum pressure-burst size for a given difficulty.
+ */
+int ai_pressure_max_streak(int difficulty);
+
+/**
+ * \brief Tick the pressure cooldown timer and clear pressure burst once it expires.
+ */
+void ai_pressure_tick(ai *a);
+
+/**
+ * \brief Check whether the AI is allowed to continue a pressure-heavy attack pattern.
+ */
+bool ai_pressure_is_allowed(const ai *a);
+
+/**
+ * \brief Register repeated pressure-heavy usage and apply the burst cooldown.
+ */
+void ai_pressure_use(ai *a);
+
+/**
  * \brief Randomly forget learned adaptations.
  *
  * Rolls a chance. If successful and the pilot has a high forget value, the pilot

@@ -164,6 +164,109 @@ void test_learning_projectile_adjusts_at_threshold(void) {
     CU_ASSERT(p.pref_back < 95);
 }
 
+void test_projectile_burst_cooldown_blocks_repeat_fire(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    make_ai_with_difficulty(&a, &p, &t, 4);
+
+    a.projectile_streak = ai_projectile_max_streak(a.difficulty) - 1;
+    CU_ASSERT_TRUE(ai_projectile_is_allowed(&a));
+
+    ai_projectile_use(&a);
+    CU_ASSERT_EQUAL(a.projectile_streak, ai_projectile_max_streak(a.difficulty));
+    CU_ASSERT_FALSE(ai_projectile_is_allowed(&a));
+    CU_ASSERT_TRUE(a.projectile_cooldown > 0);
+}
+
+void test_projectile_cooldown_expires_and_resets_burst(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    make_ai_with_difficulty(&a, &p, &t, 4);
+
+    a.projectile_cooldown = 1;
+    a.projectile_streak = ai_projectile_max_streak(a.difficulty);
+
+    ai_projectile_tick(&a);
+
+    CU_ASSERT_EQUAL(a.projectile_cooldown, 0);
+    CU_ASSERT_EQUAL(a.projectile_streak, 0);
+    CU_ASSERT_TRUE(ai_projectile_is_allowed(&a));
+}
+
+void test_learning_projectile_is_difficulty_sensitive(void) {
+    ai high_difficulty_ai;
+    ai low_difficulty_ai;
+    sd_pilot high_pilot;
+    sd_pilot low_pilot;
+    tactic_state high_t;
+    tactic_state low_t;
+
+    make_ai_with_difficulty(&high_difficulty_ai, &high_pilot, &high_t, 6);
+    high_pilot.att_def = 95;
+    high_pilot.att_sniper = 5;
+    high_pilot.att_hyper = 5;
+    high_pilot.att_jump = 5;
+    high_pilot.pref_jump = 20;
+    high_pilot.pref_fwd = 20;
+    high_pilot.pref_back = 95;
+
+    make_ai_with_difficulty(&low_difficulty_ai, &low_pilot, &low_t, 1);
+    low_pilot.learning = 0.0f; // learning_moment must stay false
+    low_pilot.att_def = 95;
+    low_pilot.att_sniper = 5;
+    low_pilot.att_hyper = 5;
+    low_pilot.att_jump = 5;
+    low_pilot.pref_jump = 20;
+    low_pilot.pref_fwd = 20;
+    low_pilot.pref_back = 95;
+
+    high_difficulty_ai.shot = MAX_TIMES_SHOT - 1;
+    low_difficulty_ai.shot = MAX_TIMES_SHOT - 1;
+
+    ai_learning_adjust_from_projectile(&high_difficulty_ai);
+    ai_learning_adjust_from_projectile(&low_difficulty_ai);
+
+    CU_ASSERT_EQUAL(high_difficulty_ai.shot, MAX_TIMES_SHOT);
+    CU_ASSERT_EQUAL(low_difficulty_ai.shot, MAX_TIMES_SHOT);
+    CU_ASSERT_EQUAL(high_pilot.att_def, 10);
+    CU_ASSERT_EQUAL(low_pilot.att_def, 95);
+    CU_ASSERT(high_pilot.pref_fwd > 20);
+    CU_ASSERT(low_pilot.pref_fwd == 20);
+}
+
+void test_pressure_burst_cooldown_blocks_repeat_charge(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    make_ai_with_difficulty(&a, &p, &t, 4);
+
+    a.pressure_streak = ai_pressure_max_streak(a.difficulty) - 1;
+    CU_ASSERT_TRUE(ai_pressure_is_allowed(&a));
+
+    ai_pressure_use(&a);
+    CU_ASSERT_EQUAL(a.pressure_streak, ai_pressure_max_streak(a.difficulty));
+    CU_ASSERT_FALSE(ai_pressure_is_allowed(&a));
+    CU_ASSERT_TRUE(a.pressure_cooldown > 0);
+}
+
+void test_pressure_cooldown_expires_and_resets_burst(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    make_ai_with_difficulty(&a, &p, &t, 4);
+
+    a.pressure_cooldown = 1;
+    a.pressure_streak = ai_pressure_max_streak(a.difficulty);
+
+    ai_pressure_tick(&a);
+
+    CU_ASSERT_EQUAL(a.pressure_cooldown, 0);
+    CU_ASSERT_EQUAL(a.pressure_streak, 0);
+    CU_ASSERT_TRUE(ai_pressure_is_allowed(&a));
+}
+
 /* -----------------------------------------------------------------------
  * ai_learning_maybe_forget
  * -------------------------------------------------------------------- */
@@ -242,6 +345,16 @@ void ai_learning_test_suite(CU_pSuite suite) {
                 test_learning_projectile_no_adjustment_below_threshold);
     CU_add_test(suite, "projectile: pilot personality adjusted at threshold",
                 test_learning_projectile_adjusts_at_threshold);
+    CU_add_test(suite, "projectile burst: cooldown blocks repeat fire",
+                test_projectile_burst_cooldown_blocks_repeat_fire);
+    CU_add_test(suite, "projectile burst: cooldown expires and resets burst",
+                test_projectile_cooldown_expires_and_resets_burst);
+    CU_add_test(suite, "projectile: learning is difficulty sensitive",
+                test_learning_projectile_is_difficulty_sensitive);
+    CU_add_test(suite, "pressure burst: cooldown blocks repeat charge",
+                test_pressure_burst_cooldown_blocks_repeat_charge);
+    CU_add_test(suite, "pressure burst: cooldown expires and resets burst",
+                test_pressure_cooldown_expires_and_resets_burst);
     CU_add_test(suite, "forget: resets counters when triggered",
                 test_learning_forget_resets_counters_when_triggered);
     CU_add_test(suite, "forget: never triggers when forget value is zero",

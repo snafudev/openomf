@@ -50,6 +50,10 @@ typedef struct ai {
     int blocked;
     int thrown;
     int shot;
+    int projectile_streak;
+    int projectile_cooldown;
+    int pressure_streak;
+    int pressure_cooldown;
 
     // tactical state
     tactic_state *tactic;
