@@ -982,6 +982,7 @@ bool handle_queued_tactic(controller *ctrl, ctrl_event **ev) {
                 } break;
                 case ATTACK_RANGED: {
                     if(attempt_projectile_attack(ctrl, ev)) {
+                        ai_projectile_use(a);
                         reset_tactic_state(a);
 
                         // chain another tactic
@@ -1003,7 +1004,12 @@ bool handle_queued_tactic(controller *ctrl, ctrl_event **ev) {
                     }
                 } break;
                 case ATTACK_CHARGE: {
+                    if(!ai_pressure_is_allowed(a)) {
+                        return acted;
+                    }
+
                     if(attempt_charge_attack(ctrl, ev)) {
+                        ai_pressure_use(a);
                         reset_tactic_state(a);
 
                         if(h->id == HAR_SHADOW) {
@@ -1015,7 +1021,12 @@ bool handle_queued_tactic(controller *ctrl, ctrl_event **ev) {
                     }
                 } break;
                 case ATTACK_PUSH: {
+                    if(!ai_pressure_is_allowed(a)) {
+                        return acted;
+                    }
+
                     if(attempt_push_attack(ctrl, ev)) {
+                        ai_pressure_use(a);
                         reset_tactic_state(a);
                     }
                 } break;
@@ -1095,6 +1106,8 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
 
     // decrement act_timer
     a->act_timer--;
+    ai_projectile_tick(a);
+    ai_pressure_tick(a);
 
     // Compact per-frame decision trace for analysis tooling (M6).
     log_debug_m(LOG_MODULE_AI, "tick=%u state=%d tactic=%d move=%d attack=%d last_move=%d", ctrl->gs->tick,
@@ -1296,6 +1309,8 @@ void ai_controller_create(controller *ctrl, int difficulty, sd_pilot *pilot, int
     a->blocked = 0;
     a->thrown = 0;
     a->shot = 0;
+    a->projectile_streak = 0;
+    a->projectile_cooldown = 0;
     vector_create(&a->active_projectiles, sizeof(object *));
     pilot->pilot_id = pilot_id;
     a->pilot = pilot;

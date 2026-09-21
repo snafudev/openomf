@@ -675,6 +675,24 @@ void test_tactic_shoot_prefers_shadow_projectile_archetype(void) {
     omf_free(ai_state.pilot);
 }
 
+void test_tactic_shoot_restricts_shredder_medium_range_projectile(void) {
+    ensure_test_runtime_ready();
+
+    ai ai_state;
+    har har_state;
+    memset(&ai_state, 0, sizeof(ai_state));
+    memset(&har_state, 0, sizeof(har_state));
+
+    ai_state.pilot = omf_calloc(1, sizeof(*ai_state.pilot));
+    ai_state.pilot->att_sniper = 0;
+    har_state.id = HAR_SHREDDER;
+
+    CU_ASSERT_TRUE(ai_tactic_should_use_shoot(&ai_state, &har_state, RANGE_MID, true, true, true));
+    CU_ASSERT_FALSE(ai_tactic_should_use_shoot(&ai_state, &har_state, RANGE_FAR, true, true, true));
+
+    omf_free(ai_state.pilot);
+}
+
 void ai_tactic_engine_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "tactic enabled: invalid id false", test_tactic_is_enabled_invalid_id_returns_false) == NULL)
         return;
@@ -747,5 +765,8 @@ void ai_tactic_engine_test_suite(CU_pSuite suite) {
         return;
     if(CU_add_test(suite, "tactic shoot: shadow projectile archetype prefers ranged attack",
                    test_tactic_shoot_prefers_shadow_projectile_archetype) == NULL)
+        return;
+    if(CU_add_test(suite, "tactic shoot: shredder projectile is medium-range only",
+                   test_tactic_shoot_restricts_shredder_medium_range_projectile) == NULL)
         return;
 }
