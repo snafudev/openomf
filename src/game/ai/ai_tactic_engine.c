@@ -497,6 +497,28 @@ static bool tactic_conditions_match_context(int tactic_type, const ai *a, const 
     return true;
 }
 
+bool ai_tactic_should_use_shoot(const ai *a, const har *h, int enemy_range, bool needs_projectiles_check,
+                               bool needs_sniper_pref_check, bool needs_enemy_not_cramped_check) {
+    if(a == NULL || a->pilot == NULL || h == NULL) {
+        return false;
+    }
+
+    bool has_projectile_move = !needs_projectiles_check || har_has_projectiles(h->id);
+    bool has_range = !needs_enemy_not_cramped_check || enemy_range > RANGE_CRAMPED;
+    bool sniper_pref_ok = !needs_sniper_pref_check || roll_pref(a->pilot->att_sniper);
+
+    if(h->id == HAR_SHADOW && has_projectile_move && has_range) {
+        return true;
+    }
+
+    if(has_projectile_move && sniper_pref_ok && has_range &&
+       (h->id != HAR_SHREDDER || ((enemy_range <= RANGE_MID && smart_usually(a)) || dumb_sometimes(a)))) {
+        return true;
+    }
+
+    return false;
+}
+
 bool ai_tactic_conditions_match_context(int tactic_type, int har_id, int enemy_range, int thrown, int shot,
                                         const sd_pilot *pilot) {
     if(pilot == NULL || tactic_type < TACTIC_ESCAPE || tactic_type > TACTIC_COUNTER) {
@@ -711,12 +733,8 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             bool needs_enemy_not_cramped_check =
                 !ai_tactic_config_has_condition(TACTIC_SHOOT, "enemy_not_cramped");
 
-            if((!needs_projectiles_check || har_has_projectiles(h->id)) &&
-               (!needs_sniper_pref_check || roll_pref(pilot->att_sniper)) &&
-               (!needs_enemy_not_cramped_check || enemy_range > RANGE_CRAMPED) &&
-               (h->id != HAR_SHREDDER || ((enemy_range <= RANGE_MID && smart_usually(a)) ||
-                                          dumb_sometimes(a)) // shredder prefers to be close-mid range
-                )) {
+            if(ai_tactic_should_use_shoot(a, h, enemy_range, needs_projectiles_check, needs_sniper_pref_check,
+                                         needs_enemy_not_cramped_check)) {
                 return true;
             }
             break;
@@ -853,37 +871,37 @@ void ai_tactic_queue(controller *ctrl, int tactic_type) {
 
     switch(tactic_type) {
         case TACTIC_GRAB:
-            log_debug("HAR %d queued tactic: GRAB", h->id);
+            log_debug("Player %d queued tactic: GRAB", h->player_id);
             break;
         case TACTIC_TRIP:
-            log_debug("HAR %d queued tactic: TRIP", h->id);
+            log_debug("Player %d queued tactic: TRIP", h->player_id);
             break;
         case TACTIC_QUICK:
-            log_debug("HAR %d queued tactic: QUICK", h->id);
+            log_debug("Player %d queued tactic: QUICK", h->player_id);
             break;
         case TACTIC_CLOSE:
-            log_debug("HAR %d queued tactic: CLOSE", h->id);
+            log_debug("Player %d queued tactic: CLOSE", h->player_id);
             break;
         case TACTIC_FLY:
-            log_debug("HAR %d queued tactic: FLY", h->id);
+            log_debug("Player %d queued tactic: FLY", h->player_id);
             break;
         case TACTIC_SHOOT:
-            log_debug("HAR %d queued tactic: SHOOT", h->id);
+            log_debug("Player %d queued tactic: SHOOT", h->player_id);
             break;
         case TACTIC_PUSH:
-            log_debug("HAR %d queued tactic: PUSH", h->id);
+            log_debug("Player %d queued tactic: PUSH", h->player_id);
             break;
         case TACTIC_SPAM:
-            log_debug("HAR %d queued tactic: SPAM", h->id);
+            log_debug("Player %d queued tactic: SPAM", h->player_id);
             break;
         case TACTIC_ESCAPE:
-            log_debug("HAR %d queued tactic: ESCAPE", h->id);
+            log_debug("Player %d queued tactic: ESCAPE", h->player_id);
             break;
         case TACTIC_TURTLE:
-            log_debug("HAR %d queued tactic: TURTLE", h->id);
+            log_debug("Player %d queued tactic: TURTLE", h->player_id);
             break;
         case TACTIC_COUNTER:
-            log_debug("HAR %d queued tactic: COUNTER", h->id);
+            log_debug("Player %d queued tactic: COUNTER", h->player_id);
             break;
     }
 

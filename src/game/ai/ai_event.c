@@ -30,6 +30,28 @@ static inline har *get_har(controller *ctrl) {
     return (har *)object_get_userdata(o);
 }
 
+static inline bool is_ready_for_tactics(har *h) {
+    // Only queue tactics if grounded (not jumping, stunned, in recoil, etc)
+    if(h == NULL) {
+        return false;
+    }
+
+    switch(h->state) {
+        case STATE_STANDING:
+        case STATE_WALKTO:
+        case STATE_WALKFROM:
+        case STATE_CROUCHING:
+        case STATE_CROUCHBLOCK:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static inline bool has_game_state(controller *ctrl) {
+    return ctrl != NULL && ctrl->gs != NULL;
+}
+
 /* -------------------------------------------------------------------------
  * Tactic cancellation
  * ---------------------------------------------------------------------- */
@@ -108,6 +130,10 @@ void ai_event_on_land_hit(controller *ctrl, har_event event, bool has_queued_tac
 
     a->last_move_id = event.move->id;
 
+    if(!has_game_state(ctrl)) {
+        return;
+    }
+
     if(a->tactic->chain_hit_on == event.move->category) {
         log_debug("Queueing chained tactic");
         ai_tactic_queue(ctrl, a->tactic->chain_hit_tactic);
@@ -142,6 +168,10 @@ void ai_event_on_enemy_block(controller *ctrl, har_event event, bool has_queued_
 
     a->last_move_id = event.move->id;
 
+    if(!has_game_state(ctrl)) {
+        return;
+    }
+
     if(has_queued_tactic || !smart_usually(a)) {
         return;
     }
@@ -168,6 +198,10 @@ void ai_event_on_block(controller *ctrl, har_event event, bool has_queued_tactic
         return;
     }
 
+    if(!has_game_state(ctrl)) {
+        return;
+    }
+
     if(has_queued_tactic || !smart_usually(a)) {
         return;
     }
@@ -190,9 +224,9 @@ void ai_event_on_land(controller *ctrl, har_event event, bool has_queued_tactic)
     ai *a = get_ai(ctrl);
     (void)event;
 
-    if(has_queued_tactic && a->tactic->attack_on == HAR_EVENT_LAND) {
+    if(has_queued_tactic && a->tactic->attack_on == HAR_EVENT_LAND && has_game_state(ctrl)) {
         har *h = get_har(ctrl);
-        if(h->state == STATE_STANDING) {
+        if(h != NULL && h->state == STATE_STANDING) {
             // do the attack now
             log_debug("\033[94mAttempting landing move");
             a->tactic->move_timer = 0;
@@ -203,7 +237,12 @@ void ai_event_on_land(controller *ctrl, har_event event, bool has_queued_tactic)
 
     a->act_timer = 0;
 
-    if(!has_queued_tactic && smart_usually(a)) {
+    if(!has_game_state(ctrl)) {
+        return;
+    }
+
+    har *h = get_har(ctrl);
+    if(!has_queued_tactic && smart_usually(a) && is_ready_for_tactics(h)) {
         int tacs[] = {TACTIC_TRIP,  TACTIC_QUICK,   TACTIC_PUSH,   TACTIC_GRAB,
                       TACTIC_SHOOT, TACTIC_COUNTER, TACTIC_TURTLE, TACTIC_CLOSE};
         ai_tactic_consider_list(ctrl, tacs, N_ELEMENTS(tacs));
@@ -212,8 +251,12 @@ void ai_event_on_land(controller *ctrl, har_event event, bool has_queued_tactic)
 
 void ai_event_on_hit_wall(controller *ctrl, har_event event, bool has_queued_tactic) {
     (void)event;
+    if(!has_game_state(ctrl)) {
+        return;
+    }
 
-    if(has_queued_tactic || !smart_usually(get_ai(ctrl))) {
+    har *h = get_har(ctrl);
+    if(has_queued_tactic || !smart_usually(get_ai(ctrl)) || !is_ready_for_tactics(h)) {
         return;
     }
 
@@ -229,6 +272,10 @@ void ai_event_on_take_hit(controller *ctrl, har_event event, bool has_queued_tac
         ai_learning_adjust_from_throw(a);
     } else if(event.type == HAR_EVENT_TAKE_HIT_PROJECTILE) {
         ai_learning_adjust_from_projectile(a);
+    }
+
+    if(!has_game_state(ctrl)) {
+        return;
     }
 
     if(has_queued_tactic || !smart_usually(a)) {
@@ -253,8 +300,12 @@ void ai_event_on_take_hit(controller *ctrl, har_event event, bool has_queued_tac
 
 void ai_event_on_recover(controller *ctrl, har_event event, bool has_queued_tactic) {
     (void)event;
+    if(!has_game_state(ctrl)) {
+        return;
+    }
 
-    if(has_queued_tactic || !smart_usually(get_ai(ctrl))) {
+    har *h = get_har(ctrl);
+    if(has_queued_tactic || !smart_usually(get_ai(ctrl)) || !is_ready_for_tactics(h)) {
         return;
     }
 
@@ -264,13 +315,17 @@ void ai_event_on_recover(controller *ctrl, har_event event, bool has_queued_tact
 
 void ai_event_on_enemy_hazard_hit(controller *ctrl, har_event event, bool has_queued_tactic) {
     (void)event;
-    ai *a = get_ai(ctrl);
-
-    if(has_queued_tactic || !smart_usually(a)) {
+    if(!has_game_state(ctrl)) {
         return;
     }
 
+    ai *a = get_ai(ctrl);
     har *h = get_har(ctrl);
+
+    if(has_queued_tactic || !smart_usually(a) || !is_ready_for_tactics(h)) {
+        return;
+    }
+
     log_debug("HAR capitalize on hazard: %d", h->id);
 
     int tacs[] = {TACTIC_GRAB, TACTIC_TRIP, TACTIC_QUICK, TACTIC_CLOSE, TACTIC_SHOOT};
@@ -279,13 +334,17 @@ void ai_event_on_enemy_hazard_hit(controller *ctrl, har_event event, bool has_qu
 
 void ai_event_on_enemy_stun(controller *ctrl, har_event event, bool has_queued_tactic) {
     (void)event;
-    ai *a = get_ai(ctrl);
-
-    if(has_queued_tactic || !smart_usually(a)) {
+    if(!has_game_state(ctrl)) {
         return;
     }
 
+    ai *a = get_ai(ctrl);
     har *h = get_har(ctrl);
+
+    if(has_queued_tactic || !smart_usually(a) || !is_ready_for_tactics(h)) {
+        return;
+    }
+
     log_debug("HAR capitalize on stun: %d", h->id);
 
     int tacs[] = {TACTIC_GRAB, TACTIC_CLOSE, TACTIC_TRIP, TACTIC_SHOOT};

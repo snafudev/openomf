@@ -54,12 +54,15 @@ typedef struct ai_har_config {
     bool    has_charge_moves;
     bool    has_push_moves;
     bool    has_projectile_moves;
+    bool    has_trip_moves;
     uint8_t charge_move_count;
     uint8_t push_move_count;
     uint8_t projectile_move_count;
+    uint8_t trip_move_count;
     ai_move_def charge_moves[AI_MAX_MOVES_PER_TYPE];
     ai_move_def push_moves[AI_MAX_MOVES_PER_TYPE];
     ai_move_def projectile_moves[AI_MAX_MOVES_PER_TYPE];
+    ai_move_def trip_moves[AI_MAX_MOVES_PER_TYPE];
 } ai_har_config;
 
 /**

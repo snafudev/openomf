@@ -7,6 +7,7 @@
 #include "resources/resource_files.h"
 #include "resources/resource_paths.h"
 #include "resources/ids.h"
+#include "utils/allocator.h"
 #include "utils/log.h"
 #include "utils/path.h"
 #include "CUnit/CUnit.h"
@@ -657,6 +658,23 @@ void test_tactic_conditions_match_context_grab_not_thrown_too_much(void) {
     ai_tactic_reset_config_cache();
 }
 
+void test_tactic_shoot_prefers_shadow_projectile_archetype(void) {
+    ensure_test_runtime_ready();
+
+    ai ai_state;
+    har har_state;
+    memset(&ai_state, 0, sizeof(ai_state));
+    memset(&har_state, 0, sizeof(har_state));
+
+    ai_state.pilot = omf_calloc(1, sizeof(*ai_state.pilot));
+    ai_state.pilot->att_sniper = 0;
+    har_state.id = HAR_SHADOW;
+
+    CU_ASSERT_TRUE(ai_tactic_should_use_shoot(&ai_state, &har_state, RANGE_MID, true, true, true));
+
+    omf_free(ai_state.pilot);
+}
+
 void ai_tactic_engine_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "tactic enabled: invalid id false", test_tactic_is_enabled_invalid_id_returns_false) == NULL)
         return;
@@ -726,5 +744,8 @@ void ai_tactic_engine_test_suite(CU_pSuite suite) {
         return;
     if(CU_add_test(suite, "tactic conditions: grab not_thrown_too_much",
                    test_tactic_conditions_match_context_grab_not_thrown_too_much) == NULL)
+        return;
+    if(CU_add_test(suite, "tactic shoot: shadow projectile archetype prefers ranged attack",
+                   test_tactic_shoot_prefers_shadow_projectile_archetype) == NULL)
         return;
 }

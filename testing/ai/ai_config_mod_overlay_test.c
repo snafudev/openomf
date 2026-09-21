@@ -153,9 +153,11 @@ static ai_har_config make_test_char_config(int har_id) {
     cfg.has_charge_moves = true;
     cfg.has_push_moves = true;
     cfg.has_projectile_moves = true;
+    cfg.has_trip_moves = true;
     cfg.charge_move_count = 2;
     cfg.push_move_count = 1;
     cfg.projectile_move_count = 1;
+    cfg.trip_move_count = 1;
     return cfg;
 }
 
@@ -218,7 +220,8 @@ void test_char_overlay_all_arrays(void) {
         "{\"id\":0,"
         "\"charge_moves\":[{\"a\":1}],"
         "\"push_moves\":[],"
-        "\"projectile_moves\":[{\"b\":2},{\"c\":3}]}";
+        "\"projectile_moves\":[{\"b\":2},{\"c\":3}],"
+        "\"trip_moves\":[{\"c\":4}]}";
     bool result = ai_skills_config_apply_overlay(&cfg, json);
     CU_ASSERT_TRUE(result);
     CU_ASSERT_EQUAL(cfg.charge_move_count, 1);
@@ -227,6 +230,8 @@ void test_char_overlay_all_arrays(void) {
     CU_ASSERT_FALSE(cfg.has_push_moves);
     CU_ASSERT_EQUAL(cfg.projectile_move_count, 2);
     CU_ASSERT_TRUE(cfg.has_projectile_moves);
+    CU_ASSERT_EQUAL(cfg.trip_move_count, 1);
+    CU_ASSERT_TRUE(cfg.has_trip_moves);
 }
 
 void test_char_overlay_sequential_last_wins(void) {

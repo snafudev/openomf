@@ -4,28 +4,58 @@
   "charge_moves": [
     {
       "name": "shadow_punch",
-      "sequence": ["D", "DB", "B", "5", "B+P"],
+      "sequence": [
+        "D",
+        "DB",
+        "B",
+        "5",
+        "B+P"
+      ],
       "range_min": "FAR",
-      "conditions": ["special_preferred", "high_difficulty"]
+      "conditions": [
+        "special_preferred",
+        "high_difficulty"
+      ]
     },
     {
       "name": "charging_punch",
-      "sequence": ["B", "5", "B+P"],
+      "sequence": [
+        "B",
+        "5",
+        "B+P"
+      ],
       "range_min": "ANY"
     }
   ],
   "push_moves": [
     {
       "name": "slow_swing_chains",
-      "sequence": ["D", "K"],
+      "sequence": [
+        "D",
+        "K"
+      ],
       "range_min": "ANY",
-      "conditions": ["roll_d3"]
+      "conditions": [
+        "roll_d3"
+      ]
     },
     {
       "name": "swinging_chains",
-      "sequence": ["D", "P"],
+      "sequence": [
+        "D",
+        "P"
+      ],
       "range_min": "ANY"
     }
   ],
-  "projectile_moves": []
+  "projectile_moves": [],
+  "trip_moves": [
+    {
+      "name": "trip",
+      "sequence": [
+        "DB+K"
+      ],
+      "range_min": "ANY"
+    }
+  ]
 }

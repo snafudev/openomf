@@ -4,7 +4,11 @@
   "charge_moves": [
     {
       "name": "shadow_grab",
-      "sequence": ["D", "5", "D+P"],
+      "sequence": [
+        "D",
+        "5",
+        "D+P"
+      ],
       "range_min": "ANY"
     }
   ],
@@ -12,13 +16,34 @@
   "projectile_moves": [
     {
       "name": "shadow_projectile_punch",
-      "sequence": ["D", "DB", "B", "P"],
+      "sequence": [
+        "D",
+        "DB",
+        "B",
+        "P"
+      ],
       "range_min": "ANY",
-      "conditions": ["roll_d2"]
+      "conditions": [
+        "roll_d2"
+      ]
     },
     {
       "name": "shadow_projectile_kick",
-      "sequence": ["D", "DB", "B", "K"],
+      "sequence": [
+        "D",
+        "DB",
+        "B",
+        "K"
+      ],
+      "range_min": "ANY"
+    }
+  ],
+  "trip_moves": [
+    {
+      "name": "trip",
+      "sequence": [
+        "DB+K"
+      ],
       "range_min": "ANY"
     }
   ]

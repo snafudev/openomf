@@ -167,6 +167,60 @@ static bool move_too_powerful_for_context(const af_move *move, const move_stat_c
     return is_special_move(move) && dumb_usually(&temp_ai);
 }
 
+static int close_range_tactical_bonus(const af_move *move, const move_stat_context *ctx) {
+    if(move == NULL || ctx == NULL) {
+        return 0;
+    }
+
+    const bool enemy_vulnerable = (ctx->enemy_state == STATE_STUNNED || ctx->enemy_in_stasis > 0);
+    const bool enemy_in_air = (ctx->enemy_state == STATE_JUMPING);
+    const bool enemy_blocking = (ctx->enemy_state == STATE_BLOCKSTUN || ctx->enemy_state == STATE_CROUCHBLOCK);
+
+    if(ctx->enemy_range <= RANGE_CLOSE || ctx->enemy_range == RANGE_CRAMPED) {
+        if(enemy_vulnerable) {
+            switch(move->category) {
+                case CAT_CLOSE:
+                case CAT_LOW:
+                case CAT_MEDIUM:
+                case CAT_HIGH:
+                    return 20;
+                case CAT_JUMPING:
+                    return -5;
+                default:
+                    return 0;
+            }
+        }
+
+        if(enemy_in_air) {
+            switch(move->category) {
+                case CAT_JUMPING:
+                case CAT_PROJECTILE:
+                    return 8;
+                case CAT_CLOSE:
+                    return -4;
+                default:
+                    return 0;
+            }
+        }
+
+        if(enemy_blocking) {
+            switch(move->category) {
+                case CAT_CLOSE:
+                case CAT_LOW:
+                case CAT_MEDIUM:
+                case CAT_HIGH:
+                    return 12;
+                case CAT_BASIC:
+                    return -6;
+                default:
+                    return 0;
+            }
+        }
+    }
+
+    return 0;
+}
+
 // ============================================================================
 // Function: ai_move_eval_score
 // ============================================================================
@@ -211,6 +265,7 @@ int ai_move_eval_score(const af_move *move, const move_stat_context *ctx) {
             value -= rand_int(10);
         }
 
+        value += close_range_tactical_bonus(move, ctx);
         value -= ms->attempts / 2;
         value -= ms->consecutive * 2;
 

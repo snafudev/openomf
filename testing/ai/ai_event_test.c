@@ -794,6 +794,26 @@ void test_event_land_queued_tactic_without_attack_on_resets_act_timer(void) {
     CU_ASSERT_EQUAL(a.act_timer, 0);
 }
 
+void test_event_land_without_game_state_does_not_crash(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    controller ctrl;
+    har_event ev;
+    make_mock_ai(&a, &p, &t);
+    make_mock_ctrl(&ctrl, &a);
+    ctrl.gs = NULL;
+    memset(&ev, 0, sizeof(ev));
+    ev.type = HAR_EVENT_LAND;
+
+    a.act_timer = 25;
+    a.difficulty = 6;
+
+    ai_event_on_land(&ctrl, ev, false);
+
+    CU_ASSERT_EQUAL(a.act_timer, 0);
+}
+
 /* -----------------------------------------------------------------------
  * Test suite registration
  * -------------------------------------------------------------------- */
@@ -880,4 +900,6 @@ void ai_event_test_suite(CU_pSuite suite) {
                 test_event_land_resets_act_timer);
     CU_add_test(suite, "land: resets act_timer when tactic queued but not waiting for land",
                 test_event_land_queued_tactic_without_attack_on_resets_act_timer);
+    CU_add_test(suite, "land: no game state does not crash",
+                test_event_land_without_game_state_does_not_crash);
 }

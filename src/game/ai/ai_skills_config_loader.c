@@ -587,9 +587,11 @@ static void load_har_config(int har_id) {
     g_configs[har_id].has_charge_moves = har_has_charge(har_id);
     g_configs[har_id].has_push_moves = har_has_push(har_id);
     g_configs[har_id].has_projectile_moves = har_has_projectiles(har_id);
+    g_configs[har_id].has_trip_moves = false;
     g_configs[har_id].charge_move_count = 0;
     g_configs[har_id].push_move_count = 0;
     g_configs[har_id].projectile_move_count = 0;
+    g_configs[har_id].trip_move_count = 0;
 
     const char *name = har_config_name(har_id);
     if(name == NULL) {
@@ -625,9 +627,12 @@ static void load_har_config(int har_id) {
                         &g_configs[har_id].push_move_count, AI_MAX_MOVES_PER_TYPE);
     ai_parse_move_array(json, "projectile_moves", g_configs[har_id].projectile_moves,
                         &g_configs[har_id].projectile_move_count, AI_MAX_MOVES_PER_TYPE);
+    ai_parse_move_array(json, "trip_moves", g_configs[har_id].trip_moves,
+                        &g_configs[har_id].trip_move_count, AI_MAX_MOVES_PER_TYPE);
     g_configs[har_id].has_charge_moves = g_configs[har_id].charge_move_count > 0;
     g_configs[har_id].has_push_moves = g_configs[har_id].push_move_count > 0;
     g_configs[har_id].has_projectile_moves = g_configs[har_id].projectile_move_count > 0;
+    g_configs[har_id].has_trip_moves = g_configs[har_id].trip_move_count > 0;
 
     omf_free(json);
 
@@ -659,6 +664,13 @@ bool ai_skills_config_apply_overlay(ai_har_config *cfg, const char *json_buf) {
         ai_parse_move_array(json_buf, "projectile_moves", cfg->projectile_moves,
                             &cfg->projectile_move_count, AI_MAX_MOVES_PER_TYPE);
         cfg->has_projectile_moves = cfg->projectile_move_count > 0;
+        changed = true;
+    }
+
+    if(strstr(json_buf, "\"trip_moves\"") != NULL) {
+        ai_parse_move_array(json_buf, "trip_moves", cfg->trip_moves, &cfg->trip_move_count,
+                            AI_MAX_MOVES_PER_TYPE);
+        cfg->has_trip_moves = cfg->trip_move_count > 0;
         changed = true;
     }
 

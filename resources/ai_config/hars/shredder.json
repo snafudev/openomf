@@ -4,19 +4,40 @@
   "charge_moves": [
     {
       "name": "flip_kick",
-      "sequence": ["D", "5", "D+K"],
+      "sequence": [
+        "D",
+        "5",
+        "D+K"
+      ],
       "range_min": "FAR",
-      "conditions": ["jump_preferred", "high_difficulty"]
+      "conditions": [
+        "jump_preferred",
+        "high_difficulty"
+      ]
     },
     {
       "name": "shadow_head_butt",
-      "sequence": ["B", "DB", "D", "DF", "F", "P"],
+      "sequence": [
+        "B",
+        "DB",
+        "D",
+        "DF",
+        "F",
+        "P"
+      ],
       "range_min": "MID",
-      "conditions": ["special_preferred", "high_difficulty"]
+      "conditions": [
+        "special_preferred",
+        "high_difficulty"
+      ]
     },
     {
       "name": "head_butt",
-      "sequence": ["D", "DF", "F+P"],
+      "sequence": [
+        "D",
+        "DF",
+        "F+P"
+      ],
       "range_min": "ANY"
     }
   ],
@@ -24,9 +45,22 @@
   "projectile_moves": [
     {
       "name": "flying_hands",
-      "sequence": ["D", "DB", "B+P"],
+      "sequence": [
+        "D",
+        "DB",
+        "B+P"
+      ],
       "range_min": "ANY",
       "range_max": "MID"
+    }
+  ],
+  "trip_moves": [
+    {
+      "name": "trip",
+      "sequence": [
+        "DB+K"
+      ],
+      "range_min": "ANY"
     }
   ]
 }

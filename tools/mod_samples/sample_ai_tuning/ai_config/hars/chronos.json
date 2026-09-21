@@ -1,0 +1,11 @@
+{
+  "id": 9,
+  "projectile_moves": [
+    {
+      "name": "sample_stasis_favor",
+      "sequence": ["D", "DF", "F", "P"],
+      "range_min": "MID",
+      "conditions": ["special_preferred", "enemy_not_stunned"]
+    }
+  ]
+}

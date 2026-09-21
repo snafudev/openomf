@@ -4,10 +4,12 @@
 
 #include "game/ai/ai_skills_config_loader.h"
 #include "game/ai/ai_har_skills.h"
+#include "game/ai/ai_utils.h"
 #include "game/common_defines.h"
 #include "resources/resource_files.h"
 #include "resources/resource_paths.h"
 #include "utils/path.h"
+#include "ai/ai_controller_test.h"
 #include "CUnit/CUnit.h"
 
 #include <stdio.h>
@@ -97,6 +99,17 @@ static void assert_har_projectile_flag(int har_id, bool expected) {
     }
 }
 
+static void assert_har_trip_flag(int har_id, bool expected) __attribute__((unused));
+static void assert_har_trip_flag(int har_id, bool expected) {
+    const ai_har_config *cfg = ai_skills_config_get(har_id);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(cfg);
+    if(expected) {
+        CU_ASSERT_TRUE(cfg->has_trip_moves);
+    } else {
+        CU_ASSERT_FALSE(cfg->has_trip_moves);
+    }
+}
+
 static void assert_har_charge_count(int har_id, uint8_t expected) {
     const ai_har_config *cfg = ai_skills_config_get(har_id);
     CU_ASSERT_PTR_NOT_NULL_FATAL(cfg);
@@ -115,64 +128,91 @@ static void assert_har_projectile_count(int har_id, uint8_t expected) {
     CU_ASSERT_EQUAL(cfg->projectile_move_count, expected);
 }
 
+static void assert_har_trip_count(int har_id, uint8_t expected) __attribute__((unused));
+static void assert_har_trip_count(int har_id, uint8_t expected) {
+    const ai_har_config *cfg = ai_skills_config_get(har_id);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(cfg);
+    CU_ASSERT_EQUAL(cfg->trip_move_count, expected);
+}
+
 static void assert_har_total_count(int har_id, uint8_t expected) {
     const ai_har_config *cfg = ai_skills_config_get(har_id);
     CU_ASSERT_PTR_NOT_NULL_FATAL(cfg);
-    uint8_t total = (uint8_t)(cfg->charge_move_count + cfg->push_move_count + cfg->projectile_move_count);
+    uint8_t total = (uint8_t)(cfg->charge_move_count + cfg->push_move_count + cfg->projectile_move_count +
+                              cfg->trip_move_count);
     CU_ASSERT_EQUAL(total, expected);
 }
 
 #define DEFINE_HAR_CONFIG_TESTS(name, har_id, charge_expected, push_expected, projectile_expected,             \
                                 charge_count_expected, push_count_expected, projectile_count_expected,          \
-                                total_count_expected)                                                            \
+                                trip_count_expected, total_count_expected)                                      \
     void test_##name##_config_present(void) {                                                                 \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_config_present(har_id);                                                                    \
     }                                                                                                         \
     void test_##name##_loaded_from_file(void) {                                                               \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_loaded_from_file(har_id);                                                                  \
     }                                                                                                         \
     void test_##name##_charge_flag(void) {                                                                    \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_charge_flag(har_id, charge_expected);                                                      \
     }                                                                                                         \
     void test_##name##_push_flag(void) {                                                                      \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_push_flag(har_id, push_expected);                                                          \
     }                                                                                                         \
     void test_##name##_projectile_flag(void) {                                                                \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_projectile_flag(har_id, projectile_expected);                                              \
     }                                                                                                         \
+    void test_##name##_trip_flag(void) {                                                                      \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
+        ai_skills_config_reset_cache();                                                                       \
+        assert_har_trip_flag(har_id, trip_count_expected > 0);                                               \
+    }                                                                                                         \
     void test_##name##_charge_count(void) {                                                                   \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_charge_count(har_id, charge_count_expected);                                               \
     }                                                                                                         \
     void test_##name##_push_count(void) {                                                                     \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_push_count(har_id, push_count_expected);                                                   \
     }                                                                                                         \
     void test_##name##_projectile_count(void) {                                                               \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_projectile_count(har_id, projectile_count_expected);                                       \
     }                                                                                                         \
+    void test_##name##_trip_count(void) {                                                                     \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
+        ai_skills_config_reset_cache();                                                                       \
+        assert_har_trip_count(har_id, trip_count_expected);                                                   \
+    }                                                                                                         \
     void test_##name##_total_count(void) {                                                                    \
+        CU_ASSERT_TRUE_FATAL(resource_path_init());                                                           \
         ai_skills_config_reset_cache();                                                                       \
         assert_har_total_count(har_id, total_count_expected);                                                 \
     }
 
-DEFINE_HAR_CONFIG_TESTS(jaguar, HAR_JAGUAR, true, true, true, 2, 1, 1, 4)
-DEFINE_HAR_CONFIG_TESTS(shadow, HAR_SHADOW, true, false, true, 1, 0, 1, 2)
-DEFINE_HAR_CONFIG_TESTS(thorn, HAR_THORN, true, true, false, 1, 2, 0, 3)
-DEFINE_HAR_CONFIG_TESTS(pyros, HAR_PYROS, true, true, false, 2, 1, 0, 3)
-DEFINE_HAR_CONFIG_TESTS(electra, HAR_ELECTRA, true, true, true, 2, 1, 1, 4)
-DEFINE_HAR_CONFIG_TESTS(katana, HAR_KATANA, true, true, false, 4, 2, 0, 6)
-DEFINE_HAR_CONFIG_TESTS(shredder, HAR_SHREDDER, true, false, true, 3, 0, 1, 4)
-DEFINE_HAR_CONFIG_TESTS(flail, HAR_FLAIL, true, true, false, 2, 2, 0, 4)
-DEFINE_HAR_CONFIG_TESTS(gargoyle, HAR_GARGOYLE, true, false, false, 3, 0, 0, 3)
-DEFINE_HAR_CONFIG_TESTS(chronos, HAR_CHRONOS, true, false, true, 2, 0, 1, 3)
-DEFINE_HAR_CONFIG_TESTS(nova, HAR_NOVA, false, true, true, 0, 2, 2, 4)
+DEFINE_HAR_CONFIG_TESTS(jaguar, HAR_JAGUAR, true, true, true, 2, 1, 1, 1, 5)
+DEFINE_HAR_CONFIG_TESTS(shadow, HAR_SHADOW, true, false, true, 1, 0, 2, 1, 4)
+DEFINE_HAR_CONFIG_TESTS(thorn, HAR_THORN, true, true, false, 1, 2, 0, 1, 4)
+DEFINE_HAR_CONFIG_TESTS(pyros, HAR_PYROS, true, true, false, 2, 1, 0, 1, 4)
+DEFINE_HAR_CONFIG_TESTS(electra, HAR_ELECTRA, true, true, true, 2, 1, 1, 1, 5)
+DEFINE_HAR_CONFIG_TESTS(katana, HAR_KATANA, true, true, false, 4, 2, 0, 1, 7)
+DEFINE_HAR_CONFIG_TESTS(shredder, HAR_SHREDDER, true, false, true, 3, 0, 1, 1, 5)
+DEFINE_HAR_CONFIG_TESTS(flail, HAR_FLAIL, true, true, false, 2, 2, 0, 1, 5)
+DEFINE_HAR_CONFIG_TESTS(gargoyle, HAR_GARGOYLE, true, false, false, 2, 0, 0, 1, 3)
+DEFINE_HAR_CONFIG_TESTS(chronos, HAR_CHRONOS, true, false, true, 2, 0, 1, 1, 4)
+DEFINE_HAR_CONFIG_TESTS(nova, HAR_NOVA, false, true, true, 0, 2, 2, 1, 5)
 
 void test_ai_skills_config_returns_entries_for_all_hars(void) {
     ai_skills_config_reset_cache();
@@ -192,12 +232,14 @@ void test_ai_skills_config_expected_default_flags(void) {
     CU_ASSERT_TRUE(jaguar->has_charge_moves);
     CU_ASSERT_TRUE(jaguar->has_push_moves);
     CU_ASSERT_TRUE(jaguar->has_projectile_moves);
+    CU_ASSERT_TRUE(jaguar->has_trip_moves);
 
     const ai_har_config *gargoyle = ai_skills_config_get(HAR_GARGOYLE);
     CU_ASSERT_PTR_NOT_NULL_FATAL(gargoyle);
     CU_ASSERT_TRUE(gargoyle->has_charge_moves);
     CU_ASSERT_FALSE(gargoyle->has_push_moves);
     CU_ASSERT_FALSE(gargoyle->has_projectile_moves);
+    CU_ASSERT_TRUE(gargoyle->has_trip_moves);
 }
 
 void test_ai_skills_config_cache_reset_rereads_file(void) {
@@ -376,7 +418,7 @@ void test_ai_skills_config_cache_is_isolated_per_har(void) {
     CU_ASSERT_TRUE(shadow->has_charge_moves);
     CU_ASSERT_EQUAL(shadow->charge_move_count, 1);
     CU_ASSERT_TRUE(shadow->has_projectile_moves);
-    CU_ASSERT_EQUAL(shadow->projectile_move_count, 1);
+    CU_ASSERT_EQUAL(shadow->projectile_move_count, 2);
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&jaguar_path, original, original_size));
     ai_skills_config_reset_cache();
@@ -424,7 +466,34 @@ void test_ai_skills_config_count_flag_consistency_for_all_hars(void) {
         CU_ASSERT_EQUAL(cfg->has_charge_moves, cfg->charge_move_count > 0);
         CU_ASSERT_EQUAL(cfg->has_push_moves, cfg->push_move_count > 0);
         CU_ASSERT_EQUAL(cfg->has_projectile_moves, cfg->projectile_move_count > 0);
+        CU_ASSERT_EQUAL(cfg->has_trip_moves, cfg->trip_move_count > 0);
+        CU_ASSERT_EQUAL(cfg->trip_move_count, 1);
     }
+}
+
+void test_ai_skills_config_trip_overlay_parses_and_flags_correctly(void) {
+    ai_har_config cfg = {0};
+    cfg.har_id = HAR_JAGUAR;
+    cfg.has_charge_moves = true;
+    cfg.charge_move_count = 1;
+
+    const char *json =
+        "{\n"
+        "  \"trip_moves\": [\n"
+        "    {\n"
+        "      \"name\": \"trip\",\n"
+        "      \"sequence\": [\"D\", \"B\", \"K\"],\n"
+        "      \"range_min\": \"CLOSE\"\n"
+        "    }\n"
+        "  ]\n"
+        "}\n";
+
+    bool result = ai_skills_config_apply_overlay(&cfg, json);
+    CU_ASSERT_TRUE(result);
+    CU_ASSERT_EQUAL(cfg.trip_move_count, 1);
+    CU_ASSERT_TRUE(cfg.has_trip_moves);
+    CU_ASSERT_EQUAL(cfg.trip_moves[0].input_count, 3);
+    CU_ASSERT_EQUAL(cfg.trip_moves[0].range_min, MOVE_RANGE_CLOSE);
 }
 
 void test_ai_skills_config_chronos_projectile_single_entry(void) {
@@ -577,9 +646,9 @@ void test_ai_skills_config_sequence_entries_match_expected_per_har_files(void) {
         const char *filename;
         int expected_sequence_entries;
     } expected[] = {
-        {"jaguar.json", 4},  {"shadow.json", 2}, {"thorn.json", 3},   {"pyros.json", 3},
-        {"electra.json", 4}, {"katana.json", 6}, {"shredder.json", 4}, {"flail.json", 4},
-        {"gargoyle.json", 3}, {"chronos.json", 3}, {"nova.json", 4},
+        {"jaguar.json", 5},  {"shadow.json", 4}, {"thorn.json", 4},   {"pyros.json", 4},
+        {"electra.json", 5}, {"katana.json", 7}, {"shredder.json", 5}, {"flail.json", 5},
+        {"gargoyle.json", 3}, {"chronos.json", 4}, {"nova.json", 5},
     };
 
     for(size_t i = 0; i < sizeof(expected) / sizeof(expected[0]); i++) {
@@ -616,6 +685,52 @@ void test_ai_skills_config_range_min_entries_match_sequence_entries(void) {
     }
 }
 
+void test_ai_har_move_def_score_prefers_contextual_move(void) {
+    test_pilot_fixture *pilot = test_pilot_create(0);
+    test_ai_fixture *ai_fix = test_ai_create(3, pilot);
+
+    ai_move_def stunned_move = {0};
+    stunned_move.range_min = MOVE_RANGE_CLOSE;
+    stunned_move.range_max = MOVE_RANGE_CLOSE;
+    stunned_move.conditions = MOVE_COND_ENEMY_STUNNED;
+
+    ai_move_def neutral_move = {0};
+    neutral_move.range_min = MOVE_RANGE_CLOSE;
+    neutral_move.range_max = MOVE_RANGE_CLOSE;
+    neutral_move.conditions = MOVE_COND_ENEMY_NOT_STUNNED;
+
+    int stunned_score = ai_move_def_score(&stunned_move, RANGE_CLOSE, true, &ai_fix->ai_data);
+    int neutral_score = ai_move_def_score(&neutral_move, RANGE_CLOSE, true, &ai_fix->ai_data);
+
+    CU_ASSERT(stunned_score > neutral_score);
+
+    test_ai_free(ai_fix);
+    test_pilot_free(pilot);
+}
+
+void test_ai_har_select_best_move_prefers_contextual_choice(void) {
+    test_pilot_fixture *pilot = test_pilot_create(0);
+    test_ai_fixture *ai_fix = test_ai_create(3, pilot);
+
+    ai_move_def neutral_move = {0};
+    neutral_move.range_min = MOVE_RANGE_CLOSE;
+    neutral_move.range_max = MOVE_RANGE_CLOSE;
+    neutral_move.conditions = MOVE_COND_ENEMY_NOT_STUNNED;
+
+    ai_move_def stunned_move = {0};
+    stunned_move.range_min = MOVE_RANGE_CLOSE;
+    stunned_move.range_max = MOVE_RANGE_CLOSE;
+    stunned_move.conditions = MOVE_COND_ENEMY_STUNNED;
+
+    ai_move_def moves[] = {neutral_move, stunned_move};
+    const ai_move_def *selected = ai_har_select_best_move(moves, 2, RANGE_CLOSE, true, &ai_fix->ai_data);
+
+    CU_ASSERT_PTR_EQUAL(selected, &moves[1]);
+
+    test_ai_free(ai_fix);
+    test_pilot_free(pilot);
+}
+
 void ai_har_skills_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "skills config: invalid har", test_ai_skills_config_invalid_har_returns_null) == NULL) return;
     if(CU_add_test(suite, "skills config: all hars", test_ai_skills_config_returns_entries_for_all_hars) == NULL) return;
@@ -627,6 +742,7 @@ void ai_har_skills_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "skills config: cache isolated per har", test_ai_skills_config_cache_is_isolated_per_har) == NULL) return;
     if(CU_add_test(suite, "skills config: missing arrays zero counts", test_ai_skills_config_missing_arrays_parses_with_zero_counts) == NULL) return;
     if(CU_add_test(suite, "skills config: count flag consistency", test_ai_skills_config_count_flag_consistency_for_all_hars) == NULL) return;
+    if(CU_add_test(suite, "skills config: trip overlay parses", test_ai_skills_config_trip_overlay_parses_and_flags_correctly) == NULL) return;
     if(CU_add_test(suite, "skills config: chronos projectile count", test_ai_skills_config_chronos_projectile_single_entry) == NULL) return;
     if(CU_add_test(suite, "skills config: nova charge count", test_ai_skills_config_nova_charge_zero_entry) == NULL) return;
     if(CU_add_test(suite, "skills config: count ignores brackets in strings", test_ai_skills_config_count_ignores_brackets_inside_strings) == NULL) return;
@@ -638,6 +754,8 @@ void ai_har_skills_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "skills exec: projectile null controller", test_ai_har_execute_projectile_null_controller_returns_false) == NULL) return;
     if(CU_add_test(suite, "skills config: sequence entries expected per har files", test_ai_skills_config_sequence_entries_match_expected_per_har_files) == NULL) return;
     if(CU_add_test(suite, "skills config: range_min matches sequence entries", test_ai_skills_config_range_min_entries_match_sequence_entries) == NULL) return;
+    if(CU_add_test(suite, "skills exec: contextual move prefers matching condition", test_ai_har_move_def_score_prefers_contextual_move) == NULL) return;
+    if(CU_add_test(suite, "skills exec: best move prefers contextual choice", test_ai_har_select_best_move_prefers_contextual_choice) == NULL) return;
 
     if(CU_add_test(suite, "jaguar: config present", test_jaguar_config_present) == NULL) return;
     if(CU_add_test(suite, "jaguar: loaded from file", test_jaguar_loaded_from_file) == NULL) return;

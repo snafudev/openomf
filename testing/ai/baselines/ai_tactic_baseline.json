@@ -1,0 +1,19 @@
+{
+  "rows": 2,
+  "tactic_counts": {
+    "8": 2,
+    "1": 0
+  },
+  "move_counts": {
+    "14": 2
+  },
+  "attack_counts": {
+    "2": 2
+  },
+  "state_counts": {
+    "3": 2
+  },
+  "last_move_counts": {
+    "7": 2
+  }
+}

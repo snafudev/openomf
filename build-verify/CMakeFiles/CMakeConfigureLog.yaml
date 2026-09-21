@@ -1,0 +1,1586 @@
+
+---
+events:
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineSystem.cmake:12 (find_program)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_UNAME"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "uname"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/bin/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/uname"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/uname"
+      - "/home/snaf/.local/bin/uname"
+      - "/home/snaf/bin/uname"
+      - "/usr/local/sbin/uname"
+      - "/usr/local/bin/uname"
+    found: "/usr/bin/uname"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineSystem.cmake:218 (message)"
+      - "CMakeLists.txt:34 (project)"
+    message: |
+      The system is: Linux - 7.2.4-ogc3.1.fc44.x86_64 - x86_64
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeNinjaFindMake.cmake:5 (find_program)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_MAKE_PROGRAM"
+    description: "Program used to build from build.ninja files."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ninja-build"
+      - "ninja"
+      - "samu"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/ninja-build"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/ninja"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/samu"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/ninja-build"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/ninja"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/samu"
+      - "/home/snaf/.local/bin/ninja-build"
+      - "/home/snaf/.local/bin/ninja"
+      - "/home/snaf/.local/bin/samu"
+      - "/home/snaf/bin/ninja-build"
+      - "/home/snaf/bin/ninja"
+      - "/home/snaf/bin/samu"
+      - "/usr/local/sbin/ninja-build"
+      - "/usr/local/sbin/ninja"
+      - "/usr/local/sbin/samu"
+      - "/usr/local/bin/ninja-build"
+      - "/usr/local/bin/ninja"
+      - "/usr/local/bin/samu"
+      - "/usr/bin/ninja-build"
+      - "/usr/bin/ninja"
+      - "/usr/bin/samu"
+      - "/home/linuxbrew/.linuxbrew/bin/ninja-build"
+    found: "/home/linuxbrew/.linuxbrew/bin/ninja"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompiler.cmake:73 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:64 (_cmake_find_compiler)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER"
+    description: "C compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "cc"
+      - "gcc"
+      - "cl"
+      - "bcc"
+      - "xlc"
+      - "icx"
+      - "clang"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/cc"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/cc"
+      - "/home/snaf/.local/bin/cc"
+      - "/home/snaf/bin/cc"
+      - "/usr/local/sbin/cc"
+      - "/usr/local/bin/cc"
+    found: "/usr/bin/cc"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerId.cmake:501 (find_file)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerId.cmake:538 (CMAKE_DETERMINE_COMPILER_ID_WRITE)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerId.cmake:8 (CMAKE_DETERMINE_COMPILER_ID_BUILD)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "file"
+    variable: "src_in"
+    description: "Path to a file."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "CMakeCCompilerId.c.in"
+    candidate_directories:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/"
+    found: "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeCCompilerId.c.in"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:122 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:34 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler: /usr/bin/cc 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+      
+      The C compiler identification is GNU, found in:
+        /home/snaf/dev/openomf/build-verify/CMakeFiles/4.4.3/CompilerIdC/a.out
+      
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_AR"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ar"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/ar"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_RANLIB"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ranlib"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/ranlib"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_STRIP"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "strip"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/strip"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_LINKER"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "ld"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/ld"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_NM"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "nm"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/nm"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_OBJDUMP"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "objdump"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/objdump"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_OBJCOPY"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "objcopy"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/objcopy"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_READELF"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "readelf"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/readelf"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_DLLTOOL"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "dlltool"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    searched_directories:
+      - "/usr/bin/dlltool"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/dlltool"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/dlltool"
+      - "/home/snaf/.local/bin/dlltool"
+      - "/home/snaf/bin/dlltool"
+      - "/usr/local/sbin/dlltool"
+      - "/usr/local/bin/dlltool"
+      - "/home/linuxbrew/.linuxbrew/bin/dlltool"
+      - "/home/linuxbrew/.linuxbrew/sbin/dlltool"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_ADDR2LINE"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "addr2line"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    found: "/usr/bin/addr2line"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeFindBinUtils.cmake:247 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:200 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_TAPI"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "tapi"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    searched_directories:
+      - "/usr/bin/tapi"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/tapi"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/tapi"
+      - "/home/snaf/.local/bin/tapi"
+      - "/home/snaf/bin/tapi"
+      - "/usr/local/sbin/tapi"
+      - "/usr/local/bin/tapi"
+      - "/home/linuxbrew/.linuxbrew/bin/tapi"
+      - "/home/linuxbrew/.linuxbrew/sbin/tapi"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake:18 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:201 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER_AR"
+    description: "A wrapper around 'ar' adding the appropriate '--plugin' option for the GCC compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gcc-ar-16.2"
+      - "gcc-ar-16"
+      - "gcc-ar16"
+      - "gcc-ar"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    searched_directories:
+      - "/usr/bin/gcc-ar-16.2"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar-16.2"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar-16.2"
+      - "/home/snaf/.local/bin/gcc-ar-16.2"
+      - "/home/snaf/bin/gcc-ar-16.2"
+      - "/usr/local/sbin/gcc-ar-16.2"
+      - "/usr/local/bin/gcc-ar-16.2"
+      - "/home/linuxbrew/.linuxbrew/bin/gcc-ar-16.2"
+      - "/home/linuxbrew/.linuxbrew/sbin/gcc-ar-16.2"
+      - "/usr/bin/gcc-ar-16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar-16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar-16"
+      - "/home/snaf/.local/bin/gcc-ar-16"
+      - "/home/snaf/bin/gcc-ar-16"
+      - "/usr/local/sbin/gcc-ar-16"
+      - "/usr/local/bin/gcc-ar-16"
+      - "/home/linuxbrew/.linuxbrew/bin/gcc-ar-16"
+      - "/home/linuxbrew/.linuxbrew/sbin/gcc-ar-16"
+      - "/usr/bin/gcc-ar16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ar16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ar16"
+      - "/home/snaf/.local/bin/gcc-ar16"
+      - "/home/snaf/bin/gcc-ar16"
+      - "/usr/local/sbin/gcc-ar16"
+      - "/usr/local/bin/gcc-ar16"
+      - "/home/linuxbrew/.linuxbrew/bin/gcc-ar16"
+      - "/home/linuxbrew/.linuxbrew/sbin/gcc-ar16"
+    found: "/usr/bin/gcc-ar"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/Compiler/GNU-FindBinUtils.cmake:30 (find_program)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCCompiler.cmake:201 (include)"
+      - "CMakeLists.txt:34 (project)"
+    mode: "program"
+    variable: "CMAKE_C_COMPILER_RANLIB"
+    description: "A wrapper around 'ranlib' adding the appropriate '--plugin' option for the GCC compiler"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: false
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: false
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "gcc-ranlib-16.2"
+      - "gcc-ranlib-16"
+      - "gcc-ranlib16"
+      - "gcc-ranlib"
+    candidate_directories:
+      - "/usr/bin/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+    searched_directories:
+      - "/usr/bin/gcc-ranlib-16.2"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib-16.2"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib-16.2"
+      - "/home/snaf/.local/bin/gcc-ranlib-16.2"
+      - "/home/snaf/bin/gcc-ranlib-16.2"
+      - "/usr/local/sbin/gcc-ranlib-16.2"
+      - "/usr/local/bin/gcc-ranlib-16.2"
+      - "/home/linuxbrew/.linuxbrew/bin/gcc-ranlib-16.2"
+      - "/home/linuxbrew/.linuxbrew/sbin/gcc-ranlib-16.2"
+      - "/usr/bin/gcc-ranlib-16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib-16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib-16"
+      - "/home/snaf/.local/bin/gcc-ranlib-16"
+      - "/home/snaf/bin/gcc-ranlib-16"
+      - "/usr/local/sbin/gcc-ranlib-16"
+      - "/usr/local/bin/gcc-ranlib-16"
+      - "/home/linuxbrew/.linuxbrew/bin/gcc-ranlib-16"
+      - "/home/linuxbrew/.linuxbrew/sbin/gcc-ranlib-16"
+      - "/usr/bin/gcc-ranlib16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/gcc-ranlib16"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/gcc-ranlib16"
+      - "/home/snaf/.local/bin/gcc-ranlib16"
+      - "/home/snaf/bin/gcc-ranlib16"
+      - "/usr/local/sbin/gcc-ranlib16"
+      - "/usr/local/bin/gcc-ranlib16"
+      - "/home/linuxbrew/.linuxbrew/bin/gcc-ranlib16"
+      - "/home/linuxbrew/.linuxbrew/sbin/gcc-ranlib16"
+    found: "/usr/bin/gcc-ranlib"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:123 (try_compile)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:34 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-7pmcH6"
+      binary: "/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-7pmcH6"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: false
+      stdout: |
+        Change Dir: '/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-7pmcH6'
+        
+        Run Build Command(s): /home/linuxbrew/.linuxbrew/bin/ninja -v cmTC_6d503
+        [1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -c /home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeCCompilerABI.c
+        Using built-in specs.
+        COLLECT_GCC=/usr/bin/cc
+        OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
+        OFFLOAD_TARGET_DEFAULT=1
+        Target: x86_64-redhat-linux
+        Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,objc,obj-c++,ada,go,d,m2,cobol,algol68,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugzilla.redhat.com/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --enable-libstdcxx-backtrace --with-libstdcxx-zoneinfo=/usr/share/zoneinfo --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-16.2.1-build/gcc-16.2.1-20260819/obj-x86_64-redhat-linux/isl-install --enable-offload-targets=nvptx-none,amdgcn-amdhsa --enable-offload-defaulted --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-tls=gnu2 --with-arch_32=i686 --build=x86_64-redhat-linux --with-build-config=bootstrap-lto --enable-link-serialization=1 --disable-libssp
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 16.2.1 20260819 (Red Hat 16.2.1-2) (GCC) 
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'CMakeFiles/cmTC_6d503.dir/'
+         /usr/libexec/gcc/x86_64-redhat-linux/16/cc1 -quiet -v /home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_6d503.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -mtls-dialect=gnu2 -version -o /tmp/ccOdsIbC.s
+        GNU C23 (GCC) version 16.2.1 20260819 (Red Hat 16.2.1-2) (x86_64-redhat-linux)
+        	compiled by GNU C version 16.2.1 20260819 (Red Hat 16.2.1-2), GMP version 6.3.0, MPFR version 4.2.2, MPC version 1.4.1, isl version isl-0.24-GMP
+        
+        GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/16/include-fixed"
+        ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/16/../../../../x86_64-redhat-linux/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/lib/gcc/x86_64-redhat-linux/16/include
+         /usr/local/include
+         /usr/include
+        End of search list.
+        Compiler executable checksum: 9bab69ee039b57e5d63c6dcf5d331ec2
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'CMakeFiles/cmTC_6d503.dir/'
+         as -v --64 -o CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o /tmp/ccOdsIbC.s
+        GNU assembler version 2.46.1 (x86_64-redhat-linux) using BFD version version 2.46.1-1.fc44
+        COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.'
+        [2/2] : && /usr/bin/cc  -v -Wl,-v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -o cmTC_6d503   && :
+        Using built-in specs.
+        COLLECT_GCC=/usr/bin/cc
+        COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper
+        OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa
+        OFFLOAD_TARGET_DEFAULT=1
+        Target: x86_64-redhat-linux
+        Configured with: ../configure --enable-bootstrap --enable-languages=c,c++,fortran,objc,obj-c++,ada,go,d,m2,cobol,algol68,lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugzilla.redhat.com/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --enable-libstdcxx-backtrace --with-libstdcxx-zoneinfo=/usr/share/zoneinfo --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-16.2.1-build/gcc-16.2.1-20260819/obj-x86_64-redhat-linux/isl-install --enable-offload-targets=nvptx-none,amdgcn-amdhsa --enable-offload-defaulted --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-tls=gnu2 --with-arch_32=i686 --build=x86_64-redhat-linux --with-build-config=bootstrap-lto --enable-link-serialization=1 --disable-libssp
+        Thread model: posix
+        Supported LTO compression algorithms: zlib zstd
+        gcc version 16.2.1 20260819 (Red Hat 16.2.1-2) (GCC) 
+        COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/
+        LIBRARY_PATH=/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6d503' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'cmTC_6d503.'
+         /usr/libexec/gcc/x86_64-redhat-linux/16/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccR2zVr1.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_6d503 /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/16 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-redhat-linux/16/crtend.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o
+        collect2 version 16.2.1 20260819 (Red Hat 16.2.1-2)
+        /usr/bin/ld -plugin /usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccR2zVr1.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_6d503 /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/16 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-redhat-linux/16/crtend.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o
+        GNU ld version 2.46.1-1.fc44
+        COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6d503' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'cmTC_6d503.'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:255 (message)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:34 (project)"
+    message: |
+      Parsed C implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/usr/lib/gcc/x86_64-redhat-linux/16/include]
+          add: [/usr/local/include]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/usr/lib/gcc/x86_64-redhat-linux/16/include] ==> [/usr/lib/gcc/x86_64-redhat-linux/16/include]
+        collapse include dir [/usr/local/include] ==> [/usr/local/include]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/usr/lib/gcc/x86_64-redhat-linux/16/include;/usr/local/include;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:291 (message)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:34 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|"|[0-9]+>[ 	-]*Build:[ 	0-9]+ ms[ 	]*)?[ 	]*(([^"]*[/\\])?(ld[0-9]*(|\\.[a-rt-z][a-z]*|\\.s[a-np-z][a-z]*|\\.so[a-z]+)|wild))("|,| |$)]
+        ignore line: [Change Dir: '/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-7pmcH6']
+        ignore line: []
+        ignore line: [Run Build Command(s): /home/linuxbrew/.linuxbrew/bin/ninja -v cmTC_6d503]
+        ignore line: [[1/2] /usr/bin/cc   -v -o CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -c /home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeCCompilerABI.c]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/usr/bin/cc]
+        ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
+        ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+        ignore line: [Target: x86_64-redhat-linux]
+        ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran objc obj-c++ ada go d m2 cobol algol68 lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugzilla.redhat.com/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --enable-libstdcxx-backtrace --with-libstdcxx-zoneinfo=/usr/share/zoneinfo --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-16.2.1-build/gcc-16.2.1-20260819/obj-x86_64-redhat-linux/isl-install --enable-offload-targets=nvptx-none amdgcn-amdhsa --enable-offload-defaulted --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-tls=gnu2 --with-arch_32=i686 --build=x86_64-redhat-linux --with-build-config=bootstrap-lto --enable-link-serialization=1 --disable-libssp]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 16.2.1 20260819 (Red Hat 16.2.1-2) (GCC) ]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'CMakeFiles/cmTC_6d503.dir/']
+        ignore line: [ /usr/libexec/gcc/x86_64-redhat-linux/16/cc1 -quiet -v /home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeCCompilerABI.c -quiet -dumpdir CMakeFiles/cmTC_6d503.dir/ -dumpbase CMakeCCompilerABI.c.c -dumpbase-ext .c -mtune=generic -march=x86-64 -mtls-dialect=gnu2 -version -o /tmp/ccOdsIbC.s]
+        ignore line: [GNU C23 (GCC) version 16.2.1 20260819 (Red Hat 16.2.1-2) (x86_64-redhat-linux)]
+        ignore line: [	compiled by GNU C version 16.2.1 20260819 (Red Hat 16.2.1-2)  GMP version 6.3.0  MPFR version 4.2.2  MPC version 1.4.1  isl version isl-0.24-GMP]
+        ignore line: []
+        ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/16/include-fixed"]
+        ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-redhat-linux/16/../../../../x86_64-redhat-linux/include"]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/lib/gcc/x86_64-redhat-linux/16/include]
+        ignore line: [ /usr/local/include]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [Compiler executable checksum: 9bab69ee039b57e5d63c6dcf5d331ec2]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'CMakeFiles/cmTC_6d503.dir/']
+        ignore line: [ as -v --64 -o CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o /tmp/ccOdsIbC.s]
+        ignore line: [GNU assembler version 2.46.1 (x86_64-redhat-linux) using BFD version version 2.46.1-1.fc44]
+        ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.']
+        ignore line: [[2/2] : && /usr/bin/cc  -v -Wl -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -o cmTC_6d503   && :]
+        ignore line: [Using built-in specs.]
+        ignore line: [COLLECT_GCC=/usr/bin/cc]
+        ignore line: [COLLECT_LTO_WRAPPER=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper]
+        ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:amdgcn-amdhsa]
+        ignore line: [OFFLOAD_TARGET_DEFAULT=1]
+        ignore line: [Target: x86_64-redhat-linux]
+        ignore line: [Configured with: ../configure --enable-bootstrap --enable-languages=c c++ fortran objc obj-c++ ada go d m2 cobol algol68 lto --prefix=/usr --mandir=/usr/share/man --infodir=/usr/share/info --with-bugurl=https://bugzilla.redhat.com/ --enable-shared --enable-threads=posix --enable-checking=release --enable-multilib --with-system-zlib --enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object --enable-linker-build-id --with-gcc-major-version-only --enable-libstdcxx-backtrace --with-libstdcxx-zoneinfo=/usr/share/zoneinfo --with-linker-hash-style=gnu --enable-plugin --enable-initfini-array --with-isl=/builddir/build/BUILD/gcc-16.2.1-build/gcc-16.2.1-20260819/obj-x86_64-redhat-linux/isl-install --enable-offload-targets=nvptx-none amdgcn-amdhsa --enable-offload-defaulted --without-cuda-driver --enable-gnu-indirect-function --enable-cet --with-tune=generic --with-tls=gnu2 --with-arch_32=i686 --build=x86_64-redhat-linux --with-build-config=bootstrap-lto --enable-link-serialization=1 --disable-libssp]
+        ignore line: [Thread model: posix]
+        ignore line: [Supported LTO compression algorithms: zlib zstd]
+        ignore line: [gcc version 16.2.1 20260819 (Red Hat 16.2.1-2) (GCC) ]
+        ignore line: [COMPILER_PATH=/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/16/:/usr/libexec/gcc/x86_64-redhat-linux/:/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/]
+        ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-redhat-linux/16/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/usr/lib/gcc/x86_64-redhat-linux/16/../../../:/lib/:/usr/lib/]
+        ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_6d503' '-mtune=generic' '-march=x86-64' '-mtls-dialect=gnu2' '-dumpdir' 'cmTC_6d503.']
+        link line: [ /usr/libexec/gcc/x86_64-redhat-linux/16/collect2 -plugin /usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccR2zVr1.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_6d503 /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/16 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-redhat-linux/16/crtend.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o]
+          arg [/usr/libexec/gcc/x86_64-redhat-linux/16/collect2] ==> ignore
+          arg [-plugin] ==> ignore
+          arg [/usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so] ==> ignore
+          arg [-plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper] ==> ignore
+          arg [-plugin-opt=-fresolution=/tmp/ccR2zVr1.res] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s_asneeded] ==> ignore
+          arg [-plugin-opt=-pass-through=-latomic_asneeded] ==> ignore
+          arg [-plugin-opt=-pass-through=-lc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+          arg [-plugin-opt=-pass-through=-lgcc_s_asneeded] ==> ignore
+          arg [--build-id] ==> ignore
+          arg [--no-add-needed] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [--hash-style=gnu] ==> ignore
+          arg [-m] ==> ignore
+          arg [elf_x86_64] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_6d503] ==> ignore
+          arg [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o]
+          arg [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o]
+          arg [/usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o]
+          arg [-L/usr/lib/gcc/x86_64-redhat-linux/16] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/16]
+          arg [-L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64]
+          arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+          arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+          arg [-L/usr/lib/gcc/x86_64-redhat-linux/16/../../..] ==> dir [/usr/lib/gcc/x86_64-redhat-linux/16/../../..]
+          arg [-L/lib] ==> dir [/lib]
+          arg [-L/usr/lib] ==> dir [/usr/lib]
+          arg [-v] ==> ignore
+          arg [CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o] ==> ignore
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lgcc_s_asneeded] ==> lib [gcc_s_asneeded]
+          arg [-latomic_asneeded] ==> lib [atomic_asneeded]
+          arg [-lc] ==> lib [c]
+          arg [-lgcc] ==> lib [gcc]
+          arg [-lgcc_s_asneeded] ==> lib [gcc_s_asneeded]
+          arg [/usr/lib/gcc/x86_64-redhat-linux/16/crtend.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/16/crtend.o]
+          arg [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o] ==> obj [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o]
+        ignore line: [collect2 version 16.2.1 20260819 (Red Hat 16.2.1-2)]
+        link line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccR2zVr1.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_6d503 /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/16 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-redhat-linux/16/crtend.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o] ==> linker [/usr/bin/ld]
+        link line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccR2zVr1.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_6d503 /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/16 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-redhat-linux/16/crtend.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o] ==> linker architecture flags [-m;elf]
+        ignore line: [/usr/bin/ld -plugin /usr/libexec/gcc/x86_64-redhat-linux/16/liblto_plugin.so -plugin-opt=/usr/libexec/gcc/x86_64-redhat-linux/16/lto-wrapper -plugin-opt=-fresolution=/tmp/ccR2zVr1.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded -plugin-opt=-pass-through=-latomic_asneeded -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s_asneeded --build-id --no-add-needed --eh-frame-hdr --hash-style=gnu -m elf_x86_64 -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_6d503 /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o /usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o -L/usr/lib/gcc/x86_64-redhat-linux/16 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/16/../../.. -L/lib -L/usr/lib -v CMakeFiles/cmTC_6d503.dir/CMakeCCompilerABI.c.o -lgcc -lgcc_s_asneeded -latomic_asneeded -lc -lgcc -lgcc_s_asneeded /usr/lib/gcc/x86_64-redhat-linux/16/crtend.o /usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o]
+        linker tool for 'C': /usr/bin/ld -m;elf
+        collapse obj [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crt1.o] ==> [/usr/lib64/crt1.o]
+        collapse obj [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crti.o] ==> [/usr/lib64/crti.o]
+        collapse obj [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64/crtn.o] ==> [/usr/lib64/crtn.o]
+        collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/16] ==> [/usr/lib/gcc/x86_64-redhat-linux/16]
+        collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/16/../../../../lib64] ==> [/usr/lib64]
+        collapse library dir [/lib/../lib64] ==> [/lib64]
+        collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+        collapse library dir [/usr/lib/gcc/x86_64-redhat-linux/16/../../..] ==> [/usr/lib]
+        collapse library dir [/lib] ==> [/lib]
+        collapse library dir [/usr/lib] ==> [/usr/lib]
+        implicit libs: [gcc;gcc_s_asneeded;atomic_asneeded;c;gcc;gcc_s_asneeded]
+        implicit objs: [/usr/lib64/crt1.o;/usr/lib64/crti.o;/usr/lib/gcc/x86_64-redhat-linux/16/crtbegin.o;/usr/lib/gcc/x86_64-redhat-linux/16/crtend.o;/usr/lib64/crtn.o]
+        implicit dirs: [/usr/lib/gcc/x86_64-redhat-linux/16;/usr/lib64;/lib64;/usr/lib;/lib]
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/Internal/CMakeDetermineLinkerId.cmake:41 (message)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:337 (cmake_determine_linker_id)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:34 (project)"
+    message: |
+      Running the C compiler's linker: "/usr/bin/ld" "-v"
+      GNU ld version 2.46.1-1.fc44
+  -
+    kind: "find-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/FindGit.cmake:111 (find_program)"
+      - "cmake-scripts/version.cmake:67 (find_package)"
+      - "CMakeLists.txt:130 (include)"
+    mode: "program"
+    variable: "GIT_EXECUTABLE"
+    description: "Git command line client"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "git"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/"
+      - "/usr/bin/"
+      - "/usr/sbin/"
+      - "/usr/"
+      - "/bin/"
+      - "/sbin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/home/linuxbrew/.linuxbrew/"
+      - "/usr/X11R6/bin/"
+      - "/usr/X11R6/sbin/"
+      - "/usr/X11R6/"
+      - "/usr/pkg/bin/"
+      - "/usr/pkg/sbin/"
+      - "/usr/pkg/"
+      - "/opt/bin/"
+      - "/opt/sbin/"
+      - "/opt/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/git"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/git"
+      - "/home/snaf/.local/bin/git"
+      - "/home/snaf/bin/git"
+      - "/usr/local/sbin/git"
+      - "/usr/local/bin/git"
+    found: "/usr/bin/git"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/home/linuxbrew/.linuxbrew"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "cmake-scripts/FindSDL2.cmake:167 (find_path)"
+      - "cmake-scripts/Dependencies.cmake:22 (find_package)"
+      - "CMakeLists.txt:146 (include)"
+    mode: "path"
+    variable: "SDL2_INCLUDE_DIR"
+    description: "Where the SDL2 headers can be found"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "SDL.h"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/SDL2/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/include/SDL2/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/include/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/SDL2/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/include/SDL2/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/include/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/SDL2/"
+      - "/home/snaf/.local/bin/include/SDL2/"
+      - "/home/snaf/.local/bin/include/"
+      - "/home/snaf/.local/bin/"
+      - "/home/snaf/bin/SDL2/"
+      - "/home/snaf/bin/include/SDL2/"
+      - "/home/snaf/bin/include/"
+      - "/home/snaf/bin/"
+      - "/usr/local/sbin/SDL2/"
+      - "/usr/local/sbin/include/SDL2/"
+      - "/usr/local/sbin/include/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/SDL2/"
+      - "/usr/local/bin/include/SDL2/"
+      - "/usr/local/bin/include/"
+      - "/usr/local/bin/"
+      - "/usr/bin/SDL2/"
+      - "/usr/bin/include/SDL2/"
+      - "/usr/bin/include/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/bin/include/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/bin/include/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/sbin/include/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/sbin/include/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/include/SDL2/"
+      - "/usr/local/include/include/SDL2/"
+      - "/usr/local/include/include/"
+      - "/usr/local/include/"
+      - "/usr/local/SDL2/"
+      - "/usr/local/include/SDL2/"
+      - "/usr/local/include/"
+      - "/usr/local/"
+      - "/usr/include/SDL2/"
+      - "/usr/include/include/SDL2/"
+      - "/usr/include/include/"
+      - "/usr/include/"
+      - "/usr/SDL2/"
+      - "/usr/include/SDL2/"
+      - "/usr/include/"
+      - "/usr/"
+      - "/include/SDL2/"
+      - "/include/include/SDL2/"
+      - "/include/include/"
+      - "/include/"
+      - "/home/linuxbrew/.linuxbrew/include/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/include/include/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/include/include/"
+      - "/home/linuxbrew/.linuxbrew/include/"
+      - "/home/linuxbrew/.linuxbrew/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/include/SDL2/"
+      - "/home/linuxbrew/.linuxbrew/include/"
+      - "/home/linuxbrew/.linuxbrew/"
+      - "/usr/X11R6/include/SDL2/"
+      - "/usr/X11R6/include/include/SDL2/"
+      - "/usr/X11R6/include/include/"
+      - "/usr/X11R6/include/"
+      - "/usr/X11R6/SDL2/"
+      - "/usr/X11R6/include/SDL2/"
+      - "/usr/X11R6/include/"
+      - "/usr/X11R6/"
+      - "/usr/pkg/include/SDL2/"
+      - "/usr/pkg/include/include/SDL2/"
+      - "/usr/pkg/include/include/"
+      - "/usr/pkg/include/"
+      - "/usr/pkg/SDL2/"
+      - "/usr/pkg/include/SDL2/"
+      - "/usr/pkg/include/"
+      - "/usr/pkg/"
+      - "/opt/include/SDL2/"
+      - "/opt/include/include/SDL2/"
+      - "/opt/include/include/"
+      - "/opt/include/"
+      - "/opt/SDL2/"
+      - "/opt/include/SDL2/"
+      - "/opt/include/"
+      - "/opt/"
+      - "/usr/include/X11/SDL2/"
+      - "/usr/include/X11/include/SDL2/"
+      - "/usr/include/X11/include/"
+      - "/usr/include/X11/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/SDL2/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/include/SDL2/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/include/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/SDL2/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/include/SDL2/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/include/SDL.h"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/SDL.h"
+      - "/home/snaf/.local/bin/SDL2/SDL.h"
+      - "/home/snaf/.local/bin/include/SDL2/SDL.h"
+      - "/home/snaf/.local/bin/include/SDL.h"
+      - "/home/snaf/.local/bin/SDL.h"
+      - "/home/snaf/bin/SDL2/SDL.h"
+      - "/home/snaf/bin/include/SDL2/SDL.h"
+      - "/home/snaf/bin/include/SDL.h"
+      - "/home/snaf/bin/SDL.h"
+      - "/usr/local/sbin/SDL2/SDL.h"
+      - "/usr/local/sbin/include/SDL2/SDL.h"
+      - "/usr/local/sbin/include/SDL.h"
+      - "/usr/local/sbin/SDL.h"
+      - "/usr/local/bin/SDL2/SDL.h"
+      - "/usr/local/bin/include/SDL2/SDL.h"
+      - "/usr/local/bin/include/SDL.h"
+      - "/usr/local/bin/SDL.h"
+      - "/usr/bin/SDL2/SDL.h"
+      - "/usr/bin/include/SDL2/SDL.h"
+      - "/usr/bin/include/SDL.h"
+      - "/usr/bin/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/bin/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/bin/include/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/bin/include/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/bin/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/sbin/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/sbin/include/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/sbin/include/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/sbin/SDL.h"
+      - "/usr/local/include/SDL2/SDL.h"
+      - "/usr/local/include/include/SDL2/SDL.h"
+      - "/usr/local/include/include/SDL.h"
+      - "/usr/local/include/SDL.h"
+      - "/usr/local/SDL2/SDL.h"
+      - "/usr/local/include/SDL2/SDL.h"
+      - "/usr/local/include/SDL.h"
+      - "/usr/local/SDL.h"
+      - "/usr/include/SDL2/SDL.h"
+      - "/usr/include/include/SDL2/SDL.h"
+      - "/usr/include/include/SDL.h"
+      - "/usr/include/SDL.h"
+      - "/usr/SDL2/SDL.h"
+      - "/usr/include/SDL2/SDL.h"
+      - "/usr/include/SDL.h"
+      - "/usr/SDL.h"
+      - "/include/SDL2/SDL.h"
+      - "/include/include/SDL2/SDL.h"
+      - "/include/include/SDL.h"
+      - "/include/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/include/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/include/include/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/include/include/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/include/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/include/SDL2/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/include/SDL.h"
+      - "/home/linuxbrew/.linuxbrew/SDL.h"
+      - "/usr/X11R6/include/SDL2/SDL.h"
+      - "/usr/X11R6/include/include/SDL2/SDL.h"
+      - "/usr/X11R6/include/include/SDL.h"
+      - "/usr/X11R6/include/SDL.h"
+      - "/usr/X11R6/SDL2/SDL.h"
+      - "/usr/X11R6/include/SDL2/SDL.h"
+      - "/usr/X11R6/include/SDL.h"
+      - "/usr/X11R6/SDL.h"
+      - "/usr/pkg/include/SDL2/SDL.h"
+      - "/usr/pkg/include/include/SDL2/SDL.h"
+      - "/usr/pkg/include/include/SDL.h"
+      - "/usr/pkg/include/SDL.h"
+      - "/usr/pkg/SDL2/SDL.h"
+      - "/usr/pkg/include/SDL2/SDL.h"
+      - "/usr/pkg/include/SDL.h"
+      - "/usr/pkg/SDL.h"
+      - "/opt/include/SDL2/SDL.h"
+      - "/opt/include/include/SDL2/SDL.h"
+      - "/opt/include/include/SDL.h"
+      - "/opt/include/SDL.h"
+      - "/opt/SDL2/SDL.h"
+      - "/opt/include/SDL2/SDL.h"
+      - "/opt/include/SDL.h"
+      - "/opt/SDL.h"
+      - "/usr/include/X11/SDL2/SDL.h"
+      - "/usr/include/X11/include/SDL2/SDL.h"
+      - "/usr/include/X11/include/SDL.h"
+      - "/usr/include/X11/SDL.h"
+    found: false
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/home/linuxbrew/.linuxbrew"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_INCLUDE_PATH:
+        - "/usr/include/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "cmake-scripts/FindSDL2.cmake:188 (find_library)"
+      - "cmake-scripts/Dependencies.cmake:22 (find_package)"
+      - "CMakeLists.txt:146 (include)"
+    mode: "library"
+    variable: "SDL2_LIBRARY"
+    description: "Where the SDL2 Library can be found"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "SDL2"
+      - "SDL-2.0"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/lib/"
+      - "/usr/local/lib/"
+      - "/usr/local/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/"
+      - "/lib64/"
+      - "/lib/"
+      - "/home/linuxbrew/.linuxbrew/lib/"
+      - "/home/linuxbrew/.linuxbrew/lib/"
+      - "/home/linuxbrew/.linuxbrew/"
+      - "/opt/"
+      - "/usr/lib64/X11/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/lib/"
+      - "/usr/local/lib/"
+      - "/usr/local/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/"
+      - "/lib64/"
+      - "/lib/"
+    found: "/home/linuxbrew/.linuxbrew/lib/libSDL2.so"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/home/linuxbrew/.linuxbrew"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "find-v1"
+    backtrace:
+      - "cmake-scripts/FindSDL2.cmake:221 (find_library)"
+      - "cmake-scripts/Dependencies.cmake:22 (find_package)"
+      - "CMakeLists.txt:146 (include)"
+    mode: "library"
+    variable: "SDL2MAIN_LIBRARY"
+    description: "Where the SDL2main library can be found"
+    settings:
+      SearchFramework: "NEVER"
+      SearchAppBundle: "NEVER"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "SDL2main"
+    candidate_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/lib/"
+      - "/usr/local/lib/"
+      - "/usr/local/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/"
+      - "/lib64/"
+      - "/lib/"
+      - "/home/linuxbrew/.linuxbrew/lib/"
+      - "/home/linuxbrew/.linuxbrew/lib/"
+      - "/home/linuxbrew/.linuxbrew/"
+      - "/opt/"
+      - "/usr/lib64/X11/"
+      - "/opt/"
+    searched_directories:
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand/"
+      - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli/"
+      - "/home/snaf/.local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/bin/"
+      - "/usr/bin/"
+      - "/home/linuxbrew/.linuxbrew/bin/"
+      - "/home/linuxbrew/.linuxbrew/sbin/"
+      - "/usr/local/lib/"
+      - "/usr/local/lib/"
+      - "/usr/local/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/lib64/"
+      - "/usr/lib/"
+      - "/usr/"
+      - "/lib64/"
+      - "/lib/"
+    found: "/home/linuxbrew/.linuxbrew/lib/libSDL2main.a"
+    search_context:
+      ENV{PATH}:
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/debugCommand"
+        - "/home/snaf/.config/Code/User/globalStorage/github.copilot-chat/copilotCli"
+        - "/home/snaf/.local/bin"
+        - "/home/snaf/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/home/linuxbrew/.linuxbrew/bin"
+        - "/home/linuxbrew/.linuxbrew/sbin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/home/linuxbrew/.linuxbrew"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:81 (try_compile)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/CheckCSourceCompiles.cmake:103 (cmake_check_source_compiles)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/FindThreads.cmake:160 (check_c_source_compiles)"
+      - "/home/linuxbrew/.linuxbrew/share/cmake/Modules/FindThreads.cmake:226 (_threads_check_libc)"
+      - "cmake-scripts/FindSDL2.cmake:234 (find_package)"
+      - "cmake-scripts/Dependencies.cmake:22 (find_package)"
+      - "CMakeLists.txt:146 (include)"
+    directories:
+      source: "/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-ifRJ7T"
+      binary: "/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-ifRJ7T"
+    cmakeVariables:
+      CMAKE_C_FLAGS: " -Wall -Wextra -Wno-unused-parameter -Wformat -pedantic -Wvla"
+      CMAKE_C_FLAGS_DEBUG: "-g -ggdb -Werror -fno-omit-frame-pointer"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/snaf/dev/openomf/cmake-scripts"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: '/home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-ifRJ7T'
+        
+        Run Build Command(s): /home/linuxbrew/.linuxbrew/bin/ninja -v cmTC_19c4f
+        [1/2] /usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD  -Wall -Wextra -Wno-unused-parameter -Wformat -pedantic -Wvla  -std=gnu11 -o CMakeFiles/cmTC_19c4f.dir/src.c.o -c /home/snaf/dev/openomf/build-verify/CMakeFiles/CMakeScratch/TryCompile-ifRJ7T/src.c
+        [2/2] : && /usr/bin/cc -Wall -Wextra -Wno-unused-parameter -Wformat -pedantic -Wvla  CMakeFiles/cmTC_19c4f.dir/src.c.o -o cmTC_19c4f   && :
+        
+      exitCode: 0
+...

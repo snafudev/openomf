@@ -16,6 +16,10 @@ OPTION(USE_EXTENDED_PALETTE "Use 1024-color extended palette instead of 256" ON)
 OPTION(USE_MINIUPNPC "Use miniupnpc for port forwarding" ON)
 OPTION(USE_NATPMP "Use natpmp for port forwarding" ON)
 
+set(OPENOMF_DEMO_HAR "-1" CACHE STRING "HAR id to preload in the startup demo (-1 = random)")
+set(OPENOMF_DEMO_PILOT "-1" CACHE STRING "Pilot id to preload in the startup demo (-1 = random)")
+set(OPENOMF_DEMO_DIFFICULTY "-1" CACHE STRING "AI difficulty to preload in the startup demo (-1 = default)")
+
 # vcpkg features must be set before project()
 if(USE_TESTS)
     list(APPEND VCPKG_MANIFEST_FEATURES use-tests)
@@ -28,6 +32,12 @@ if(USE_NATPMP)
 endif()
 
 project(OpenOMF C)
+
+add_compile_definitions(
+    OPENOMF_DEFAULT_DEMO_HAR=${OPENOMF_DEMO_HAR}
+    OPENOMF_DEFAULT_DEMO_PILOT=${OPENOMF_DEMO_PILOT}
+    OPENOMF_DEFAULT_DEMO_DIFFICULTY=${OPENOMF_DEMO_DIFFICULTY}
+)
 
 # Generate compile_commands.json so editors can find the correct headers.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -339,6 +349,7 @@ if (USE_TOOLS)
     add_executable(fonttool tools/fonttool/main.c)
     add_executable(setuptool tools/setuptool/main.c tools/shared/pilot.c)
     add_executable(stringparser tools/stringparser/main.c)
+    add_executable(gen_move_test tools/gen_move_test.c)
 
     list(APPEND TOOL_TARGET_NAMES
         bktool
@@ -355,6 +366,7 @@ if (USE_TOOLS)
         chrtool
         setuptool
         stringparser
+        gen_move_test
     )
     message(STATUS "Development: CLI tools enabled")
 else()
@@ -438,6 +450,12 @@ if(CUNIT_FOUND)
         "testing/*.c"
     )
 
+    # ai_catalog_matching_test.c exercises the move-catalog-by-name feature
+    # (assign_move_by_name / ai_catalog_*), which is currently only documented
+    # in docs/AI_MOVE_CATALOG.md and not yet implemented in src/. Exclude it so
+    # the rest of the test binary can build; re-add when the feature lands.
+    list(REMOVE_ITEM TEST_SRC "testing/ai/ai_catalog_matching_test.c")
+
     add_executable(openomf_test_main ${TEST_SRC})
 
     # This makes loading test resources possible
@@ -465,8 +483,11 @@ endif()
 
 include("cmake-scripts/BuildLanguages.cmake")
 
-# Copy some resources to destination resources directory to ease development setup.
-file(COPY resources/openomf.bk resources/gamecontrollerdb/gamecontrollerdb.txt DESTINATION resources)
+# Copy the runtime resources expected by a development build into the generated
+# resources directory so the binary can resolve the same layout as an installed
+# package. Keep the AI config and mod tree alongside the generated game assets.
+file(COPY resources/openomf.bk resources/gamecontrollerdb/gamecontrollerdb.txt
+     resources/ai_config resources/mods DESTINATION resources)
 
 set(DOC_FILES
     README.md

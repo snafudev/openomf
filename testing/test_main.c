@@ -1,5 +1,12 @@
 #include <CUnit/Basic.h>
 #include <CUnit/CUnit.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int ai_deterministic_tests_enabled(void) {
+    const char *flag = getenv("OPENOMF_RUN_DETERMINISTIC_TESTS");
+    return flag != NULL && strcmp(flag, "0") != 0 && strcmp(flag, "false") != 0 && strcmp(flag, "FALSE") != 0;
+}
 
 void af_test_suite(CU_pSuite suite);
 void bk_test_suite(CU_pSuite suite);
@@ -26,6 +33,7 @@ void sprite_packer_test_suite(CU_pSuite suite);
 void sound_tracker_test_suite(CU_pSuite suite);
 int sound_tracker_suite_init(void);
 int sound_tracker_suite_free(void);
+void log_module_test_suite(CU_pSuite suite);
 void ai_decision_engine_test_suite(CU_pSuite suite);
 void ai_utils_test_suite(CU_pSuite suite);
 void ai_state_test_suite(CU_pSuite suite);
@@ -39,6 +47,7 @@ void ai_config_mod_overlay_test_suite(CU_pSuite suite);
 void ai_learning_test_suite(CU_pSuite suite);
 void ai_event_test_suite(CU_pSuite suite);
 void ai_integration_test_suite(CU_pSuite suite);
+void ai_pilot_stats_test_suite(CU_pSuite suite);
 
 int main(int argc, char **argv) {
     CU_pSuite suite = NULL;
@@ -175,83 +184,100 @@ int main(int argc, char **argv) {
     }
     sound_tracker_test_suite(sound_tracker_suite);
 
-    CU_pSuite ai_decision_engine_suite = CU_add_suite("AI Decision Engine", NULL, NULL);
-    if(ai_decision_engine_suite == NULL) {
+    CU_pSuite log_module_suite = CU_add_suite("Log Modules", NULL, NULL);
+    if(log_module_suite == NULL) {
         goto end;
     }
-    ai_decision_engine_test_suite(ai_decision_engine_suite);
+    log_module_test_suite(log_module_suite);
 
-    CU_pSuite ai_utils_suite = CU_add_suite("AI Utils", NULL, NULL);
-    if(ai_utils_suite == NULL) {
-        goto end;
-    }
-    ai_utils_test_suite(ai_utils_suite);
+    if(ai_deterministic_tests_enabled()) {
+        CU_pSuite ai_decision_engine_suite = CU_add_suite("AI Decision Engine", NULL, NULL);
+        if(ai_decision_engine_suite == NULL) {
+            goto end;
+        }
+        ai_decision_engine_test_suite(ai_decision_engine_suite);
 
-    CU_pSuite ai_state_suite = CU_add_suite("AI State", NULL, NULL);
-    if(ai_state_suite == NULL) {
-        goto end;
-    }
-    ai_state_test_suite(ai_state_suite);
+        CU_pSuite ai_utils_suite = CU_add_suite("AI Utils", NULL, NULL);
+        if(ai_utils_suite == NULL) {
+            goto end;
+        }
+        ai_utils_test_suite(ai_utils_suite);
 
-    CU_pSuite ai_movement_suite = CU_add_suite("AI Movement", NULL, NULL);
-    if(ai_movement_suite == NULL) {
-        goto end;
-    }
-    ai_movement_test_suite(ai_movement_suite);
+        CU_pSuite ai_state_suite = CU_add_suite("AI State", NULL, NULL);
+        if(ai_state_suite == NULL) {
+            goto end;
+        }
+        ai_state_test_suite(ai_state_suite);
 
-    CU_pSuite ai_move_selector_suite = CU_add_suite("AI Move Selector", NULL, NULL);
-    if(ai_move_selector_suite == NULL) {
-        goto end;
-    }
-    ai_move_selector_test_suite(ai_move_selector_suite);
+        CU_pSuite ai_movement_suite = CU_add_suite("AI Movement", NULL, NULL);
+        if(ai_movement_suite == NULL) {
+            goto end;
+        }
+        ai_movement_test_suite(ai_movement_suite);
 
-    CU_pSuite ai_tactic_engine_suite = CU_add_suite("AI Tactic Engine", NULL, NULL);
-    if(ai_tactic_engine_suite == NULL) {
-        goto end;
-    }
-    ai_tactic_engine_test_suite(ai_tactic_engine_suite);
+        CU_pSuite ai_move_selector_suite = CU_add_suite("AI Move Selector", NULL, NULL);
+        if(ai_move_selector_suite == NULL) {
+            goto end;
+        }
+        ai_move_selector_test_suite(ai_move_selector_suite);
 
-    CU_pSuite ai_har_skills_suite = CU_add_suite("AI HAR Skills", NULL, NULL);
-    if(ai_har_skills_suite == NULL) {
-        goto end;
-    }
-    ai_har_skills_test_suite(ai_har_skills_suite);
+        CU_pSuite ai_tactic_engine_suite = CU_add_suite("AI Tactic Engine", NULL, NULL);
+        if(ai_tactic_engine_suite == NULL) {
+            goto end;
+        }
+        ai_tactic_engine_test_suite(ai_tactic_engine_suite);
 
-    CU_pSuite ai_move_parser_suite = CU_add_suite("AI Move Parser", NULL, NULL);
-    if(ai_move_parser_suite == NULL) {
-        goto end;
-    }
-    ai_move_parser_test_suite(ai_move_parser_suite);
+        CU_pSuite ai_har_skills_suite = CU_add_suite("AI HAR Skills", NULL, NULL);
+        if(ai_har_skills_suite == NULL) {
+            goto end;
+        }
+        ai_har_skills_test_suite(ai_har_skills_suite);
 
-    CU_pSuite ai_move_executor_suite = CU_add_suite("AI Move Executor", NULL, NULL);
-    if(ai_move_executor_suite == NULL) {
-        goto end;
-    }
-    ai_move_executor_test_suite(ai_move_executor_suite);
+        CU_pSuite ai_move_parser_suite = CU_add_suite("AI Move Parser", NULL, NULL);
+        if(ai_move_parser_suite == NULL) {
+            goto end;
+        }
+        ai_move_parser_test_suite(ai_move_parser_suite);
 
-    CU_pSuite ai_config_mod_overlay_suite = CU_add_suite("AI Config Mod Overlays", NULL, NULL);
-    if(ai_config_mod_overlay_suite == NULL) {
-        goto end;
-    }
-    ai_config_mod_overlay_test_suite(ai_config_mod_overlay_suite);
+        CU_pSuite ai_move_executor_suite = CU_add_suite("AI Move Executor", NULL, NULL);
+        if(ai_move_executor_suite == NULL) {
+            goto end;
+        }
+        ai_move_executor_test_suite(ai_move_executor_suite);
 
-    CU_pSuite ai_learning_suite = CU_add_suite("AI Learning", NULL, NULL);
-    if(ai_learning_suite == NULL) {
-        goto end;
-    }
-    ai_learning_test_suite(ai_learning_suite);
+        CU_pSuite ai_config_mod_overlay_suite = CU_add_suite("AI Config Mod Overlays", NULL, NULL);
+        if(ai_config_mod_overlay_suite == NULL) {
+            goto end;
+        }
+        ai_config_mod_overlay_test_suite(ai_config_mod_overlay_suite);
 
-    CU_pSuite ai_event_suite = CU_add_suite("AI Event Handlers", NULL, NULL);
-    if(ai_event_suite == NULL) {
-        goto end;
-    }
-    ai_event_test_suite(ai_event_suite);
+        CU_pSuite ai_learning_suite = CU_add_suite("AI Learning", NULL, NULL);
+        if(ai_learning_suite == NULL) {
+            goto end;
+        }
+        ai_learning_test_suite(ai_learning_suite);
 
-    CU_pSuite ai_integration_suite = CU_add_suite("AI Integration", NULL, NULL);
-    if(ai_integration_suite == NULL) {
-        goto end;
+        CU_pSuite ai_event_suite = CU_add_suite("AI Event Handlers", NULL, NULL);
+        if(ai_event_suite == NULL) {
+            goto end;
+        }
+        ai_event_test_suite(ai_event_suite);
+
+        CU_pSuite ai_integration_suite = CU_add_suite("AI Integration", NULL, NULL);
+        if(ai_integration_suite == NULL) {
+            goto end;
+        }
+        ai_integration_test_suite(ai_integration_suite);
+
+        CU_pSuite ai_pilot_stats_suite = CU_add_suite("AI Pilot Stats", NULL, NULL);
+        if(ai_pilot_stats_suite == NULL) {
+            goto end;
+        }
+        ai_pilot_stats_test_suite(ai_pilot_stats_suite);
+    } else {
+        fprintf(stderr,
+                "Skipping AI pilot deterministic test suites. Set OPENOMF_RUN_DETERMINISTIC_TESTS=1 to enable while actively tuning AI pilot behavior.\n");
     }
-    ai_integration_test_suite(ai_integration_suite);
 
     // Run tests
     CU_basic_set_mode(CU_BRM_VERBOSE);

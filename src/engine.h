@@ -15,6 +15,9 @@ typedef struct engine_init_flags {
     path rec_file;
     int warpspeed;
     int speed;
+    int demo_har;
+    int demo_pilot;
+    int demo_difficulty;
 } engine_init_flags;
 
 int engine_init(const engine_init_flags *init_flags); // Init window, audiodevice, etc.

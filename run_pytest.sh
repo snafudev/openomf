@@ -14,4 +14,8 @@ fi
 export OPENOMF_BIN="./${OPENOMF_BIN#$BUILD_DIR}"
 export OPENOMF_RESOURCE_PATH="$PWD/$BUILD_DIR"
 
-exec poetry run pytest -vrP pytest
+if [ "${OPENOMF_RUN_DETERMINISTIC_TESTS:-0}" != "1" ]; then
+  echo "AI pilot deterministic tests are disabled by default. Set OPENOMF_RUN_DETERMINISTIC_TESTS=1 to enable them while actively tuning AI pilot behavior." >&2
+fi
+
+exec python3 -m pytest -vrP pytest

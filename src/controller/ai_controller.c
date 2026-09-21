@@ -78,6 +78,7 @@ bool likes_tactic(const controller *ctrl, int tactic_type) {
  * \return Void.
  */
 void queue_tactic(controller *ctrl, int tactic_type) {
+    log_debug_m(LOG_MODULE_TACTIC, "queue tactic %d", tactic_type);
     ai_tactic_queue(ctrl, tactic_type);
 }
 
@@ -505,8 +506,10 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
     // default mid-action jump chance
     int jump_chance = ai_movement_jump_chance(a);
 
+    const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
+
     // Change action after act_timer runs out
-    if(a->act_timer <= 0 && (roll_chance(ai_core_config_get()->base_act_chance) || diff_scale(a))) {
+    if(a->act_timer <= 0 && (roll_chance(config->base_act_chance) || diff_scale(a))) {
         int enemy_range = get_enemy_range(ctrl);
         int move_dir = ai_movement_decide(a, enemy_range, h->is_wallhugging, h->id);
 
@@ -514,7 +517,7 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
             case MOVE_DIR_FWD:
                 // walk forward
                 a->cur_act = FORWARD;
-                jump_chance = ai_core_config_get()->base_fwd_jump_chance;
+                jump_chance = config->base_fwd_jump_chance;
                 if(diff_scale(a)) {
                     jump_chance -= 2;
                 }
@@ -522,21 +525,22 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
             case MOVE_DIR_BACK:
                 // walk backward
                 a->cur_act = BACK;
-                jump_chance = ai_core_config_get()->base_back_jump_chance;
+                jump_chance = config->base_back_jump_chance;
                 if(diff_scale(a)) {
                     jump_chance -= 2;
                 }
                 break;
             case MOVE_DIR_STILL:
             default:
-                if(smart_usually(a) || roll_pref(a->pilot->att_def)) {
+                if(smart_usually(a) || roll_pref(a->pilot->att_def) ||
+                   ((int)rand_int(100) < config->block_chance)) {
                     // crouch and block
                     a->cur_act = DOWNBACK;
                     jump_chance = 0;
                 } else {
                     // do nothing
                     a->cur_act = ACT_STOP;
-                    jump_chance = ai_core_config_get()->base_still_jump_chance;
+                    jump_chance = config->base_still_jump_chance;
                     if(diff_scale(a)) {
                         jump_chance -= 5;
                     }
@@ -546,6 +550,19 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
 
         reset_act_timer(a);
         controller_cmd(ctrl, a->cur_act, ev);
+    }
+
+    // Apply the jump frequency multiplier as a divisor on the roll_chance operand.
+    // roll_chance() treats lower values as more likely, so a higher multiplier
+    // (e.g. 200) makes the AI jump more often, matching its documented meaning.
+    if(jump_chance > 0) {
+        int mult = config->jump_frequency_mult;
+        if(mult > 0) {
+            jump_chance = (jump_chance * 100) / mult;
+            if(jump_chance < 1) {
+                jump_chance = 1;
+            }
+        }
     }
 
     // Jump once in a while if they like to jump
@@ -810,11 +827,13 @@ bool handle_queued_tactic(controller *ctrl, ctrl_event **ev) {
                 tactic->move_timer = 0;
                 acted = false;
         }
-    } else if(tactic->attack_type > 0 && tactic->attack_timer > 0) {
+    } else if(tactic->attack_type > 0 && tactic->attack_timer >= 0) {
         // handle attack phase of tactic
         bool in_attempt_range = (enemy_range <= RANGE_CLOSE || (enemy_range <= RANGE_MID && dumb_sometimes(a)));
         acted = true;
-        tactic->attack_timer--;
+        if(tactic->attack_timer > 0) {
+            tactic->attack_timer--;
+        }
         if(tactic->attack_on == 0) {
             int attack_cat = 0;
             switch(tactic->attack_type) {
@@ -1029,6 +1048,11 @@ bool handle_queued_tactic(controller *ctrl, ctrl_event **ev) {
                     tactic->attack_timer = 0;
             }
         }
+
+        // If attack_timer reaches 0, reset the tactic (give up on this attack)
+        if(tactic->attack_timer == 0 && tactic->attack_type > 0 && !a->selected_move) {
+            reset_tactic_state(a);
+        }
     } else {
         // reset queued tactic
         reset_tactic_state(a);
@@ -1071,6 +1095,10 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
 
     // decrement act_timer
     a->act_timer--;
+
+    // Compact per-frame decision trace for analysis tooling (M6).
+    log_debug_m(LOG_MODULE_AI, "tick=%u state=%d tactic=%d move=%d attack=%d last_move=%d", ctrl->gs->tick,
+                h->state, a->tactic->tactic_type, a->tactic->move_type, a->tactic->attack_type, a->last_move_id);
 
     // Grab all projectiles on screen
     vector_clear(&a->active_projectiles);
@@ -1141,9 +1169,10 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     }
 
     int enemy_range = get_enemy_range(ctrl);
+    const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
 
     // attempt a random attack
-    if((roll_chance(ai_core_config_get()->random_attack_chance) || diff_scale(a)) && (enemy_range <= RANGE_CLOSE || dumb_sometimes(a)) &&
+    if((roll_chance(config->random_attack_chance) || diff_scale(a)) && (enemy_range <= RANGE_CLOSE || dumb_sometimes(a)) &&
        attempt_attack(ctrl, false)) {
         // log_debug("Random attack: %d", h->id);
         // reset movement act timer
@@ -1158,11 +1187,15 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     // log_debug("=== POLL === handle_movement");
 
     // queue a random tactic for next poll
-    if((a->last_move_id == 0 || a->tactic->tactic_type == 0 || (roll_chance(ai_core_config_get()->random_attack_chance) && diff_scale(a))) &&
+    if((a->last_move_id == 0 || a->tactic->tactic_type == 0 || (roll_chance(config->random_attack_chance) && diff_scale(a))) &&
        can_move) {
         // log_debug("Attempt to queue random tactic[0m");
-        int tacs[] = {TACTIC_SHOOT, TACTIC_CLOSE, TACTIC_FLY, TACTIC_PUSH, TACTIC_TRIP, TACTIC_GRAB, TACTIC_QUICK};
-        chain_consider_tactics(ctrl, tacs, N_ELEMENTS(tacs));
+        int tacs[] = {TACTIC_SHOOT,  TACTIC_CLOSE, TACTIC_FLY,  TACTIC_PUSH,
+                      TACTIC_TRIP,  TACTIC_GRAB,  TACTIC_QUICK, TACTIC_COUNTER};
+        // COUNTER is an advanced tactic: only consider it when the difficulty
+        // config opts into aggressive tactics. Basic list is unchanged otherwise.
+        size_t n_tacs = config->aggressive_tactics ? N_ELEMENTS(tacs) : N_ELEMENTS(tacs) - 1;
+        chain_consider_tactics(ctrl, tacs, n_tacs);
     }
 
     return 0;

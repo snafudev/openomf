@@ -43,8 +43,10 @@ typedef struct {
     // Pilot data for preference checks
     sd_pilot pilot;
     
-    // Enemy range (for attempt_attack context)
+    // Enemy range / state (for close-range tactical weighting)
     int enemy_range;
+    int enemy_state;
+    int enemy_in_stasis;
     
     // Last move ID (to avoid repetition)
     int last_move_id;

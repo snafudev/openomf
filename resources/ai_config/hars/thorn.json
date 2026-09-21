@@ -4,22 +4,49 @@
   "charge_moves": [
     {
       "name": "spike_charge",
-      "sequence": ["F", "5", "F+P"],
+      "sequence": [
+        "F",
+        "5",
+        "F+P"
+      ],
       "range_min": "ANY"
     }
   ],
   "push_moves": [
     {
       "name": "shadow_kick",
-      "sequence": ["B", "DB", "D", "DF", "F", "K"],
+      "sequence": [
+        "B",
+        "DB",
+        "D",
+        "DF",
+        "F",
+        "K"
+      ],
       "range_min": "CLOSE",
-      "conditions": ["special_preferred", "high_difficulty"]
+      "conditions": [
+        "special_preferred",
+        "high_difficulty"
+      ]
     },
     {
       "name": "speed_kick",
-      "sequence": ["D", "DF", "F+K"],
+      "sequence": [
+        "D",
+        "DF",
+        "F+K"
+      ],
       "range_min": "ANY"
     }
   ],
-  "projectile_moves": []
+  "projectile_moves": [],
+  "trip_moves": [
+    {
+      "name": "trip",
+      "sequence": [
+        "DB+K"
+      ],
+      "range_min": "ANY"
+    }
+  ]
 }

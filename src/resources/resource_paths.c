@@ -7,6 +7,9 @@
 
 #include <SDL.h>
 
+#include <limits.h>
+#include <unistd.h>
+
 #define SDL_ORGANISATION_NAME ""
 #define SDL_PROJECT_NAME "OpenOMF"
 
@@ -28,10 +31,19 @@ static path config_dir = {0};
 static path state_dir = {0};
 
 static bool base_path(str *dst) {
+    // Prefer the binary's actual location over the current working directory.
+    // In a dev build the repo root may also contain a resources tree, but the
+    // generated build output is the correct runtime resource root.
     char *sdl_env = SDL_GetBasePath();
     if(sdl_env) {
         str_from_c(dst, sdl_env);
         SDL_free(sdl_env);
+        return true;
+    }
+
+    char cwd[PATH_MAX];
+    if(getcwd(cwd, sizeof(cwd)) != NULL) {
+        str_from_c(dst, cwd);
         return true;
     }
     return false;
@@ -97,13 +109,26 @@ static bool scan_potential_resource_dirs(path *result, const str *src, const cha
     foreach(it, slice) {
         path_from_str(base, slice);
         if(!path_resolve(base)) {
-            log_warn("Unable to resolve %s; does it exist?", path_c(base));
+            if(log_is_initialized()) {
+                log_warn("Unable to resolve %s; does it exist?", path_c(base));
+            }
             continue;
         }
         path_from_parts(test, path_c(base), find);
-        log_debug("Looking for resources in %s ...", path_c(test));
+        if(log_is_initialized()) {
+            log_debug("Looking for resources in %s ...", path_c(test));
+        }
         if(path_is_file(test)) {
             path_from_parts(result, path_c(base), append);
+            path tmp_cfg = {0};
+            path_from_parts(&tmp_cfg, path_c(result), "resources", "ai_config");
+            if(!path_is_directory(&tmp_cfg)) {
+                if(log_is_initialized()) {
+                    log_debug("Skipping %s: no resource config tree found at %s", path_c(base), path_c(&tmp_cfg));
+                }
+                path_clear(result);
+                continue;
+            }
             break;
         }
     }
@@ -119,14 +144,18 @@ static bool find_resource_path(path *dst) {
     path_clear(dst);
     if(env_str(&tmp, OPENOMF_RESOURCE_PATH)) {
         if(scan_potential_resource_dirs(dst, &tmp, "resources/openomf.bk", "/")) {
-            log_debug("Resources found in %s: %s", OPENOMF_RESOURCE_PATH, path_c(dst));
+            if(log_is_initialized()) {
+                log_debug("Resources found in %s: %s", OPENOMF_RESOURCE_PATH, path_c(dst));
+            }
             goto ok;
         }
         str_free(&tmp);
     }
     if(env_str(&tmp, XDG_DATA_HOME)) {
         if(scan_potential_resource_dirs(dst, &tmp, "resources/openomf.bk", "/")) {
-            log_debug("Resources found in %s: %s", XDG_DATA_HOME, path_c(dst));
+            if(log_is_initialized()) {
+                log_debug("Resources found in %s: %s", XDG_DATA_HOME, path_c(dst));
+            }
             goto ok;
         }
         str_free(&tmp);
@@ -134,7 +163,9 @@ static bool find_resource_path(path *dst) {
     if(base_path(&tmp)) {
         // Check the base path. This may work in windows build sand when in dev mode.
         if(scan_potential_resource_dirs(dst, &tmp, "resources/openomf.bk", "/")) {
-            log_debug("Resources found in base directory: %s", path_c(dst));
+            if(log_is_initialized()) {
+                log_debug("Resources found in base directory: %s", path_c(dst));
+            }
             goto ok;
         }
         str_free(&tmp);
@@ -142,7 +173,9 @@ static bool find_resource_path(path *dst) {
     if(system_path(&tmp)) {
         // Check default paths. This may be set in CMAKE.
         if(scan_potential_resource_dirs(dst, &tmp, "openomf/resources/openomf.bk", "openomf/")) {
-            log_debug("Resources found in system path: %s", path_c(dst));
+            if(log_is_initialized()) {
+                log_debug("Resources found in system path: %s", path_c(dst));
+            }
             goto ok;
         }
         str_free(&tmp);
@@ -150,7 +183,9 @@ static bool find_resource_path(path *dst) {
     if(env_str(&tmp, "APPDIR")) {
         str_append_c(&tmp, "/usr/share/games/openomf");
         if(scan_potential_resource_dirs(dst, &tmp, "resources/openomf.bk", "/")) {
-            log_debug("Resources found in APPDIR: %s", path_c(dst));
+            if(log_is_initialized()) {
+                log_debug("Resources found in APPDIR: %s", path_c(dst));
+            }
             goto ok;
         }
         str_free(&tmp);
@@ -164,42 +199,63 @@ ok:
 
 bool resource_path_init(void) {
     if(!find_writeable_path(&state_dir, OPENOMF_STATE_PATH, XDG_STATE_HOME)) {
-        log_error("Unable to find state path!");
+        if(log_is_initialized()) {
+            log_error("Unable to find state path!");
+        }
         return false;
     }
     if(!find_writeable_path(&config_dir, OPENOMF_CONFIG_PATH, XDG_CONFIG_HOME)) {
-        log_error("Unable to find config path!");
+        if(log_is_initialized()) {
+            log_error("Unable to find config path!");
+        }
         return false;
     }
     if(!find_resource_path(&resource_dir)) {
-        log_error("Unable to find resource path!");
+        if(log_is_initialized()) {
+            log_error("Unable to find resource path!");
+        }
         return false;
     }
-    log_info("Config path = %s", path_c(&config_dir));
-    log_info("State path = %s", path_c(&state_dir));
-    log_info("Resource path = %s", path_c(&resource_dir));
+    if(log_is_initialized()) {
+        log_info("Config path = %s", path_c(&config_dir));
+        log_info("State path = %s", path_c(&state_dir));
+        log_info("Resource path = %s", path_c(&resource_dir));
+    }
     return true;
 }
 
 void resource_path_create_dirs(void) {
     if(!path_exists(&state_dir)) {
-        log_error("State directory does not exist, creating it now.");
+        if(log_is_initialized()) {
+            log_error("State directory does not exist, creating it now.");
+        }
         path_mkdir(&state_dir);
     }
     if(!path_exists(&config_dir)) {
-        log_error("Config directory does not exist, creating it now.");
+        if(log_is_initialized()) {
+            log_error("Config directory does not exist, creating it now.");
+        }
         path_mkdir(&config_dir);
     }
 }
 
 path get_config_dir(void) {
+    if(!path_is_set(&config_dir)) {
+        resource_path_init();
+    }
     return config_dir;
 }
 
 path get_state_dir(void) {
+    if(!path_is_set(&state_dir)) {
+        resource_path_init();
+    }
     return state_dir;
 }
 
 path get_resource_dir(void) {
+    if(!path_is_set(&resource_dir)) {
+        resource_path_init();
+    }
     return resource_dir;
 }

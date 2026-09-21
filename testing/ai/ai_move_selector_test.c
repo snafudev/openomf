@@ -240,6 +240,36 @@ void test_move_eval_score_consecutive_penalty(void) {
     test_pilot_free(pilot);
 }
 
+void test_move_eval_score_prefers_close_when_enemy_stunned(void) {
+    test_pilot_fixture *pilot = test_pilot_create(0);
+    test_ai_fixture *ai_fix = test_ai_create(3, pilot);
+
+    af_move close_move = create_test_move(0, CAT_CLOSE, 10.0f, 0.0f, "2K");
+    af_move neutral_move = create_test_move(1, CAT_BASIC, 10.0f, 0.0f, "1");
+
+    test_har_state har = {.state = STATE_STANDING, .close = 1, .id = HAR_JAGUAR};
+    move_stat_context ctx = {
+        .move_stats = ai_fix->ai_data.move_stats,
+        .har = &har,
+        .highest_damage = false,
+        .difficulty = 3,
+        .pilot = pilot->pilot_data,
+        .enemy_range = RANGE_CLOSE,
+        .enemy_state = STATE_STUNNED,
+        .enemy_in_stasis = 0,
+        .damage_divisor = 3,
+    };
+
+    int close_score = ai_move_eval_score(&close_move, &ctx);
+    int neutral_score = ai_move_eval_score(&neutral_move, &ctx);
+    CU_ASSERT(close_score > neutral_score);
+
+    free_test_move(&close_move);
+    free_test_move(&neutral_move);
+    test_ai_free(ai_fix);
+    test_pilot_free(pilot);
+}
+
 // ============================================================================
 // Test: ai_move_select_best - selection logic
 // ============================================================================
@@ -464,6 +494,7 @@ void ai_move_selector_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "move eval_score: learning reinforcement", test_move_eval_score_learning_reinforcement) == NULL) return;
     if(CU_add_test(suite, "move eval_score: attempt penalty", test_move_eval_score_attempt_penalty) == NULL) return;
     if(CU_add_test(suite, "move eval_score: consecutive penalty", test_move_eval_score_consecutive_penalty) == NULL) return;
+    if(CU_add_test(suite, "move eval_score: prefer close when enemy stunned", test_move_eval_score_prefers_close_when_enemy_stunned) == NULL) return;
     
     if(CU_add_test(suite, "move select_best: single valid move", test_move_select_best_single_valid_move) == NULL) return;
     if(CU_add_test(suite, "move select_best: multiple valid highest damage", test_move_select_best_multiple_valid_highest_damage) == NULL) return;
