@@ -16,6 +16,7 @@
 #include "utils/path.h"
 
 #include <errno.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -30,10 +31,171 @@ static char g_tactic_attack_type[TACTIC_COUNTER + 1][40] = {{0}};
 static char g_tactic_conditions[TACTIC_COUNTER + 1][8][40] = {{{0}}};
 static uint8_t g_tactic_condition_count[TACTIC_COUNTER + 1] = {0};
 
+typedef struct {
+    int layer;
+    int persistent;
+    int singleton;
+    object *obj;
+} tactic_render_obj;
+
 static bool move_type_token_supported(const char *move_cfg);
 static bool attack_type_token_supported(const char *attack_cfg);
 static bool condition_token_supported(const char *condition);
 static void warn_unsupported_tactic_tokens(int tactic_type);
+
+static bool ai_hazard_difficulty_allows(const controller *ctrl, int minimum_difficulty) {
+    return ctrl != NULL && ctrl->data != NULL && ((ai *)ctrl->data)->difficulty >= minimum_difficulty;
+}
+
+bool ai_hazard_fire_orb_opportunity(const controller *ctrl) {
+    if(ctrl == NULL || ctrl->gs == NULL || ctrl->har_obj_id == 0 || !ai_hazard_difficulty_allows(ctrl, 3)) {
+        return false;
+    }
+
+    object *self_obj = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
+    object *enemy_obj = NULL;
+    if(self_obj == NULL) {
+        return false;
+    }
+
+    har *self_har = object_get_userdata(self_obj);
+    if(self_har == NULL) {
+        return false;
+    }
+
+    iterator it;
+    tactic_render_obj *robj;
+    vector_iter_begin(&ctrl->gs->objects, &it);
+    foreach(it, robj) {
+        object *candidate = robj->obj;
+        if(candidate == NULL || candidate == self_obj || object_get_group(candidate) != GROUP_HAR) {
+            continue;
+        }
+        har *candidate_har = object_get_userdata(candidate);
+        if(candidate_har == NULL || candidate_har->player_id == self_har->player_id) {
+            continue;
+        }
+        enemy_obj = candidate;
+        break;
+    }
+    if(enemy_obj == NULL) {
+        return false;
+    }
+
+    har *enemy_har = object_get_userdata(enemy_obj);
+    if(enemy_har == NULL) {
+        return false;
+    }
+
+    float self_x = self_obj->pos.x;
+    float enemy_x = enemy_obj->pos.x;
+    float self_y = self_obj->pos.y;
+    float enemy_y = enemy_obj->pos.y;
+    float orb_mid_x = (self_x + enemy_x) / 2.0f;
+    float orb_gap = fabsf(enemy_x - self_x);
+
+    vector_iter_begin(&ctrl->gs->objects, &it);
+    foreach(it, robj) {
+        object *hazard = robj->obj;
+        if(hazard == NULL || hazard == self_obj || hazard == enemy_obj || object_get_group(hazard) != GROUP_HAZARD) {
+            continue;
+        }
+        if(hazard->orb_val == 0) {
+            continue;
+        }
+
+        float hazard_x = hazard->pos.x;
+        float hazard_y = hazard->pos.y;
+        float within_x = fabsf(hazard_x - orb_mid_x) <= 50.0f || fabsf(hazard_x - self_x) <= 50.0f ||
+                         fabsf(hazard_x - enemy_x) <= 50.0f;
+        float within_y = fabsf(hazard_y - self_y) <= 60.0f || fabsf(hazard_y - enemy_y) <= 60.0f;
+        if(orb_gap <= 220.0f && within_x && within_y) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool ai_hazard_wall_pressure_opportunity(const controller *ctrl) {
+    if(ctrl == NULL || ctrl->gs == NULL || ctrl->har_obj_id == 0 || !ai_hazard_difficulty_allows(ctrl, 3)) {
+        return false;
+    }
+
+    object *self_obj = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
+    if(self_obj == NULL || object_get_group(self_obj) != GROUP_HAR) {
+        return false;
+    }
+
+    object *enemy_obj = NULL;
+    iterator it;
+    tactic_render_obj *robj;
+    vector_iter_begin(&ctrl->gs->objects, &it);
+    foreach(it, robj) {
+        object *candidate = robj->obj;
+        if(candidate == NULL || candidate == self_obj || object_get_group(candidate) != GROUP_HAR) {
+            continue;
+        }
+        har *candidate_har = object_get_userdata(candidate);
+        if(candidate_har == NULL) {
+            continue;
+        }
+        enemy_obj = candidate;
+        break;
+    }
+
+    if(enemy_obj == NULL) {
+        return false;
+    }
+
+    bool self_near_wall = self_obj->pos.x <= 120.0f || self_obj->pos.x >= 520.0f;
+    bool enemy_near_wall = enemy_obj->pos.x <= 120.0f || enemy_obj->pos.x >= 520.0f;
+    if(!self_near_wall && !enemy_near_wall) {
+        return false;
+    }
+
+    float wall_x = self_near_wall ? self_obj->pos.x : enemy_obj->pos.x;
+    float nearest_hazard_x = 10000.0f;
+    vector_iter_begin(&ctrl->gs->objects, &it);
+    foreach(it, robj) {
+        object *hazard = robj->obj;
+        if(hazard == NULL || hazard == self_obj || hazard == enemy_obj || object_get_group(hazard) != GROUP_HAZARD) {
+            continue;
+        }
+        nearest_hazard_x = fminf(nearest_hazard_x, fabsf(hazard->pos.x - wall_x));
+    }
+
+    return nearest_hazard_x <= 90.0f && fabsf(enemy_obj->pos.x - self_obj->pos.x) <= 150.0f;
+}
+
+bool ai_hazard_spike_danger(const controller *ctrl) {
+    if(ctrl == NULL || ctrl->gs == NULL || ctrl->har_obj_id == 0 || !ai_hazard_difficulty_allows(ctrl, 2)) {
+        return false;
+    }
+
+    object *self_obj = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
+    if(self_obj == NULL || object_get_group(self_obj) != GROUP_HAR) {
+        return false;
+    }
+
+    iterator it;
+    tactic_render_obj *robj;
+    vector_iter_begin(&ctrl->gs->objects, &it);
+    foreach(it, robj) {
+        object *hazard = robj->obj;
+        if(hazard == NULL || hazard == self_obj || object_get_group(hazard) != GROUP_HAZARD) {
+            continue;
+        }
+
+        float dx = fabsf(hazard->pos.x - self_obj->pos.x);
+        float dy = fabsf(hazard->pos.y - self_obj->pos.y);
+        if(dx <= 50.0f && dy <= 60.0f) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 static const char *tactic_name_from_id(int tactic_id) {
     switch(tactic_id) {
@@ -747,6 +909,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             break;
         }
         case TACTIC_CLOSE: {
+            if(ai_hazard_fire_orb_opportunity(ctrl) && smart_usually(a) && enemy_range <= RANGE_MID) {
+                return true;
+            }
+
             // Avoid double-gating when an equivalent condition token is configured.
             bool needs_close_enemy_not_cramped_check =
                 !ai_tactic_config_has_condition(TACTIC_CLOSE, "enemy_not_cramped");
@@ -761,6 +927,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             break;
         }
         case TACTIC_QUICK: {
+            if(ai_hazard_fire_orb_opportunity(ctrl) && smart_usually(a) && enemy_range <= RANGE_MID) {
+                return true;
+            }
+
             bool needs_quick_enemy_not_cramped_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "enemy_not_cramped");
             bool needs_quick_pref_sniper_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "pref_sniper");
             bool needs_quick_pref_hyper_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "pref_hyper");
@@ -805,6 +975,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             break;
         }
         case TACTIC_ESCAPE: {
+            if(ai_hazard_spike_danger(ctrl)) {
+                return true;
+            }
+
             bool needs_escape_pref_jump_check = !ai_tactic_config_has_condition(TACTIC_ESCAPE, "pref_jump");
             bool needs_escape_pref_def_check = !ai_tactic_config_has_condition(TACTIC_ESCAPE, "pref_def");
 
@@ -826,6 +1000,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             break;
         }
         case TACTIC_PUSH: {
+            if(ai_hazard_wall_pressure_opportunity(ctrl) && smart_usually(a)) {
+                return true;
+            }
+
             bool needs_push_has_push_check = !ai_tactic_config_has_condition(TACTIC_PUSH, "has_push");
             bool needs_push_pref_hyper_check = !ai_tactic_config_has_condition(TACTIC_PUSH, "pref_hyper");
             bool needs_push_pref_def_check = !ai_tactic_config_has_condition(TACTIC_PUSH, "pref_def");

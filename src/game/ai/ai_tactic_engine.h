@@ -51,6 +51,9 @@ enum
     ATTACK_RANDOM, // random attack
 };
 
+bool ai_hazard_fire_orb_opportunity(const controller *ctrl);
+bool ai_hazard_wall_pressure_opportunity(const controller *ctrl);
+bool ai_hazard_spike_danger(const controller *ctrl);
 bool ai_tactic_likes_it(const controller *ctrl, int tactic_type);
 void ai_tactic_queue(controller *ctrl, int tactic_type);
 void ai_tactic_consider_list(controller *ctrl, int tactics[], size_t n_tactics);
