@@ -4,6 +4,8 @@
 
 #include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_utils.h"
+#include "game/game_player.h"
+#include "game/game_state.h"
 #include "resources/resource_files.h"
 #include "resources/resource_paths.h"
 #include "resources/ids.h"
@@ -63,6 +65,166 @@ void test_tactic_is_enabled_defaults_true_for_valid_ids(void) {
     ai_tactic_reset_config_cache();
     CU_ASSERT_TRUE(ai_tactic_is_enabled(TACTIC_ESCAPE));
     CU_ASSERT_TRUE(ai_tactic_is_enabled(TACTIC_COUNTER));
+}
+
+static void make_fire_orb_hazard_context(game_state *gs, controller *ctrl, ai *a, tactic_state *t, sd_pilot *pilot,
+                                         object **self_obj, object **enemy_obj, object **hazard_obj) {
+    memset(gs, 0, sizeof(*gs));
+    typedef struct {
+        int layer;
+        int persistent;
+        int singleton;
+        object *obj;
+    } test_render_obj;
+
+    vector_create(&gs->objects, sizeof(test_render_obj));
+
+    game_player players[2];
+    memset(players, 0, sizeof(players));
+    gs->players[0] = &players[0];
+    gs->players[1] = &players[1];
+
+    *self_obj = omf_calloc(1, sizeof(object));
+    *enemy_obj = omf_calloc(1, sizeof(object));
+    *hazard_obj = omf_calloc(1, sizeof(object));
+
+    object_create(*self_obj, gs, vec2i_create(200, 180), vec2f_create(0, 0));
+    object_create(*enemy_obj, gs, vec2i_create(420, 180), vec2f_create(0, 0));
+    object_create(*hazard_obj, gs, vec2i_create(310, 180), vec2f_create(0, 0));
+
+    har *self_h = omf_calloc(1, sizeof(har));
+    har *enemy_h = omf_calloc(1, sizeof(har));
+    memset(self_h, 0, sizeof(*self_h));
+    memset(enemy_h, 0, sizeof(*enemy_h));
+    self_h->player_id = 0;
+    self_h->state = STATE_STANDING;
+    self_h->close = true;
+    enemy_h->player_id = 1;
+    enemy_h->state = STATE_STANDING;
+    enemy_h->close = true;
+    object_set_userdata(*self_obj, self_h);
+    object_set_userdata(*enemy_obj, enemy_h);
+    object_set_group(*self_obj, GROUP_HAR);
+    object_set_group(*enemy_obj, GROUP_HAR);
+    object_set_group(*hazard_obj, GROUP_HAZARD);
+    (*hazard_obj)->orb_val = 5;
+
+    test_render_obj self_render = {.layer = RENDER_LAYER_MIDDLE, .persistent = 0, .singleton = 0, .obj = *self_obj};
+    test_render_obj enemy_render = {.layer = RENDER_LAYER_MIDDLE, .persistent = 0, .singleton = 0, .obj = *enemy_obj};
+    test_render_obj hazard_render = {.layer = RENDER_LAYER_BOTTOM, .persistent = 0, .singleton = 0, .obj = *hazard_obj};
+    vector_append(&gs->objects, &self_render);
+    vector_append(&gs->objects, &enemy_render);
+    vector_append(&gs->objects, &hazard_render);
+
+    players[0].har_obj_id = (*self_obj)->id;
+    players[1].har_obj_id = (*enemy_obj)->id;
+
+    memset(a, 0, sizeof(*a));
+    memset(pilot, 0, sizeof(*pilot));
+    memset(t, 0, sizeof(*t));
+    pilot->pilot_id = 0;
+    pilot->att_hyper = 100;
+    pilot->att_sniper = 100;
+    pilot->att_jump = 100;
+    pilot->att_normal = 100;
+    pilot->att_def = 100;
+    pilot->learning = 2.0f;
+    a->difficulty = 6;
+    a->pilot = pilot;
+    a->tactic = t;
+
+    ctrl->data = a;
+    ctrl->gs = gs;
+    ctrl->har_obj_id = (*self_obj)->id;
+}
+
+void test_hazard_fire_orb_opportunity_detects_lined_up_orb(void) {
+    game_state gs;
+    controller ctrl;
+    ai a;
+    tactic_state t;
+    sd_pilot pilot;
+    object *self_obj = NULL;
+    object *enemy_obj = NULL;
+    object *hazard_obj = NULL;
+
+    memset(&ctrl, 0, sizeof(ctrl));
+    make_fire_orb_hazard_context(&gs, &ctrl, &a, &t, &pilot, &self_obj, &enemy_obj, &hazard_obj);
+
+    CU_ASSERT_TRUE(ai_hazard_fire_orb_opportunity(&ctrl));
+    CU_ASSERT_TRUE(ai_tactic_likes_it(&ctrl, TACTIC_QUICK));
+    CU_ASSERT_FALSE(ai_tactic_likes_it(&ctrl, TACTIC_GRAB));
+}
+
+void test_hazard_wall_pressure_detects_enemy_near_wall(void) {
+    game_state gs;
+    controller ctrl;
+    ai a;
+    tactic_state t;
+    sd_pilot pilot;
+    object *self_obj = NULL;
+    object *enemy_obj = NULL;
+    object *hazard_obj = NULL;
+
+    memset(&ctrl, 0, sizeof(ctrl));
+    make_fire_orb_hazard_context(&gs, &ctrl, &a, &t, &pilot, &self_obj, &enemy_obj, &hazard_obj);
+
+    self_obj->pos.x = 100.0f;
+    enemy_obj->pos.x = 120.0f;
+    hazard_obj->pos.x = 40.0f;
+    hazard_obj->pos.y = 150.0f;
+    hazard_obj->orb_val = 0;
+
+    CU_ASSERT_TRUE(ai_hazard_wall_pressure_opportunity(&ctrl));
+    CU_ASSERT_TRUE(ai_tactic_likes_it(&ctrl, TACTIC_PUSH));
+}
+
+void test_hazard_spike_danger_detects_self_near_spike(void) {
+    game_state gs;
+    controller ctrl;
+    ai a;
+    tactic_state t;
+    sd_pilot pilot;
+    object *self_obj = NULL;
+    object *enemy_obj = NULL;
+    object *hazard_obj = NULL;
+
+    memset(&ctrl, 0, sizeof(ctrl));
+    make_fire_orb_hazard_context(&gs, &ctrl, &a, &t, &pilot, &self_obj, &enemy_obj, &hazard_obj);
+
+    self_obj->pos.x = 80.0f;
+    enemy_obj->pos.x = 250.0f;
+    hazard_obj->pos.x = 70.0f;
+    hazard_obj->pos.y = 180.0f;
+    hazard_obj->orb_val = 0;
+
+    CU_ASSERT_TRUE(ai_hazard_spike_danger(&ctrl));
+    CU_ASSERT_TRUE(ai_tactic_likes_it(&ctrl, TACTIC_ESCAPE));
+}
+
+void test_hazard_opportunities_are_disabled_at_low_difficulty(void) {
+    game_state gs;
+    controller ctrl;
+    ai a;
+    tactic_state t;
+    sd_pilot pilot;
+    object *self_obj = NULL;
+    object *enemy_obj = NULL;
+    object *hazard_obj = NULL;
+
+    memset(&ctrl, 0, sizeof(ctrl));
+    make_fire_orb_hazard_context(&gs, &ctrl, &a, &t, &pilot, &self_obj, &enemy_obj, &hazard_obj);
+    a.difficulty = 1;
+
+    self_obj->pos.x = 100.0f;
+    enemy_obj->pos.x = 120.0f;
+    hazard_obj->pos.x = 40.0f;
+    hazard_obj->pos.y = 150.0f;
+    hazard_obj->orb_val = 0;
+
+    CU_ASSERT_FALSE(ai_hazard_fire_orb_opportunity(&ctrl));
+    CU_ASSERT_FALSE(ai_hazard_wall_pressure_opportunity(&ctrl));
+    CU_ASSERT_FALSE(ai_hazard_spike_danger(&ctrl));
 }
 
 void test_tactic_is_enabled_respects_disabled_flag_in_config(void) {
