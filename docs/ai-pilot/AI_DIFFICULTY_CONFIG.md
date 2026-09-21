@@ -152,10 +152,132 @@ random_attack_chance = 20   # Reduced from 35
 Deterministic AI pilot tests are intentionally opt-in and are not part of the default CI suite. While actively tuning AI behavior, enable the local-only test gate with:
 
 ```bash
-OPENOMF_RUN_DETERMINISTIC_TESTS=1 python3 -m pytest pytest/test_rec_assertions.py -q
+OPENOMF_RUN_DETERMINISTIC_TESTS=1 ./build/openomf_test_main
 ```
 
 This keeps normal CI runs stable while still allowing focused AI pilot validation during active development.
+
+## Deterministic AI verification matrix
+
+The deterministic test suite is the primary guardrail for AI balance work. When a tuning change affects aggression, projectile usage, range decisions, or tactical pressure, it should be backed by one of the tests below:
+
+### Core suites
+
+- `testing/ai/ai_learning_test.c`
+  - Verifies learning counters, projectile burst cooldowns, pressure-burst limits, and difficulty-sensitive adaptation.
+  - These tests protect against regressions like repeated projectile spam or repeated charge pressure loops.
+
+- `testing/ai/ai_tactic_engine_test.c`
+  - Verifies tactic enable/disable logic, range gating, condition matching, and special-case shoot logic such as Shadow projectile preference and Shredder medium-range-only attack behavior.
+  - This is the best place to tune whether a HAR should shoot, close, trip, fly, or charge in a given range/state.
+
+- `testing/ai/ai_har_skills_test.c`
+  - Verifies each HAR has the correct charge, push, projectile, and trip moves configured, and that the JSON-loaded move arrays match expectations for the relevant character.
+  - Use this to verify that a balance change did not break a HAR’s move profile.
+
+- `testing/ai/ai_state_test.c` and related AI tests
+  - Verifies base state reset, tactic cleanup, and difficulty scaling assumptions.
+
+### How to run the suite
+
+```bash
+cd /work
+cmake --build build --target openomf_test_main
+OPENOMF_RUN_DETERMINISTIC_TESTS=1 ./build/openomf_test_main
+```
+
+### What a good balance fix should include
+
+Before merging a tuning change, check which category the issue falls into:
+
+- Range logic: modify `resources/ai_config/hars/*.json` and/or `ai_tactic_should_use_shoot()` in `src/game/ai/ai_tactic_engine.c`
+- Pressure loop / spam: modify `ai_projectile_*` and `ai_pressure_*` logic in `src/game/ai/ai_learning.c`
+- Personality / preference bias: modify pilot stats in `resources/ai_config/pilots.json` or the pilot adaptation logic in `src/game/ai/ai_learning.c`
+- Tactic enablement / decision gating: modify `resources/ai_config/tactics.json` or the gate logic in `src/game/ai/ai_tactic_engine.c`
+
+## AI tuning knobs for modders and developers
+
+The AI is designed so that balance changes should usually happen in configuration or data files before hard-coding behavior in C.
+
+### 1. Tactic selection and default behavior
+
+File: `resources/ai_config/tactics.json`
+
+Use this to:
+
+- enable or disable a tactic globally
+- change the implied default move/attack type for that tactic
+- adjust which tactics are considered by default in a match
+
+This is the first place to look when a HAR is choosing the wrong family of attacks.
+
+### 2. HAR-specific move profile
+
+Files: `resources/ai_config/hars/*.json`
+
+Use this to:
+
+- set move sequence strings
+- set `range_min` / `range_max`
+- change move conditions such as `high_difficulty`, `special_preferred`, `jump_preferred`, `enemy_stunned`
+- add or remove charge / push / projectile / trip moves for a specific HAR
+
+This is the most important place for character balance work. For example, Shredder’s projectile is intentionally limited to a medium-range band, so the JSON `range_max` and the move-specific shoot logic should be tuned together.
+
+### 3. Pilot personality tuning
+
+File: `resources/ai_config/pilots.json`
+
+Use this to adjust:
+
+- `att_sniper`, `att_hyper`, `att_def`, `att_jump`
+- `pref_fwd`, `pref_back`, `pref_jump`
+- `ap_special`, `ap_low`, and other pilot preference values
+
+This is the right knob for “this pilot wants to zone / pressure / counter more often” without changing the underlying HAR move list.
+
+### 4. Burst and cooldown tuning
+
+Files:
+
+- `src/game/ai/ai_learning.c`
+- `src/game/ai/ai_learning.h`
+
+These contain the repeated-pressure limits that prevent spam loops. The key functions are:
+
+- `ai_projectile_max_streak()`
+- `ai_projectile_is_allowed()`
+- `ai_projectile_use()`
+- `ai_pressure_max_streak()`
+- `ai_pressure_is_allowed()`
+- `ai_pressure_use()`
+
+If the issue is “this HAR keeps repeating the same attack forever,” this is the place to fix it.
+
+### 5. Tactical decision gating
+
+File: `src/game/ai/ai_tactic_engine.c`
+
+This is the runtime gate for questions like:
+
+- should this HAR shoot right now?
+- is the enemy too cramped for ranged attacks?
+- does this HAR need a special-case projectile rule?
+- should a charge or push be blocked by burst pressure?
+
+When a balance problem is not obviously a config issue, this is the next place to inspect.
+
+### Recommended workflow for tuning a balance issue
+
+1. Reproduce with the deterministic AI suite or a focused demo.
+2. Decide whether the issue is range, pressure, or personality.
+3. Start with the smallest relevant config/jargon knob:
+   - range: HAR JSON
+   - tactic family: `tactics.json`
+   - behavior bias: pilot JSON
+   - spam loop: `ai_learning.c`
+4. Add or update a deterministic regression test before and after the fix.
+5. Re-run the AI suite and confirm the change is stable.
 
 ### Observation Checklist
 
