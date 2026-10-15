@@ -156,6 +156,27 @@ void test_hazard_fire_orb_opportunity_detects_lined_up_orb(void) {
     CU_ASSERT_FALSE(ai_tactic_likes_it(&ctrl, TACTIC_GRAB));
 }
 
+void test_hazard_fire_orb_overhead_opportunity_is_detected(void) {
+    game_state gs;
+    controller ctrl;
+    ai a;
+    tactic_state t;
+    sd_pilot pilot;
+    object *self_obj = NULL;
+    object *enemy_obj = NULL;
+    object *hazard_obj = NULL;
+
+    memset(&ctrl, 0, sizeof(ctrl));
+    make_fire_orb_hazard_context(&gs, &ctrl, &a, &t, &pilot, &self_obj, &enemy_obj, &hazard_obj);
+    hazard_obj->pos.x = self_obj->pos.x + 20.0f;
+    hazard_obj->pos.y = self_obj->pos.y - 50.0f;
+
+    CU_ASSERT_TRUE(ai_hazard_fire_orb_overhead_opportunity(&ctrl));
+
+    a.difficulty = 2;
+    CU_ASSERT_FALSE(ai_hazard_fire_orb_overhead_opportunity(&ctrl));
+}
+
 void test_hazard_wall_pressure_detects_enemy_near_wall(void) {
     game_state gs;
     controller ctrl;
@@ -859,6 +880,8 @@ void ai_tactic_engine_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "tactic enabled: invalid id false", test_tactic_is_enabled_invalid_id_returns_false) == NULL)
         return;
     if(CU_add_test(suite, "tactic enabled: valid ids true by default", test_tactic_is_enabled_defaults_true_for_valid_ids) == NULL)
+        return;
+    if(CU_add_test(suite, "hazard: overhead fire orb opportunity", test_hazard_fire_orb_overhead_opportunity_is_detected) == NULL)
         return;
     if(CU_add_test(suite, "tactic enabled: config disabled flag", test_tactic_is_enabled_respects_disabled_flag_in_config) == NULL)
         return;

@@ -191,6 +191,14 @@ void test_ai_core_config_progression_matches_difficulty_expectations(void) {
     CU_ASSERT_EQUAL(deadly.aggressive_tactics, 1);
     CU_ASSERT_EQUAL(ultimate.aggressive_tactics, 1);
 
+    CU_ASSERT_EQUAL(punching_bag.fire_orb_exploitation_enabled, 0);
+    CU_ASSERT_EQUAL(rookie.fire_orb_exploitation_enabled, 0);
+    CU_ASSERT_EQUAL(veteran.fire_orb_exploitation_enabled, 0);
+    CU_ASSERT_EQUAL(world_class.fire_orb_exploitation_enabled, 1);
+    CU_ASSERT_EQUAL(champion.fire_orb_exploitation_enabled, 1);
+    CU_ASSERT_EQUAL(deadly.fire_orb_exploitation_enabled, 1);
+    CU_ASSERT_EQUAL(ultimate.fire_orb_exploitation_enabled, 1);
+
     CU_ASSERT_TRUE(punching_bag.jump_frequency_mult < rookie.jump_frequency_mult);
     CU_ASSERT_TRUE(rookie.jump_frequency_mult < veteran.jump_frequency_mult);
     CU_ASSERT_TRUE(veteran.jump_frequency_mult < world_class.jump_frequency_mult);

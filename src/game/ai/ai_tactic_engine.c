@@ -5,6 +5,7 @@
 #include "game/ai/ai_tactic_engine.h"
 
 #include "game/ai/ai_decision_engine.h"
+#include "game/ai/ai_core_config.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_utils.h"
 #include "game/game_state.h"
@@ -48,7 +49,12 @@ static bool ai_hazard_difficulty_allows(const controller *ctrl, int minimum_diff
 }
 
 bool ai_hazard_fire_orb_opportunity(const controller *ctrl) {
-    if(ctrl == NULL || ctrl->gs == NULL || ctrl->har_obj_id == 0 || !ai_hazard_difficulty_allows(ctrl, 3)) {
+    if(ctrl == NULL || ctrl->gs == NULL || ctrl->har_obj_id == 0 || ctrl->data == NULL) {
+        return false;
+    }
+    ai *a = ctrl->data;
+    const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
+    if(!config->fire_orb_exploitation_enabled) {
         return false;
     }
 
@@ -110,6 +116,41 @@ bool ai_hazard_fire_orb_opportunity(const controller *ctrl) {
                          fabsf(hazard_x - enemy_x) <= 50.0f;
         float within_y = fabsf(hazard_y - self_y) <= 60.0f || fabsf(hazard_y - enemy_y) <= 60.0f;
         if(orb_gap <= 220.0f && within_x && within_y) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool ai_hazard_fire_orb_overhead_opportunity(const controller *ctrl) {
+    if(ctrl == NULL || ctrl->gs == NULL || ctrl->har_obj_id == 0 || ctrl->data == NULL) {
+        return false;
+    }
+
+    ai *a = ctrl->data;
+    const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
+    if(!config->fire_orb_exploitation_enabled) {
+        return false;
+    }
+
+    object *self_obj = game_state_find_object(ctrl->gs, ctrl->har_obj_id);
+    if(self_obj == NULL || object_get_group(self_obj) != GROUP_HAR) {
+        return false;
+    }
+
+    iterator it;
+    tactic_render_obj *robj;
+    vector_iter_begin(&ctrl->gs->objects, &it);
+    foreach(it, robj) {
+        object *hazard = robj->obj;
+        if(hazard == NULL || object_get_group(hazard) != GROUP_HAZARD || hazard->orb_val == 0) {
+            continue;
+        }
+
+        float horizontal_gap = fabsf(hazard->pos.x - self_obj->pos.x);
+        float height_above_har = self_obj->pos.y - hazard->pos.y;
+        if(horizontal_gap <= 55.0f && height_above_har >= 20.0f && height_above_har <= 110.0f) {
             return true;
         }
     }
@@ -989,6 +1030,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             break;
         }
         case TACTIC_FLY: {
+            if(ai_hazard_fire_orb_overhead_opportunity(ctrl) && smart_usually(a)) {
+                return true;
+            }
+
             bool needs_fly_pref_jump_check = !ai_tactic_config_has_condition(TACTIC_FLY, "pref_jump");
 
             if(((!needs_fly_pref_jump_check || roll_pref(a->pilot->att_jump)) ||

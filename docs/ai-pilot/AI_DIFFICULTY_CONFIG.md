@@ -70,6 +70,7 @@ block_chance = 70           # Frequently blocks
 | Parameter | Type | Range | Description |
 |-----------|------|-------|-------------|
 | `jump_frequency_mult` | int | 10-300 | Jump frequency multiplier, applied as a divisor on the roll chance. Higher = jump more often (100 = normal). |
+| `fire_orb_exploitation_enabled` | int | 0-1 | Enables deliberate fire-orb opportunities and post-hit tactic reassessment for this difficulty. |
 
 ## How It Works
 

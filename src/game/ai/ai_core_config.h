@@ -28,6 +28,8 @@ typedef struct {
     // Jump frequency multiplier applied as a divisor on the roll_chance operand.
     // 100 = normal, higher = jump more often.
     int jump_frequency_mult;
+    // 0 = do not seek or respond to fire-orb opportunities; 1 = enabled.
+    int fire_orb_exploitation_enabled;
 } ai_core_config;
 
 /**
