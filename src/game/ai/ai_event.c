@@ -98,6 +98,9 @@ bool ai_event_check_cancel_tactic(controller *ctrl, har_event event) {
             }
             break;
         case HAR_EVENT_ENEMY_STUN:
+            if(!ai_core_config_get_for_difficulty(a->difficulty)->stun_capitalize_enabled) {
+                break;
+            }
             if(a->tactic->tactic_type == TACTIC_GRAB || a->tactic->tactic_type == TACTIC_CLOSE ||
                a->tactic->tactic_type == TACTIC_TRIP) {
                 log_debug("Extend tactic move timer to capitalize on stun");
@@ -351,6 +354,10 @@ void ai_event_on_enemy_stun(controller *ctrl, har_event event, bool has_queued_t
 
     ai *a = get_ai(ctrl);
     har *h = get_har(ctrl);
+
+    if(!ai_core_config_get_for_difficulty(a->difficulty)->stun_capitalize_enabled) {
+        return;
+    }
 
     if(has_queued_tactic || !smart_usually(a) || !is_ready_for_tactics(h)) {
         return;

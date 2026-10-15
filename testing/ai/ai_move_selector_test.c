@@ -5,6 +5,7 @@
  * in isolation using mock move data and scoring context.
  */
 
+#include "game/ai/ai_core_config.h"
 #include "game/ai/ai_move_selector.h"
 #include "game/ai/ai_utils.h"
 #include "game/ai/ai_decision_engine.h"
@@ -263,6 +264,12 @@ void test_move_eval_score_prefers_close_when_enemy_stunned(void) {
     int close_score = ai_move_eval_score(&close_move, &ctx);
     int neutral_score = ai_move_eval_score(&neutral_move, &ctx);
     CU_ASSERT(close_score > neutral_score);
+
+    // With stun capitalizing off, the stunned-enemy bonus no longer applies
+    ai_core_config *cfg = (ai_core_config *)ai_core_config_get_for_difficulty(ctx.difficulty);
+    cfg->stun_capitalize_enabled = 0;
+    CU_ASSERT(ai_move_eval_score(&close_move, &ctx) < close_score);
+    cfg->stun_capitalize_enabled = 1;
 
     free_test_move(&close_move);
     free_test_move(&neutral_move);

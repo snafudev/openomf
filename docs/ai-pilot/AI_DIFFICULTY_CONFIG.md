@@ -71,6 +71,7 @@ block_chance = 70           # Frequently blocks
 |-----------|------|-------|-------------|
 | `jump_frequency_mult` | int | 10-300 | Jump frequency multiplier, applied as a divisor on the roll chance. Higher = jump more often (100 = normal). |
 | `fire_orb_exploitation_enabled` | int | 0-1 | Enables deliberate fire-orb opportunities and post-hit tactic reassessment for this difficulty. |
+| `stun_capitalize_enabled` | int | 0-1 | Enables following up on a stunned (or stasis-locked) enemy: extends or queues GRAB/CLOSE/TRIP tactics on `HAR_EVENT_ENEMY_STUN` and favours close-range punishing moves. Default 1. |
 
 ## How It Works
 

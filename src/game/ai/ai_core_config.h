@@ -30,6 +30,8 @@ typedef struct {
     int jump_frequency_mult;
     // 0 = do not seek or respond to fire-orb opportunities; 1 = enabled.
     int fire_orb_exploitation_enabled;
+    // 0 = ignore enemy stun/stasis openings; 1 = extend/queue follow-up tactics and favour punishing moves.
+    int stun_capitalize_enabled;
 } ai_core_config;
 
 /**

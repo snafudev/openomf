@@ -6,6 +6,7 @@
  */
 
 #include "game/ai/ai_move_selector.h"
+#include "game/ai/ai_core_config.h"
 #include "game/ai/ai_utils.h"
 #include "game/ai/ai_decision_engine.h"
 #include "game/common_defines.h"
@@ -172,7 +173,8 @@ static int close_range_tactical_bonus(const af_move *move, const move_stat_conte
         return 0;
     }
 
-    const bool enemy_vulnerable = (ctx->enemy_state == STATE_STUNNED || ctx->enemy_in_stasis > 0);
+    const bool enemy_vulnerable = (ctx->enemy_state == STATE_STUNNED || ctx->enemy_in_stasis > 0) &&
+                                  ai_core_config_get_for_difficulty(ctx->difficulty)->stun_capitalize_enabled;
     const bool enemy_in_air = (ctx->enemy_state == STATE_JUMPING);
     const bool enemy_blocking = (ctx->enemy_state == STATE_BLOCKSTUN || ctx->enemy_state == STATE_CROUCHBLOCK);
 

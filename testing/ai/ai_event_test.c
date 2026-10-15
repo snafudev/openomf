@@ -15,6 +15,7 @@
  * and by the integration tests.
  */
 
+#include "game/ai/ai_core_config.h"
 #include "game/ai/ai_event.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_tactic_engine.h"
@@ -410,6 +411,37 @@ void test_event_cancel_enemy_stun_resets_non_shoot_non_grab(void) {
 
     CU_ASSERT_FALSE(still_queued);
     CU_ASSERT_EQUAL(t.tactic_type, 0);
+}
+
+/** Flip the cached per-difficulty toggle; callers must restore it. */
+static void set_stun_capitalize_enabled(int difficulty, int enabled) {
+    ((ai_core_config *)ai_core_config_get_for_difficulty(difficulty))->stun_capitalize_enabled = enabled;
+}
+
+void test_event_cancel_enemy_stun_ignored_when_disabled(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    controller ctrl;
+    har_event ev;
+    make_mock_ai(&a, &p, &t);
+    make_mock_ctrl(&ctrl, &a);
+    memset(&ev, 0, sizeof(ev));
+    ev.type = HAR_EVENT_ENEMY_STUN;
+    set_stun_capitalize_enabled(a.difficulty, 0);
+
+    // GRAB is not extended
+    t.tactic_type = TACTIC_GRAB;
+    t.move_timer = 0;
+    CU_ASSERT_TRUE(ai_event_check_cancel_tactic(&ctrl, ev));
+    CU_ASSERT_EQUAL(t.move_timer, 0);
+
+    // Other tactics are not reset to make room for a stun follow-up
+    t.tactic_type = TACTIC_ESCAPE;
+    CU_ASSERT_TRUE(ai_event_check_cancel_tactic(&ctrl, ev));
+    CU_ASSERT_EQUAL(t.tactic_type, TACTIC_ESCAPE);
+
+    set_stun_capitalize_enabled(a.difficulty, 1);
 }
 
 void test_event_cancel_other_events_leave_tactic_unchanged(void) {
@@ -925,6 +957,8 @@ void ai_event_test_suite(CU_pSuite suite) {
                 test_event_cancel_enemy_stun_keeps_shoot_tactic);
     CU_add_test(suite, "cancel: ENEMY_STUN resets non-GRAB/CLOSE/TRIP/SHOOT",
                 test_event_cancel_enemy_stun_resets_non_shoot_non_grab);
+    CU_add_test(suite, "cancel: ENEMY_STUN ignored when stun_capitalize disabled",
+                test_event_cancel_enemy_stun_ignored_when_disabled);
     CU_add_test(suite, "cancel: unhandled event leaves tactic unchanged",
                 test_event_cancel_other_events_leave_tactic_unchanged);
     CU_add_test(suite, "cancel: HAZARD_PUNCHED resets tactic when enabled",

@@ -199,6 +199,14 @@ void test_ai_core_config_progression_matches_difficulty_expectations(void) {
     CU_ASSERT_EQUAL(deadly.fire_orb_exploitation_enabled, 1);
     CU_ASSERT_EQUAL(ultimate.fire_orb_exploitation_enabled, 1);
 
+    CU_ASSERT_EQUAL(punching_bag.stun_capitalize_enabled, 0);
+    CU_ASSERT_EQUAL(rookie.stun_capitalize_enabled, 0);
+    CU_ASSERT_EQUAL(veteran.stun_capitalize_enabled, 1);
+    CU_ASSERT_EQUAL(world_class.stun_capitalize_enabled, 1);
+    CU_ASSERT_EQUAL(champion.stun_capitalize_enabled, 1);
+    CU_ASSERT_EQUAL(deadly.stun_capitalize_enabled, 1);
+    CU_ASSERT_EQUAL(ultimate.stun_capitalize_enabled, 1);
+
     CU_ASSERT_TRUE(punching_bag.jump_frequency_mult < rookie.jump_frequency_mult);
     CU_ASSERT_TRUE(rookie.jump_frequency_mult < veteran.jump_frequency_mult);
     CU_ASSERT_TRUE(veteran.jump_frequency_mult < world_class.jump_frequency_mult);

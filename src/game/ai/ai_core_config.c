@@ -94,6 +94,7 @@ static bool load_ai_core_config(ai_core_config *config) {
     config->aggressive_tactics = 0;
     config->jump_frequency_mult = 100;
     config->fire_orb_exploitation_enabled = 0;
+    config->stun_capitalize_enabled = 1;
 
     path cfg_path = get_resource_filename("ai_config/ai_core.ini");
     size_t file_size = 0;
@@ -140,6 +141,7 @@ static bool load_ai_core_config(ai_core_config *config) {
             parse_int_line(trimmed, "aggressive_tactics", &config->aggressive_tactics);
             parse_int_line(trimmed, "jump_frequency_mult", &config->jump_frequency_mult);
             parse_int_line(trimmed, "fire_orb_exploitation_enabled", &config->fire_orb_exploitation_enabled);
+            parse_int_line(trimmed, "stun_capitalize_enabled", &config->stun_capitalize_enabled);
         }
 
         omf_free(line_copy);
@@ -202,6 +204,7 @@ static bool load_ai_difficulty_config(ai_core_config *config, int difficulty) {
             parse_int_line(trimmed, "aggressive_tactics", &config->aggressive_tactics);
             parse_int_line(trimmed, "jump_frequency_mult", &config->jump_frequency_mult);
             parse_int_line(trimmed, "fire_orb_exploitation_enabled", &config->fire_orb_exploitation_enabled);
+            parse_int_line(trimmed, "stun_capitalize_enabled", &config->stun_capitalize_enabled);
         }
 
         omf_free(line_copy);
