@@ -9,10 +9,11 @@ This branch introduces the new `ai-pilot-v2` system alongside the related loggin
 - a new config-driven AI pilot system
 - hazard-aware tactical scoring
 - anti-spam cooldown logic and difficulty gating
+- per-difficulty behaviour toggles in the difficulty config files
 - richer logging and AI test-record analysis
 - deterministic regression coverage for AI and recording behavior
 
-The delta includes 124 changed files, with 23,981 insertions and 1,760 deletions.
+The delta includes 122 changed files, with 21,122 insertions and 1,757 deletions.
 
 ## AI changes: ai-pilot-v2
 
@@ -50,8 +51,17 @@ The new `ai-pilot-v2` stack replaces the older controller-coupled behavior with 
   - wall-pressure windows
   - spike danger avoidance
 - Added gating so higher-difficulty AI can take more aggressive hazard-driven decisions without destabilizing lower difficulties.
+- Added per-difficulty behaviour toggles in `ai_core.ini` and `ai_difficulty/*.ini`, so whole behaviours can be switched on or off for any difficulty without code changes:
+  - `fire_orb_exploitation_enabled`: deliberate fire orb use (on for World Class and above)
+  - `stun_capitalize_enabled`: following up on a stunned enemy (off for Punching Bag and Rookie)
 - Added cooldown logic to prevent projectile and pressure spam.
 - Added ranged and charge tactic gating based on active cooldown conditions.
+
+### Fire pit orb
+
+- The AI now looks for two orb opportunities: the orb lined up with the enemy (favours `CLOSE` and `QUICK`) and the orb directly overhead (favours `FLY`, a jump attack).
+- Added `HAR_EVENT_HAZARD_PUNCHED`, fired when a HAR's attack connects with the orb. It reports whether it was a ground punch or a jump punch, and the AI drops its queued tactic in response.
+- Fixed the punch type check so a standing punch at a floating orb is no longer reported as an overhead punch.
 
 ### Defensive and behavior improvements
 
@@ -62,7 +72,7 @@ The new `ai-pilot-v2` stack replaces the older controller-coupled behavior with 
 
 ### Documentation and planning
 
-- Added the AI architecture docs and migration/design writeups for the refactor.
+- Added the AI architecture docs (`docs/source/architecture/ai.rst`) and migration/design writeups for the refactor.
 - Added tuning docs covering difficulty config, pilot alignment, and HAR behavior modeling.
 - Added a dedicated hazard-aware AI plan describing safer, map-aware tactical opportunities.
 
@@ -88,6 +98,8 @@ This category covers the operational tooling and verification infrastructure aro
   - rec assertions
   - config overlay behavior
   - AI learning and event logic
+  - fire orb punching, driven through the real hazard collision code with a synthetic orb (no game data needed)
+  - per-difficulty behaviour toggles
 - Included automated test support for AI tuning workflows and demo/autoload validation.
 
 ## Supporting work
@@ -97,8 +109,8 @@ This release also includes supporting documentation, build/test wiring, and conf
 - project instructions and AI-pilot guidance files
 - CMake/test configuration updates
 - example AI tuning mod content and sample mod resources
-- build verification and general documentation cleanup
+- general documentation cleanup
 
 ## Release summary
 
-Overall, this release introduces the new `ai-pilot-v2` system and brings the AI substantially more in line with a data-driven, tunable, and testable gameplay framework. The key point is that this is no longer just a refactor: it is a configurable AI platform. Pilot personalities, tactic weights, HAR skill behavior, difficulty thresholds, hazard handling, and cooldown gating are all exposed as moddable data surfaces that can be tuned without rewriting core C logic.
+Overall, this release introduces the new `ai-pilot-v2` system and brings the AI substantially more in line with a data-driven, tunable, and testable gameplay framework. The key point is that this is no longer just a refactor: it is a configurable AI platform. Pilot personalities, tactic weights, HAR skill behavior, difficulty thresholds, per-difficulty behaviour toggles, hazard handling, and cooldown gating are all exposed as moddable data surfaces that can be tuned without rewriting core C logic.
