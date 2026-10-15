@@ -47,6 +47,7 @@ void ai_config_mod_overlay_test_suite(CU_pSuite suite);
 void ai_learning_test_suite(CU_pSuite suite);
 void ai_event_test_suite(CU_pSuite suite);
 void ai_integration_test_suite(CU_pSuite suite);
+void ai_fire_orb_test_suite(CU_pSuite suite);
 void ai_pilot_stats_test_suite(CU_pSuite suite);
 
 int main(int argc, char **argv) {
@@ -268,6 +269,12 @@ int main(int argc, char **argv) {
             goto end;
         }
         ai_integration_test_suite(ai_integration_suite);
+
+        CU_pSuite ai_fire_orb_suite = CU_add_suite("AI Fire Orb", NULL, NULL);
+        if(ai_fire_orb_suite == NULL) {
+            goto end;
+        }
+        ai_fire_orb_test_suite(ai_fire_orb_suite);
 
         CU_pSuite ai_pilot_stats_suite = CU_add_suite("AI Pilot Stats", NULL, NULL);
         if(ai_pilot_stats_suite == NULL) {

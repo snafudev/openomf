@@ -7,6 +7,7 @@
 #include "game/ai/ai_event.h"
 
 #include "game/ai/ai_decision_engine.h"
+#include "game/ai/ai_core_config.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_tactic_engine.h"
@@ -59,6 +60,16 @@ static inline bool has_game_state(controller *ctrl) {
 bool ai_event_check_cancel_tactic(controller *ctrl, har_event event) {
     ai *a = get_ai(ctrl);
     bool has_queued_tactic = (a->tactic->tactic_type > 0);
+
+    if(event.type == HAR_EVENT_HAZARD_PUNCHED) {
+        const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
+        if(config->fire_orb_exploitation_enabled && has_queued_tactic) {
+            reset_tactic_state(a);
+            log_debug("Reset tactic queue: HAR_EVENT_HAZARD_PUNCHED");
+            return false;
+        }
+        return has_queued_tactic;
+    }
 
     if(!has_queued_tactic) {
         return false;

@@ -173,6 +173,16 @@ void har_event_enemy_hazard_hit(har *h, controller *ctrl) {
     fire_hooks(h, event, ctrl);
 }
 
+static void har_event_hazard_punched(har *h, int mode, controller *ctrl) {
+    har_event event;
+    memset(&event, 0, sizeof(event));
+    event.type = HAR_EVENT_HAZARD_PUNCHED;
+    event.player_id = h->player_id;
+    event.hazard_punch_mode = mode;
+
+    fire_hooks(h, event, ctrl);
+}
+
 void har_event_stun(har *h, controller *ctrl) {
     har_event event;
     memset(&event, 0, sizeof(event));
@@ -1674,12 +1684,16 @@ void har_collide_with_hazard(object *o_har, object *o_hzd) {
         h->damage_received = 1;
         h->rehit_combo = air_hit;
     } else if(anim->chain_hit && intersect_sprite_hitpoint(o_har, o_hzd, level, &hit_coord)) {
+        // HAR pos is at its feet, so a floating orb is always "above" it; classify by jump state instead
+        int punch_mode = air_hit ? HAR_HAZARD_PUNCH_OVERHEAD : HAR_HAZARD_PUNCH_GROUND;
+        controller *ctrl = game_player_get_ctrl(game_state_get_player(o_har->gs, h->player_id));
         // we can punch this! Only set on fire pit orb
         anim = bk_get_info(bk_data, anim->chain_hit);
         o_hzd->animation_state.enemy_obj_id = o_har->animation_state.enemy_obj_id;
         object_set_animation(o_hzd, &anim->ani);
         object_set_repeat(o_hzd, 0);
         o_hzd->animation_state.finished = 0;
+        har_event_hazard_punched(h, punch_mode, ctrl);
     }
 }
 

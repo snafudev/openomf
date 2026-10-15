@@ -80,6 +80,7 @@ enum
     HAR_EVENT_TAKE_HIT_PROJECTILE,    // Hit by projectile
     HAR_EVENT_HAZARD_HIT,             // Hit by hazard
     HAR_EVENT_ENEMY_HAZARD_HIT,
+    HAR_EVENT_HAZARD_PUNCHED, // Attack connected and changed the orb animation
     HAR_EVENT_STUN,
     HAR_EVENT_ENEMY_STUN,
     HAR_EVENT_RECOVER,  // regained control after recoil/stun
@@ -99,8 +100,15 @@ typedef struct har_event_t {
         bk_info *info; // for hazard hit
         int wall;      // for hit wall
         int direction; // jump direction
+        int hazard_punch_mode;
     };
 } har_event;
+
+enum
+{
+    HAR_HAZARD_PUNCH_GROUND,
+    HAR_HAZARD_PUNCH_OVERHEAD
+};
 
 enum
 {
@@ -208,6 +216,7 @@ int har_is_walking(har *h);
 int har_is_blocking(object *obj, af_move *move);
 void har_copy_actions(object *new, object *old);
 void har_reset(object *obj);
+void har_collide_with_hazard(object *o_har, object *o_hzd);
 
 void har_set_delay(object *obj, int delay);
 

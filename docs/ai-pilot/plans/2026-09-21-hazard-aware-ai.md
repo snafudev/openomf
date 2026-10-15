@@ -58,6 +58,9 @@ Desired behaviour:
 - prefer safer pressure tactics such as `CLOSE` and `QUICK` when the orb is lined up; super-jump remains a broader AI consideration for positioning and escape, but it is not the default orb exploit because it can leave the HAR exposed and easy to punish
 - use jump or aerial pressure only as a narrow follow-up when the lane is clean and the orb is already lined up, not as a generic opening move
 - avoid this tactic when the orb is too far away or when the AI is already pressured
+- emit `HAR_EVENT_HAZARD_PUNCHED` when the HAR's attack actually connects with the orb, then clear or re-evaluate the current orb tactic; this confirms a punch, not necessarily that the orb despawned. The event carries `hazard_punch_mode` (`GROUND` or `OVERHEAD`, based on whether the HAR was airborne at contact)
+- a pre-contact "punchable" cue (step forward and punch / jump and punch) is deferred: `har_collide_with_hazard()` runs every tick for every HAR/hazard pair but only learns about contact once the attack hitpoints already overlap the orb, so a cue from there would fire on the same tick as `HAR_EVENT_HAZARD_PUNCHED`. It needs a separate reach check during HAR updates
+- make orb exploitation a moddable per-difficulty behavior, controlled by a dedicated `fire_orb_exploitation_enabled` setting in `ai_core.ini` with per-difficulty overrides in `ai_difficulty/*.ini`; do not couple it to `aggressive_tactics` or a hard-coded minimum difficulty
 
 This is now the implemented baseline: the orb-lining check is simple, map-aware enough to be deterministic, and intentionally avoids the earlier “grab when lined up” mistake.
 
@@ -92,8 +95,9 @@ The intended flow is:
 1. read hazard context from the arena / match state
 2. compute a hazard-opportunity score for the current AI controller
 3. apply that score to tactic ranking
-4. use higher-difficulty thresholds to gate the hazard score
-5. back the behavior with deterministic tests
+4. use moddable per-difficulty behavior toggles to gate hazard scoring and event-driven actions
+5. use HAR events for precise opportunities and confirmed hazard interactions
+6. back the behavior with deterministic tests
 
 ## Proposed AI hooks
 
@@ -108,15 +112,13 @@ These functions should return additive score values, not hard-coded tactic assig
 
 This keeps the system extensible and makes it easy to tune by arena type and difficulty without writing map-specific logic everywhere.
 
-## Difficulty gating
+## Difficulty configuration
 
-Hazard exploitation should be gated by difficulty, roughly as follows:
+Hazard behavior must be independently moddable for each difficulty through `resources/ai_config/ai_core.ini` and `resources/ai_config/ai_difficulty/[difficulty].ini`. Add a dedicated `fire_orb_exploitation_enabled` setting with a shared default and difficulty-specific overrides. The setting gates both orb opportunity scoring and responses to orb events, so a difficulty with the behavior disabled neither seeks nor reacts to these opportunities.
 
-- low / rookie: hazard use is mostly ignored unless the AI is already in a severe threat state
-- veteran / world class: occasional orb and wall-trap exploitation
-- champion / deadly / ultimate: hazard pressure becomes a meaningful part of the tactical profile
+Choose default values that preserve the intended difficulty progression, but do not make difficulty-number checks the source of truth. Modders must be able to enable or disable orb exploitation on any individual difficulty without changing code or unrelated hazard behaviors. Keep tuning weights separate from the boolean enable toggle.
 
-This matches the project’s existing difficulty framework and keeps high-difficulty AI feeling smarter without making low difficulties too chaotic.
+Apply the same config-driven pattern to other hazard behaviors when they are introduced, using separate settings so orb use, wall pressure, and spike avoidance can be toggled independently.
 
 ## Deterministic testing approach
 
@@ -125,22 +127,27 @@ Hazard behavior needs a deterministic regression suite before it is considered v
 ### Tests to add
 
 1. Fire orb opportunity test
-   - setup: difficulty high, enemy within orb assist range, orb in the same lane, AI is in a valid attacking state
+   - setup: orb exploitation enabled for the selected difficulty, enemy within orb assist range, orb in the same lane, AI is in a valid attacking state
    - expect: hazard-opportunity score is positive and close-range tactics are preferred
 
-2. Fire orb low-difficulty suppression test
-   - same setup, but low difficulty
-   - expect: hazard bonus is absent or low enough that normal close-range play still dominates
+2. Fire orb difficulty-toggle test
+   - run the same opportunity setup with `fire_orb_exploitation_enabled` on and off for a difficulty
+   - expect: enabled allows orb scoring and event responses; disabled suppresses both, regardless of the difficulty number
 
-3. Spike avoidance test
+3. Fire orb punched event test (`testing/ai/ai_fire_orb_test.c`)
+   - setup: synthetic orb and HAR attack frame driven through the real `har_collide_with_hazard()`, grounded and airborne
+   - expect: exactly one `HAR_EVENT_HAZARD_PUNCHED` with the correct mode, the orb chains to its punched animation, out-of-reach attacks fire nothing, and an already-punched orb cannot be re-punched
+   - expect: the AI clears its orb tactic when the difficulty toggle is on and keeps it when off, without assuming the orb object was destroyed
+
+4. Spike avoidance test
    - setup: AI is near the spike danger zone
    - expect: escape / jump / dodge preference outranks attack preference
 
-4. Wall-pressure test
+5. Wall-pressure test
    - setup: enemy is near a wall hazard zone and the AI is in a valid pressure state
    - expect: pressure tactic weight increases
 
-5. No-op safety test
+6. No-op safety test
    - setup: no hazard context, no wall danger, no spike danger
    - expect: base AI tactics are unchanged
 
@@ -148,17 +155,23 @@ These are pure logic tests and should not depend on visual gameplay playback.
 
 ### Files to update
 
+- [src/game/ai/ai_core_config.c](src/game/ai/ai_core_config.c) and [src/game/ai/ai_core_config.h](src/game/ai/ai_core_config.h) for parsing and exposing the per-difficulty enable setting
+- [resources/ai_config/ai_core.ini](resources/ai_config/ai_core.ini) and [resources/ai_config/ai_difficulty/](resources/ai_config/ai_difficulty/) for the shared default and difficulty overrides
+- [testing/ai/ai_tactic_engine_test.c](testing/ai/ai_tactic_engine_test.c) for config-gated orb scoring and opportunity behavior
 - [testing/ai/ai_event_test.c](testing/ai/ai_event_test.c)
-- optionally a dedicated hazard-focused test file if the suite becomes large enough
+- [testing/ai/ai_fire_orb_test.c](testing/ai/ai_fire_orb_test.c) for the collision-to-event-to-AI orb punch path
+- HAR event definitions and dispatch in [src/game/objects/har.h](src/game/objects/har.h), [src/game/objects/har.c](src/game/objects/har.c), and [src/controller/ai_controller.c](src/controller/ai_controller.c)
 
 ## Intended implementation order
 
 1. Add the hazard-context scoring helpers and hook them into the tactic ranking pipeline.
 2. Add the failing deterministic tests for fire orb, wall pressure, and spike avoidance.
-3. Implement the fire-orb bonus and low-difficulty gating. (done in the initial pass; keep the scoring subtle and difficulty-gated)
-4. Implement wall-pressure and spike-danger weighting.
-5. Tune the numbers against a few real matches and deterministic scenarios.
-6. Re-run the AI deterministic suite plus a runtime sanity check with the AI log filter enabled.
+3. Add the moddable per-difficulty orb enable setting and verify its defaults/overrides.
+4. Implement the confirmed-punch event and handle it in the AI controller to clear orb tactics. (done; a pre-contact punchable cue is deferred until there is a reach check in the HAR update path)
+5. Implement the fire-orb bonus, gated by the config setting. (the initial scoring pass is done; keep the score subtle)
+6. Implement wall-pressure and spike-danger weighting with their own independent config settings.
+7. Tune the numbers against a few real matches and deterministic scenarios.
+8. Re-run the AI deterministic suite plus a runtime sanity check with the AI log filter enabled.
 
 ## Acceptance criteria
 
@@ -166,9 +179,11 @@ The feature is considered complete when all of these are true:
 
 - high-difficulty AI uses fire orb / wall / spike contexts opportunistically
 - low-difficulty AI does not become erratic or “hazard-bot” behavior
+- each hazard behavior can be independently enabled or disabled per difficulty through moddable config files
+- a confirmed orb-punch event distinguishes grounded punches from jump-punches and invalidates stale orb tactics
 - map-specific hazard logic is scored rather than hard-coded to one arena
 - hazard behavior is covered by deterministic AI tests
-- tuning is possible through config or scoring weights without needing a bespoke hard-coded patch for each map
+- tuning and enablement are possible through config or scoring weights without needing a bespoke hard-coded patch for each map
 
 ## Risks and cautions
 

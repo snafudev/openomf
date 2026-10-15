@@ -162,6 +162,13 @@ int ai_har_event(controller *ctrl, har_event event) {
         case HAR_EVENT_LAND_HIT_PROJECTILE:
             a->selected_move = NULL;
             break;
+        case HAR_EVENT_HAZARD_PUNCHED: {
+            const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
+            if(config->fire_orb_exploitation_enabled) {
+                a->selected_move = NULL;
+            }
+            break;
+        }
         default:
             break;
     }

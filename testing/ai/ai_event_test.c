@@ -19,6 +19,7 @@
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_types.h"
+#include "controller/ai_controller.h"
 #include "controller/controller.h"
 #include "game/objects/har.h"
 #include "resources/af_move.h"
@@ -427,6 +428,74 @@ void test_event_cancel_other_events_leave_tactic_unchanged(void) {
 
     CU_ASSERT_TRUE(still_queued);
     CU_ASSERT_EQUAL(t.tactic_type, TACTIC_SPAM);
+}
+
+void test_event_hazard_punched_resets_tactic_when_enabled(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    controller ctrl;
+    har_event ev;
+    make_mock_ai(&a, &p, &t);
+    make_mock_ctrl(&ctrl, &a);
+    memset(&ev, 0, sizeof(ev));
+    ev.type = HAR_EVENT_HAZARD_PUNCHED;
+
+    t.tactic_type = TACTIC_QUICK;
+    bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
+
+    CU_ASSERT_FALSE(still_queued);
+    CU_ASSERT_EQUAL(t.tactic_type, 0);
+    CU_ASSERT_EQUAL(t.last_tactic, TACTIC_QUICK);
+}
+
+void test_event_hazard_punched_preserves_tactic_when_disabled(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    controller ctrl;
+    har_event ev;
+    make_mock_ai(&a, &p, &t);
+    make_mock_ctrl(&ctrl, &a);
+    memset(&ev, 0, sizeof(ev));
+    ev.type = HAR_EVENT_HAZARD_PUNCHED;
+
+    a.difficulty = 2;
+    t.tactic_type = TACTIC_QUICK;
+    bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
+
+    CU_ASSERT_TRUE(still_queued);
+    CU_ASSERT_EQUAL(t.tactic_type, TACTIC_QUICK);
+}
+
+void test_har_event_hazard_punched_respects_difficulty_toggle(void) {
+    ai a;
+    sd_pilot p;
+    tactic_state t;
+    controller ctrl;
+    af_move selected_move;
+    har_event ev;
+    make_mock_ai(&a, &p, &t);
+    make_mock_ctrl(&ctrl, &a);
+    make_move(&selected_move, 1, CAT_BASIC);
+    memset(&ev, 0, sizeof(ev));
+    ev.type = HAR_EVENT_HAZARD_PUNCHED;
+    a.selected_move = &selected_move;
+    t.tactic_type = TACTIC_QUICK;
+
+    ai_har_event(&ctrl, ev);
+
+    CU_ASSERT_PTR_NULL(a.selected_move);
+    CU_ASSERT_EQUAL(t.tactic_type, 0);
+
+    a.difficulty = 2;
+    a.selected_move = &selected_move;
+    t.tactic_type = TACTIC_QUICK;
+
+    ai_har_event(&ctrl, ev);
+
+    CU_ASSERT_PTR_EQUAL(a.selected_move, &selected_move);
+    CU_ASSERT_EQUAL(t.tactic_type, TACTIC_QUICK);
 }
 
 /* -----------------------------------------------------------------------
@@ -858,6 +927,12 @@ void ai_event_test_suite(CU_pSuite suite) {
                 test_event_cancel_enemy_stun_resets_non_shoot_non_grab);
     CU_add_test(suite, "cancel: unhandled event leaves tactic unchanged",
                 test_event_cancel_other_events_leave_tactic_unchanged);
+    CU_add_test(suite, "cancel: HAZARD_PUNCHED resets tactic when enabled",
+                test_event_hazard_punched_resets_tactic_when_enabled);
+    CU_add_test(suite, "cancel: HAZARD_PUNCHED preserves tactic when disabled",
+                test_event_hazard_punched_preserves_tactic_when_disabled);
+    CU_add_test(suite, "event: HAZARD_PUNCHED respects difficulty toggle",
+                test_har_event_hazard_punched_respects_difficulty_toggle);
 
     // ai_event_on_land_hit
     CU_add_test(suite, "land_hit: increments move value",
