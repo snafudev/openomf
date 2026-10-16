@@ -15,7 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum parse_field_result {
+enum parse_field_result
+{
     PARSE_FIELD_MISSING = 0,
     PARSE_FIELD_OK,
     PARSE_FIELD_INVALID

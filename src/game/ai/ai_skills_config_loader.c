@@ -342,7 +342,8 @@ static bool find_json_array_bounds(const char *json, const char *key, const char
     return true;
 }
 
-static bool extract_string_field(const char *obj_start, const char *obj_end, const char *key, char *out, size_t out_len) {
+static bool extract_string_field(const char *obj_start, const char *obj_end, const char *key, char *out,
+                                 size_t out_len) {
     char field[64];
     snprintf(field, sizeof(field), "\"%s\"", key);
 
@@ -621,14 +622,14 @@ static void load_har_config(int har_id) {
     }
 
     g_configs[har_id].loaded_from_file = true;
-    ai_parse_move_array(json, "charge_moves", g_configs[har_id].charge_moves,
-                        &g_configs[har_id].charge_move_count, AI_MAX_MOVES_PER_TYPE);
-    ai_parse_move_array(json, "push_moves", g_configs[har_id].push_moves,
-                        &g_configs[har_id].push_move_count, AI_MAX_MOVES_PER_TYPE);
+    ai_parse_move_array(json, "charge_moves", g_configs[har_id].charge_moves, &g_configs[har_id].charge_move_count,
+                        AI_MAX_MOVES_PER_TYPE);
+    ai_parse_move_array(json, "push_moves", g_configs[har_id].push_moves, &g_configs[har_id].push_move_count,
+                        AI_MAX_MOVES_PER_TYPE);
     ai_parse_move_array(json, "projectile_moves", g_configs[har_id].projectile_moves,
                         &g_configs[har_id].projectile_move_count, AI_MAX_MOVES_PER_TYPE);
-    ai_parse_move_array(json, "trip_moves", g_configs[har_id].trip_moves,
-                        &g_configs[har_id].trip_move_count, AI_MAX_MOVES_PER_TYPE);
+    ai_parse_move_array(json, "trip_moves", g_configs[har_id].trip_moves, &g_configs[har_id].trip_move_count,
+                        AI_MAX_MOVES_PER_TYPE);
     g_configs[har_id].has_charge_moves = g_configs[har_id].charge_move_count > 0;
     g_configs[har_id].has_push_moves = g_configs[har_id].push_move_count > 0;
     g_configs[har_id].has_projectile_moves = g_configs[har_id].projectile_move_count > 0;
@@ -654,22 +655,20 @@ bool ai_skills_config_apply_overlay(ai_har_config *cfg, const char *json_buf) {
     }
 
     if(strstr(json_buf, "\"push_moves\"") != NULL) {
-        ai_parse_move_array(json_buf, "push_moves", cfg->push_moves, &cfg->push_move_count,
-                            AI_MAX_MOVES_PER_TYPE);
+        ai_parse_move_array(json_buf, "push_moves", cfg->push_moves, &cfg->push_move_count, AI_MAX_MOVES_PER_TYPE);
         cfg->has_push_moves = cfg->push_move_count > 0;
         changed = true;
     }
 
     if(strstr(json_buf, "\"projectile_moves\"") != NULL) {
-        ai_parse_move_array(json_buf, "projectile_moves", cfg->projectile_moves,
-                            &cfg->projectile_move_count, AI_MAX_MOVES_PER_TYPE);
+        ai_parse_move_array(json_buf, "projectile_moves", cfg->projectile_moves, &cfg->projectile_move_count,
+                            AI_MAX_MOVES_PER_TYPE);
         cfg->has_projectile_moves = cfg->projectile_move_count > 0;
         changed = true;
     }
 
     if(strstr(json_buf, "\"trip_moves\"") != NULL) {
-        ai_parse_move_array(json_buf, "trip_moves", cfg->trip_moves, &cfg->trip_move_count,
-                            AI_MAX_MOVES_PER_TYPE);
+        ai_parse_move_array(json_buf, "trip_moves", cfg->trip_moves, &cfg->trip_move_count, AI_MAX_MOVES_PER_TYPE);
         cfg->has_trip_moves = cfg->trip_move_count > 0;
         changed = true;
     }

@@ -113,7 +113,7 @@ bool ai_tactic_conditions_match_context(int tactic_type, int har_id, int enemy_r
                                         const sd_pilot *pilot);
 
 bool ai_tactic_should_use_shoot(const ai *a, const har *h, int enemy_range, bool needs_projectiles_check,
-                               bool needs_sniper_pref_check, bool needs_enemy_not_cramped_check);
+                                bool needs_sniper_pref_check, bool needs_enemy_not_cramped_check);
 
 /**
  * Return whether a tactic is currently enabled by config.

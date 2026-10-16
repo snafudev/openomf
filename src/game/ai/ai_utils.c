@@ -3,8 +3,8 @@
  */
 
 #include "game/ai/ai_utils.h"
-#include "game/game_state.h"
 #include "game/game_player.h"
+#include "game/game_state.h"
 #include "game/objects/har.h"
 #include "utils/log.h"
 #include <math.h>

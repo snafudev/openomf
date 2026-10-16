@@ -9,11 +9,11 @@
  * - modmanager returns no overlays when no mods are loaded
  */
 
+#include "CUnit/CUnit.h"
 #include "game/ai/ai_config_loader.h"
 #include "game/ai/ai_skills_config_loader.h"
 #include "game/common_defines.h"
 #include "resources/modmanager.h"
-#include "CUnit/CUnit.h"
 
 #include <string.h>
 
@@ -85,12 +85,11 @@ void test_pilot_overlay_single_field_updates_one(void) {
 
 void test_pilot_overlay_multiple_fields(void) {
     sd_pilot p = make_test_pilot(0);
-    const char *json =
-        "{\"pilots\":[{\"id\":0,"
-        "\"att_normal\":1,"
-        "\"att_hyper\":2,"
-        "\"learning\":0.9,"
-        "\"forget\":0.05}]}";
+    const char *json = "{\"pilots\":[{\"id\":0,"
+                       "\"att_normal\":1,"
+                       "\"att_hyper\":2,"
+                       "\"learning\":0.9,"
+                       "\"forget\":0.05}]}";
     bool result = ai_config_apply_pilot_overlay(&p, json);
     CU_ASSERT_TRUE(result);
     CU_ASSERT_EQUAL(p.att_normal, 1);
@@ -102,10 +101,9 @@ void test_pilot_overlay_multiple_fields(void) {
 
 void test_pilot_overlay_attack_prefs(void) {
     sd_pilot p = make_test_pilot(0);
-    const char *json =
-        "{\"pilots\":[{\"id\":0,"
-        "\"ap_throw\":200,"
-        "\"pref_jump\":9}]}";
+    const char *json = "{\"pilots\":[{\"id\":0,"
+                       "\"ap_throw\":200,"
+                       "\"pref_jump\":9}]}";
     bool result = ai_config_apply_pilot_overlay(&p, json);
     CU_ASSERT_TRUE(result);
     CU_ASSERT_EQUAL(p.ap_throw, 200);
@@ -131,13 +129,12 @@ void test_pilot_overlay_sequential_last_wins(void) {
 
 void test_pilot_overlay_multiple_pilots_picks_correct(void) {
     sd_pilot p = make_test_pilot(2);
-    const char *json =
-        "{\"pilots\":["
-        "{\"id\":0,\"att_normal\":11},"
-        "{\"id\":1,\"att_normal\":22},"
-        "{\"id\":2,\"att_normal\":33},"
-        "{\"id\":3,\"att_normal\":44}"
-        "]}";
+    const char *json = "{\"pilots\":["
+                       "{\"id\":0,\"att_normal\":11},"
+                       "{\"id\":1,\"att_normal\":22},"
+                       "{\"id\":2,\"att_normal\":33},"
+                       "{\"id\":3,\"att_normal\":44}"
+                       "]}";
     bool result = ai_config_apply_pilot_overlay(&p, json);
     CU_ASSERT_TRUE(result);
     CU_ASSERT_EQUAL(p.att_normal, 33);
@@ -216,12 +213,11 @@ void test_char_overlay_partial_only_updates_present_arrays(void) {
 
 void test_char_overlay_all_arrays(void) {
     ai_har_config cfg = make_test_char_config(HAR_JAGUAR);
-    const char *json =
-        "{\"id\":0,"
-        "\"charge_moves\":[{\"a\":1}],"
-        "\"push_moves\":[],"
-        "\"projectile_moves\":[{\"b\":2},{\"c\":3}],"
-        "\"trip_moves\":[{\"c\":4}]}";
+    const char *json = "{\"id\":0,"
+                       "\"charge_moves\":[{\"a\":1}],"
+                       "\"push_moves\":[],"
+                       "\"projectile_moves\":[{\"b\":2},{\"c\":3}],"
+                       "\"trip_moves\":[{\"c\":4}]}";
     bool result = ai_skills_config_apply_overlay(&cfg, json);
     CU_ASSERT_TRUE(result);
     CU_ASSERT_EQUAL(cfg.charge_move_count, 1);

@@ -55,13 +55,18 @@ void test_log_module_bits_are_distinct(void) {
 }
 
 void log_module_test_suite(CU_pSuite suite) {
-    if(CU_add_test(suite, "log modules: single tag", test_log_modules_single) == NULL) return;
-    if(CU_add_test(suite, "log modules: multiple tags", test_log_modules_multiple) == NULL) return;
-    if(CU_add_test(suite, "log modules: whitespace", test_log_modules_whitespace) == NULL) return;
-    if(CU_add_test(suite, "log modules: all", test_log_modules_all) == NULL) return;
+    if(CU_add_test(suite, "log modules: single tag", test_log_modules_single) == NULL)
+        return;
+    if(CU_add_test(suite, "log modules: multiple tags", test_log_modules_multiple) == NULL)
+        return;
+    if(CU_add_test(suite, "log modules: whitespace", test_log_modules_whitespace) == NULL)
+        return;
+    if(CU_add_test(suite, "log modules: all", test_log_modules_all) == NULL)
+        return;
     if(CU_add_test(suite, "log modules: empty falls back to all", test_log_modules_empty_falls_back_to_all) == NULL)
         return;
     if(CU_add_test(suite, "log modules: unknown tokens ignored", test_log_modules_unknown_tokens_ignored) == NULL)
         return;
-    if(CU_add_test(suite, "log modules: bits distinct", test_log_module_bits_are_distinct) == NULL) return;
+    if(CU_add_test(suite, "log modules: bits distinct", test_log_module_bits_are_distinct) == NULL)
+        return;
 }

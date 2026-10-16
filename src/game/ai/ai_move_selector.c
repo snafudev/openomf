@@ -7,8 +7,8 @@
 
 #include "game/ai/ai_move_selector.h"
 #include "game/ai/ai_core_config.h"
-#include "game/ai/ai_utils.h"
 #include "game/ai/ai_decision_engine.h"
+#include "game/ai/ai_utils.h"
 #include "game/common_defines.h"
 #include "utils/random.h"
 #include <stddef.h>
@@ -95,7 +95,7 @@ bool ai_move_is_valid(const af_move *move, const void *har, bool force_allow_pro
         char tmp = str_at(&move->move_string, i);
         if(!((tmp >= '1' && tmp <= '9') || tmp == 'K' || tmp == 'P')) {
             if(force_allow_projectile && move->category == CAT_PROJECTILE) {
-                return true;  // projectile is always true
+                return true; // projectile is always true
             }
             return false;
         }
@@ -103,7 +103,8 @@ bool ai_move_is_valid(const af_move *move, const void *har, bool force_allow_pro
 
     // Valid if has damage or is projectile/special
     if((move->damage > 0 || move->category == CAT_PROJECTILE || move->category == CAT_SCRAP ||
-        move->category == CAT_DESTRUCTION) && move_str_len > 0) {
+        move->category == CAT_DESTRUCTION) &&
+       move_str_len > 0) {
         return true;
     }
 
@@ -273,7 +274,7 @@ int ai_move_eval_score(const af_move *move, const move_stat_context *ctx) {
 
         // sometimes skip move if it is too powerful for difficulty
         if(move_too_powerful_for_context(move, ctx)) {
-            return -999;  // effectively disable this move by giving it very low score
+            return -999; // effectively disable this move by giving it very low score
         }
 
         return value;
@@ -311,9 +312,9 @@ af_move *ai_move_select_best(af_move **moves, int count, const move_stat_context
         // Additional range constraint for attempt_attack context
         // (smart AI will bail out unless close enough to hit)
         if(ctx->enemy_range > 0) {
-            bool in_attempt_range = (ctx->enemy_range <= RANGE_CLOSE || 
-                                    (ctx->enemy_range == RANGE_MID && dumb_sometimes(&temp_ai)));
-            
+            bool in_attempt_range =
+                (ctx->enemy_range <= RANGE_CLOSE || (ctx->enemy_range == RANGE_MID && dumb_sometimes(&temp_ai)));
+
             if(!in_attempt_range && (move->category == CAT_BASIC || move->category == CAT_LOW ||
                                      move->category == CAT_MEDIUM || move->category == CAT_HIGH)) {
                 continue;

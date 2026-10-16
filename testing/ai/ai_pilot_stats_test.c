@@ -14,10 +14,10 @@
  * mutates physical stats.
  */
 
+#include "CUnit/CUnit.h"
 #include "game/ai/ai_state.h"
 #include "game/common_defines.h"
 #include "resources/pilots.h"
-#include "CUnit/CUnit.h"
 #include <string.h>
 
 static void assert_pilot_stats(int id, int power, int agility, int endurance) {

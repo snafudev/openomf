@@ -212,8 +212,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Set basic match parameters
-    rec.game_mode = REC_GAMEMODE_ARCADE;           // 1/2 player arcade
-    rec.arena_id = 0;                              // Stadium (safe neutral arena)
+    rec.game_mode = REC_GAMEMODE_ARCADE;                 // 1/2 player arcade
+    rec.arena_id = 0;                                    // Stadium (safe neutral arena)
     rec.p1_controller = REC_CONTROLLER_CUSTOM_KEYBOARD1; // Player keyboard
     rec.p2_controller = REC_CONTROLLER_AI;               // CPU opponent
     rec.p2_controller_ = REC_CONTROLLER_AI;

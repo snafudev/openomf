@@ -10,16 +10,16 @@
  * and by the regression (.REC) tests.
  */
 
+#include "CUnit/CUnit.h"
+#include "controller/controller.h"
 #include "game/ai/ai_event.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_types.h"
-#include "controller/controller.h"
 #include "game/objects/har.h"
 #include "resources/af_move.h"
 #include "resources/ids.h"
-#include "CUnit/CUnit.h"
 #include <string.h>
 
 /* -----------------------------------------------------------------------
@@ -90,7 +90,7 @@ void test_integration_land_hit_does_not_cancel_grab_tactic(void) {
     a.move_stats[4].value = 1;
 
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
-    CU_ASSERT_TRUE(still_queued);  // LAND_HIT doesn't trigger cancel
+    CU_ASSERT_TRUE(still_queued); // LAND_HIT doesn't trigger cancel
 
     ai_event_on_land_hit(&ctrl, ev, still_queued);
 
@@ -128,7 +128,7 @@ void test_integration_block_cancels_close_tactic(void) {
     // ai_event_on_block with has_queued_tactic=false and NULL gs → smart_usually
     // may fail at difficulty 1; set difficulty low to avoid tactic queuing crash
     a.difficulty = 1;
-    ai_event_on_block(&ctrl, ev, false);  // should not crash, early-returns
+    ai_event_on_block(&ctrl, ev, false); // should not crash, early-returns
 }
 
 /**
@@ -150,7 +150,7 @@ void test_integration_repeated_throws_trigger_learning(void) {
 
     p.att_def = 95;
     p.att_sniper = 20;
-    p.learning = 8.0f;  // guarantee learning_moment always returns true at diff 6
+    p.learning = 8.0f; // guarantee learning_moment always returns true at diff 6
 
     // Simulate being thrown MAX_TIMES_THROWN times (threshold = 3)
     for(int i = 0; i < MAX_TIMES_THROWN; i++) {
@@ -182,7 +182,7 @@ void test_integration_repeated_shots_trigger_learning(void) {
     p.att_def = 95;
     p.pref_fwd = 20;
     p.pref_back = 95;
-    p.learning = 8.0f;  // guarantee learning_moment always returns true at diff 6
+    p.learning = 8.0f; // guarantee learning_moment always returns true at diff 6
 
     for(int i = 0; i < MAX_TIMES_SHOT; i++) {
         ai_event_on_take_hit(&ctrl, ev, true);
@@ -307,8 +307,7 @@ void test_integration_move_stat_distance_tracking(void) {
 void ai_integration_test_suite(CU_pSuite suite) {
     CU_add_test(suite, "integration: LAND_HIT does not cancel GRAB tactic",
                 test_integration_land_hit_does_not_cancel_grab_tactic);
-    CU_add_test(suite, "integration: BLOCK cancels CLOSE tactic cleanly",
-                test_integration_block_cancels_close_tactic);
+    CU_add_test(suite, "integration: BLOCK cancels CLOSE tactic cleanly", test_integration_block_cancels_close_tactic);
     CU_add_test(suite, "integration: repeated throws trigger learning at threshold",
                 test_integration_repeated_throws_trigger_learning);
     CU_add_test(suite, "integration: repeated shots trigger learning at threshold",

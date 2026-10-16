@@ -2,17 +2,17 @@
  * Unit tests for AI tactic engine config gating.
  */
 
+#include "CUnit/CUnit.h"
 #include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_utils.h"
 #include "game/game_player.h"
 #include "game/game_state.h"
+#include "resources/ids.h"
 #include "resources/resource_files.h"
 #include "resources/resource_paths.h"
-#include "resources/ids.h"
 #include "utils/allocator.h"
 #include "utils/log.h"
 #include "utils/path.h"
-#include "CUnit/CUnit.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -79,7 +79,7 @@ static void make_fire_orb_hazard_context(game_state *gs, controller *ctrl, ai *a
 
     vector_create(&gs->objects, sizeof(test_render_obj));
 
-    game_player players[2];
+    static game_player players[2];
     memset(players, 0, sizeof(players));
     gs->players[0] = &players[0];
     gs->players[1] = &players[1];
@@ -138,6 +138,16 @@ static void make_fire_orb_hazard_context(game_state *gs, controller *ctrl, ai *a
     ctrl->har_obj_id = (*self_obj)->id;
 }
 
+static void free_fire_orb_hazard_context(game_state *gs, object *self_obj, object *enemy_obj, object *hazard_obj) {
+    object *objs[] = {self_obj, enemy_obj, hazard_obj};
+    for(int i = 0; i < 3; i++) {
+        omf_free(objs[i]->userdata);
+        object_free(objs[i]);
+        omf_free(objs[i]);
+    }
+    vector_free(&gs->objects);
+}
+
 void test_hazard_fire_orb_opportunity_detects_lined_up_orb(void) {
     game_state gs;
     controller ctrl;
@@ -154,6 +164,8 @@ void test_hazard_fire_orb_opportunity_detects_lined_up_orb(void) {
     CU_ASSERT_TRUE(ai_hazard_fire_orb_opportunity(&ctrl));
     CU_ASSERT_TRUE(ai_tactic_likes_it(&ctrl, TACTIC_QUICK));
     CU_ASSERT_FALSE(ai_tactic_likes_it(&ctrl, TACTIC_GRAB));
+
+    free_fire_orb_hazard_context(&gs, self_obj, enemy_obj, hazard_obj);
 }
 
 void test_hazard_fire_orb_overhead_opportunity_is_detected(void) {
@@ -175,6 +187,8 @@ void test_hazard_fire_orb_overhead_opportunity_is_detected(void) {
 
     a.difficulty = 2;
     CU_ASSERT_FALSE(ai_hazard_fire_orb_overhead_opportunity(&ctrl));
+
+    free_fire_orb_hazard_context(&gs, self_obj, enemy_obj, hazard_obj);
 }
 
 void test_hazard_wall_pressure_detects_enemy_near_wall(void) {
@@ -198,6 +212,8 @@ void test_hazard_wall_pressure_detects_enemy_near_wall(void) {
 
     CU_ASSERT_TRUE(ai_hazard_wall_pressure_opportunity(&ctrl));
     CU_ASSERT_TRUE(ai_tactic_likes_it(&ctrl, TACTIC_PUSH));
+
+    free_fire_orb_hazard_context(&gs, self_obj, enemy_obj, hazard_obj);
 }
 
 void test_hazard_spike_danger_detects_self_near_spike(void) {
@@ -221,6 +237,8 @@ void test_hazard_spike_danger_detects_self_near_spike(void) {
 
     CU_ASSERT_TRUE(ai_hazard_spike_danger(&ctrl));
     CU_ASSERT_TRUE(ai_tactic_likes_it(&ctrl, TACTIC_ESCAPE));
+
+    free_fire_orb_hazard_context(&gs, self_obj, enemy_obj, hazard_obj);
 }
 
 void test_hazard_opportunities_are_disabled_at_low_difficulty(void) {
@@ -246,6 +264,8 @@ void test_hazard_opportunities_are_disabled_at_low_difficulty(void) {
     CU_ASSERT_FALSE(ai_hazard_fire_orb_opportunity(&ctrl));
     CU_ASSERT_FALSE(ai_hazard_wall_pressure_opportunity(&ctrl));
     CU_ASSERT_FALSE(ai_hazard_spike_danger(&ctrl));
+
+    free_fire_orb_hazard_context(&gs, self_obj, enemy_obj, hazard_obj);
 }
 
 void test_tactic_is_enabled_respects_disabled_flag_in_config(void) {
@@ -287,15 +307,14 @@ void test_tactic_is_enabled_partial_config_keeps_unspecified_enabled(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": false\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": false\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -326,19 +345,18 @@ void test_tactic_first_enabled_skips_disabled_entries(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": false\n"
-        "    },\n"
-        "    \"GRAB\": {\n"
-        "      \"id\": 3,\n"
-        "      \"enabled\": true\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": false\n"
+                          "    },\n"
+                          "    \"GRAB\": {\n"
+                          "      \"id\": 3,\n"
+                          "      \"enabled\": true\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -372,15 +390,14 @@ void test_tactic_metadata_missing_fields_return_empty_string(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": true\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": true\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -438,17 +455,16 @@ void test_tactic_metadata_tokens_unknown_are_reported_unsupported(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_NOT_A_REAL_TOKEN\",\n"
-        "      \"attack_type\": \"ATTACK_UNKNOWN_MODE\"\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_NOT_A_REAL_TOKEN\",\n"
+                          "      \"attack_type\": \"ATTACK_UNKNOWN_MODE\"\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -484,18 +500,17 @@ void test_tactic_conditions_parsed_from_config(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",\n"
-        "      \"attack_type\": \"ATTACK_RANGED\",\n"
-        "      \"conditions\": [\"pref_hyper\", \"not_thrown_too_much\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",\n"
+                          "      \"attack_type\": \"ATTACK_RANGED\",\n"
+                          "      \"conditions\": [\"pref_hyper\", \"not_thrown_too_much\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -537,18 +552,17 @@ void test_tactic_conditions_unknown_token_reports_unsupported(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",\n"
-        "      \"attack_type\": \"ATTACK_RANGED\",\n"
-        "      \"conditions\": [\"pref_hyper\", \"unknown_condition_token\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",\n"
+                          "      \"attack_type\": \"ATTACK_RANGED\",\n"
+                          "      \"conditions\": [\"pref_hyper\", \"unknown_condition_token\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -611,18 +625,17 @@ void test_tactic_conditions_match_context_unknown_condition_ignored(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"SHOOT\": {\n"
-        "      \"id\": 5,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",\n"
-        "      \"attack_type\": \"ATTACK_RANGED\",\n"
-        "      \"conditions\": [\"unknown_condition_token\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"SHOOT\": {\n"
+                          "      \"id\": 5,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",\n"
+                          "      \"attack_type\": \"ATTACK_RANGED\",\n"
+                          "      \"conditions\": [\"unknown_condition_token\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -658,18 +671,17 @@ void test_tactic_conditions_match_context_close_has_charge(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"CLOSE\": {\n"
-        "      \"id\": 8,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_CLOSE\",\n"
-        "      \"attack_type\": \"ATTACK_RANDOM\",\n"
-        "      \"conditions\": [\"has_charge\", \"enemy_not_cramped\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"CLOSE\": {\n"
+                          "      \"id\": 8,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_CLOSE\",\n"
+                          "      \"attack_type\": \"ATTACK_RANDOM\",\n"
+                          "      \"conditions\": [\"has_charge\", \"enemy_not_cramped\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -699,17 +711,28 @@ void test_tactic_conditions_match_context_all_tactics_enemy_not_cramped(void) {
     const char *partial =
         "{\n"
         "  \"tactics\": {\n"
-        "    \"ESCAPE\":  {\"id\": 1,  \"enabled\": true, \"move_type\": \"MOVE_AVOID\",              \"attack_type\": \"NONE\",                  \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"TURTLE\":  {\"id\": 2,  \"enabled\": true, \"move_type\": \"MOVE_BLOCK\",              \"attack_type\": \"NONE\",                  \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"GRAB\":    {\"id\": 3,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": \"ATTACK_GRAB\",           \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"SPAM\":    {\"id\": 4,  \"enabled\": true, \"move_type\": \"NONE\",                    \"attack_type\": \"ATTACK_ID_OR_LIGHT\",    \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"SHOOT\":   {\"id\": 5,  \"enabled\": true, \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",   \"attack_type\": \"ATTACK_RANGED\",         \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"TRIP\":    {\"id\": 6,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": \"ATTACK_TRIP\",           \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"QUICK\":   {\"id\": 7,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": \"ATTACK_LIGHT\",          \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"CLOSE\":   {\"id\": 8,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": \"ATTACK_RANDOM\",         \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"FLY\":     {\"id\": 9,  \"enabled\": true, \"move_type\": \"MOVE_HIGH_JUMP\",          \"attack_type\": \"ATTACK_JUMP_OR_NONE\",   \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"PUSH\":    {\"id\": 10, \"enabled\": true, \"move_type\": \"NONE\",                    \"attack_type\": \"ATTACK_PUSH_OR_HEAVY\",  \"conditions\": [\"enemy_not_cramped\"]},\n"
-        "    \"COUNTER\": {\"id\": 11, \"enabled\": true, \"move_type\": \"MOVE_BLOCK_IF_NOT_CRAMPED\", \"attack_type\": \"ATTACK_TRIP_OR_HEAVY\", \"conditions\": [\"enemy_not_cramped\"]}\n"
+        "    \"ESCAPE\":  {\"id\": 1,  \"enabled\": true, \"move_type\": \"MOVE_AVOID\",              \"attack_type\": "
+        "\"NONE\",                  \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"TURTLE\":  {\"id\": 2,  \"enabled\": true, \"move_type\": \"MOVE_BLOCK\",              \"attack_type\": "
+        "\"NONE\",                  \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"GRAB\":    {\"id\": 3,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": "
+        "\"ATTACK_GRAB\",           \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"SPAM\":    {\"id\": 4,  \"enabled\": true, \"move_type\": \"NONE\",                    \"attack_type\": "
+        "\"ATTACK_ID_OR_LIGHT\",    \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"SHOOT\":   {\"id\": 5,  \"enabled\": true, \"move_type\": \"MOVE_AVOID_IF_CRAMPED\",   \"attack_type\": "
+        "\"ATTACK_RANGED\",         \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"TRIP\":    {\"id\": 6,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": "
+        "\"ATTACK_TRIP\",           \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"QUICK\":   {\"id\": 7,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": "
+        "\"ATTACK_LIGHT\",          \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"CLOSE\":   {\"id\": 8,  \"enabled\": true, \"move_type\": \"MOVE_CLOSE\",              \"attack_type\": "
+        "\"ATTACK_RANDOM\",         \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"FLY\":     {\"id\": 9,  \"enabled\": true, \"move_type\": \"MOVE_HIGH_JUMP\",          \"attack_type\": "
+        "\"ATTACK_JUMP_OR_NONE\",   \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"PUSH\":    {\"id\": 10, \"enabled\": true, \"move_type\": \"NONE\",                    \"attack_type\": "
+        "\"ATTACK_PUSH_OR_HEAVY\",  \"conditions\": [\"enemy_not_cramped\"]},\n"
+        "    \"COUNTER\": {\"id\": 11, \"enabled\": true, \"move_type\": \"MOVE_BLOCK_IF_NOT_CRAMPED\", "
+        "\"attack_type\": \"ATTACK_TRIP_OR_HEAVY\", \"conditions\": [\"enemy_not_cramped\"]}\n"
         "  }\n"
         "}\n";
 
@@ -739,18 +762,17 @@ void test_tactic_conditions_match_context_push_has_push(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"PUSH\": {\n"
-        "      \"id\": 10,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"NONE\",\n"
-        "      \"attack_type\": \"ATTACK_PUSH_OR_HEAVY\",\n"
-        "      \"conditions\": [\"has_push\", \"enemy_not_cramped\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"PUSH\": {\n"
+                          "      \"id\": 10,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"NONE\",\n"
+                          "      \"attack_type\": \"ATTACK_PUSH_OR_HEAVY\",\n"
+                          "      \"conditions\": [\"has_push\", \"enemy_not_cramped\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -777,18 +799,17 @@ void test_tactic_conditions_match_context_fly_not_shot_too_much(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"FLY\": {\n"
-        "      \"id\": 9,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_HIGH_JUMP\",\n"
-        "      \"attack_type\": \"ATTACK_JUMP_OR_NONE\",\n"
-        "      \"conditions\": [\"not_shot_too_much\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"FLY\": {\n"
+                          "      \"id\": 9,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_HIGH_JUMP\",\n"
+                          "      \"attack_type\": \"ATTACK_JUMP_OR_NONE\",\n"
+                          "      \"conditions\": [\"not_shot_too_much\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -814,18 +835,17 @@ void test_tactic_conditions_match_context_grab_not_thrown_too_much(void) {
     size_t original_size = 0;
     CU_ASSERT_TRUE_FATAL(read_whole_file(&tactics_path, original, sizeof(original), &original_size));
 
-    const char *partial =
-        "{\n"
-        "  \"tactics\": {\n"
-        "    \"GRAB\": {\n"
-        "      \"id\": 3,\n"
-        "      \"enabled\": true,\n"
-        "      \"move_type\": \"MOVE_CLOSE\",\n"
-        "      \"attack_type\": \"ATTACK_GRAB\",\n"
-        "      \"conditions\": [\"not_thrown_too_much\"]\n"
-        "    }\n"
-        "  }\n"
-        "}\n";
+    const char *partial = "{\n"
+                          "  \"tactics\": {\n"
+                          "    \"GRAB\": {\n"
+                          "      \"id\": 3,\n"
+                          "      \"enabled\": true,\n"
+                          "      \"move_type\": \"MOVE_CLOSE\",\n"
+                          "      \"attack_type\": \"ATTACK_GRAB\",\n"
+                          "      \"conditions\": [\"not_thrown_too_much\"]\n"
+                          "    }\n"
+                          "  }\n"
+                          "}\n";
 
     CU_ASSERT_TRUE_FATAL(write_whole_file(&tactics_path, partial, strlen(partial)));
 
@@ -879,11 +899,14 @@ void test_tactic_shoot_restricts_shredder_medium_range_projectile(void) {
 void ai_tactic_engine_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "tactic enabled: invalid id false", test_tactic_is_enabled_invalid_id_returns_false) == NULL)
         return;
-    if(CU_add_test(suite, "tactic enabled: valid ids true by default", test_tactic_is_enabled_defaults_true_for_valid_ids) == NULL)
+    if(CU_add_test(suite, "tactic enabled: valid ids true by default",
+                   test_tactic_is_enabled_defaults_true_for_valid_ids) == NULL)
         return;
-    if(CU_add_test(suite, "hazard: overhead fire orb opportunity", test_hazard_fire_orb_overhead_opportunity_is_detected) == NULL)
+    if(CU_add_test(suite, "hazard: overhead fire orb opportunity",
+                   test_hazard_fire_orb_overhead_opportunity_is_detected) == NULL)
         return;
-    if(CU_add_test(suite, "tactic enabled: config disabled flag", test_tactic_is_enabled_respects_disabled_flag_in_config) == NULL)
+    if(CU_add_test(suite, "tactic enabled: config disabled flag",
+                   test_tactic_is_enabled_respects_disabled_flag_in_config) == NULL)
         return;
     if(CU_add_test(suite, "tactic enabled: partial config keeps unspecified enabled",
                    test_tactic_is_enabled_partial_config_keeps_unspecified_enabled) == NULL)
@@ -912,11 +935,9 @@ void ai_tactic_engine_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "tactic metadata: unknown tokens unsupported",
                    test_tactic_metadata_tokens_unknown_are_reported_unsupported) == NULL)
         return;
-    if(CU_add_test(suite, "tactic conditions: missing by default",
-                   test_tactic_conditions_missing_by_default) == NULL)
+    if(CU_add_test(suite, "tactic conditions: missing by default", test_tactic_conditions_missing_by_default) == NULL)
         return;
-    if(CU_add_test(suite, "tactic conditions: parsed from config",
-                   test_tactic_conditions_parsed_from_config) == NULL)
+    if(CU_add_test(suite, "tactic conditions: parsed from config", test_tactic_conditions_parsed_from_config) == NULL)
         return;
     if(CU_add_test(suite, "tactic conditions: invalid id or query",
                    test_tactic_conditions_invalid_id_or_query_returns_false) == NULL)
@@ -939,8 +960,8 @@ void ai_tactic_engine_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "tactic conditions: all tactics enemy_not_cramped",
                    test_tactic_conditions_match_context_all_tactics_enemy_not_cramped) == NULL)
         return;
-    if(CU_add_test(suite, "tactic conditions: push has_push",
-                   test_tactic_conditions_match_context_push_has_push) == NULL)
+    if(CU_add_test(suite, "tactic conditions: push has_push", test_tactic_conditions_match_context_push_has_push) ==
+       NULL)
         return;
     if(CU_add_test(suite, "tactic conditions: fly not_shot_too_much",
                    test_tactic_conditions_match_context_fly_not_shot_too_much) == NULL)

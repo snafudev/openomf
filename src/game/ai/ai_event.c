@@ -6,8 +6,8 @@
 
 #include "game/ai/ai_event.h"
 
-#include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_core_config.h"
+#include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_tactic_engine.h"
@@ -228,8 +228,7 @@ void ai_event_on_block(controller *ctrl, har_event event, bool has_queued_tactic
         ai_tactic_consider_list(ctrl, tacs, N_ELEMENTS(tacs));
     } else {
         // we blocked a HAR attack
-        int tacs[] = {TACTIC_TRIP,   TACTIC_PUSH,  TACTIC_TURTLE, TACTIC_GRAB,
-                      TACTIC_ESCAPE, TACTIC_QUICK, TACTIC_SPAM};
+        int tacs[] = {TACTIC_TRIP, TACTIC_PUSH, TACTIC_TURTLE, TACTIC_GRAB, TACTIC_ESCAPE, TACTIC_QUICK, TACTIC_SPAM};
         ai_tactic_consider_list(ctrl, tacs, N_ELEMENTS(tacs));
     }
 }

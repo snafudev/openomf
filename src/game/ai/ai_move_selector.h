@@ -16,9 +16,9 @@
 #ifndef AI_MOVE_SELECTOR_H
 #define AI_MOVE_SELECTOR_H
 
-#include "resources/af_move.h"
 #include "formats/pilot.h"
 #include "game/ai/ai_types.h"
+#include "resources/af_move.h"
 #include <stdbool.h>
 
 /**
@@ -30,31 +30,31 @@
 typedef struct {
     // Move statistics array (indexed by move ID)
     move_stat *move_stats;
-    
+
     // HAR state for validity checks
-    const void *har;  // typedef struct { uint8_t state, close, id; } test_har_state;
-    
+    const void *har; // typedef struct { uint8_t state, close, id; } test_har_state;
+
     // Scoring mode
     bool highest_damage;
-    
+
     // AI difficulty level
     int difficulty;
-    
+
     // Pilot data for preference checks
     sd_pilot pilot;
-    
+
     // Enemy range / state (for close-range tactical weighting)
     int enemy_range;
     int enemy_state;
     int enemy_in_stasis;
-    
+
     // Last move ID (to avoid repetition)
     int last_move_id;
-    
+
     // Damage bonus divisor for smart AI (typically 3 or 4)
     // Set to 3 for assign_move_by_cat, 4 for attempt_attack
     int damage_divisor;
-    
+
     // Whether to force-allow projectile moves (assign_move_by_cat uses true, attempt_attack uses false)
     bool force_allow_projectile;
 } move_stat_context;

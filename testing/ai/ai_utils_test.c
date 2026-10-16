@@ -2,9 +2,9 @@
  * Unit tests for AI utility helpers
  */
 
+#include "CUnit/CUnit.h"
 #include "game/ai/ai_utils.h"
 #include "resources/af_move.h"
-#include "CUnit/CUnit.h"
 #include <string.h>
 
 static void test_move_init(af_move *move, const char *move_string) {
@@ -97,19 +97,34 @@ void test_char_to_act_maps_forward_for_right_facing(void) {
 }
 
 void ai_utils_test_suite(CU_pSuite suite) {
-    if(CU_add_test(suite, "enemy range: cramped", test_enemy_range_cramped) == NULL) return;
-    if(CU_add_test(suite, "enemy range: close", test_enemy_range_close) == NULL) return;
-    if(CU_add_test(suite, "enemy range: mid", test_enemy_range_mid) == NULL) return;
-    if(CU_add_test(suite, "enemy range: far", test_enemy_range_far) == NULL) return;
-    if(CU_add_test(suite, "enemy state: stunned", test_enemy_stunned_or_stasis_when_stunned) == NULL) return;
-    if(CU_add_test(suite, "enemy state: stasis", test_enemy_stunned_or_stasis_when_in_stasis) == NULL) return;
-    if(CU_add_test(suite, "enemy state: normal", test_enemy_stunned_or_stasis_when_neither) == NULL) return;
-    if(CU_add_test(suite, "special move: kick", test_is_special_move_returns_false_for_kick) == NULL) return;
-    if(CU_add_test(suite, "special move: punch variant", test_is_special_move_returns_false_for_punch_variant) == NULL) return;
-    if(CU_add_test(suite, "special move: directional", test_is_special_move_returns_true_for_directional_input) == NULL) return;
-    if(CU_add_test(suite, "projectiles: jaguar", test_har_has_projectiles_for_jaguar) == NULL) return;
-    if(CU_add_test(suite, "projectiles: katana", test_har_has_projectiles_for_katana) == NULL) return;
-    if(CU_add_test(suite, "charge: gargoyle", test_har_has_charge_for_gargoyle) == NULL) return;
-    if(CU_add_test(suite, "push: nova", test_har_has_push_for_nova) == NULL) return;
-    if(CU_add_test(suite, "char_to_act: forward", test_char_to_act_maps_forward_for_right_facing) == NULL) return;
+    if(CU_add_test(suite, "enemy range: cramped", test_enemy_range_cramped) == NULL)
+        return;
+    if(CU_add_test(suite, "enemy range: close", test_enemy_range_close) == NULL)
+        return;
+    if(CU_add_test(suite, "enemy range: mid", test_enemy_range_mid) == NULL)
+        return;
+    if(CU_add_test(suite, "enemy range: far", test_enemy_range_far) == NULL)
+        return;
+    if(CU_add_test(suite, "enemy state: stunned", test_enemy_stunned_or_stasis_when_stunned) == NULL)
+        return;
+    if(CU_add_test(suite, "enemy state: stasis", test_enemy_stunned_or_stasis_when_in_stasis) == NULL)
+        return;
+    if(CU_add_test(suite, "enemy state: normal", test_enemy_stunned_or_stasis_when_neither) == NULL)
+        return;
+    if(CU_add_test(suite, "special move: kick", test_is_special_move_returns_false_for_kick) == NULL)
+        return;
+    if(CU_add_test(suite, "special move: punch variant", test_is_special_move_returns_false_for_punch_variant) == NULL)
+        return;
+    if(CU_add_test(suite, "special move: directional", test_is_special_move_returns_true_for_directional_input) == NULL)
+        return;
+    if(CU_add_test(suite, "projectiles: jaguar", test_har_has_projectiles_for_jaguar) == NULL)
+        return;
+    if(CU_add_test(suite, "projectiles: katana", test_har_has_projectiles_for_katana) == NULL)
+        return;
+    if(CU_add_test(suite, "charge: gargoyle", test_har_has_charge_for_gargoyle) == NULL)
+        return;
+    if(CU_add_test(suite, "push: nova", test_har_has_push_for_nova) == NULL)
+        return;
+    if(CU_add_test(suite, "char_to_act: forward", test_char_to_act_maps_forward_for_right_facing) == NULL)
+        return;
 }

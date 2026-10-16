@@ -5,11 +5,11 @@
  * using extreme pilot preference values for deterministic results.
  */
 
+#include "CUnit/CUnit.h"
+#include "ai/ai_controller_test.h"
 #include "game/ai/ai_movement.h"
 #include "game/ai/ai_utils.h"
 #include "game/common_defines.h"
-#include "ai/ai_controller_test.h"
-#include "CUnit/CUnit.h"
 
 // ============================================================================
 // Test: ai_movement_decide
@@ -178,9 +178,10 @@ void ai_movement_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "movement decide: cramped wallhugging pref fwd",
                    test_movement_decide_cramped_wallhugging_pref_fwd) == NULL)
         return;
-    if(CU_add_test(suite, "movement decide: far pref fwd", test_movement_decide_far_pref_fwd) == NULL) return;
-    if(CU_add_test(suite, "movement decide: far pref back no wallhug",
-                   test_movement_decide_far_pref_back_no_wallhug) == NULL)
+    if(CU_add_test(suite, "movement decide: far pref fwd", test_movement_decide_far_pref_fwd) == NULL)
+        return;
+    if(CU_add_test(suite, "movement decide: far pref back no wallhug", test_movement_decide_far_pref_back_no_wallhug) ==
+       NULL)
         return;
     if(CU_add_test(suite, "movement decide: far pref back wallhugging",
                    test_movement_decide_far_pref_back_wallhugging) == NULL)
@@ -188,9 +189,9 @@ void ai_movement_test_suite(CU_pSuite suite) {
     if(CU_add_test(suite, "movement decide: brawler smart goes forward",
                    test_movement_decide_brawler_smart_goes_forward) == NULL)
         return;
-    if(CU_add_test(suite, "movement decide: default still", test_movement_decide_default_still) == NULL) return;
-    if(CU_add_test(suite, "movement jump chance: high pref jump",
-                   test_movement_jump_chance_high_pref_jump) == NULL)
+    if(CU_add_test(suite, "movement decide: default still", test_movement_decide_default_still) == NULL)
+        return;
+    if(CU_add_test(suite, "movement jump chance: high pref jump", test_movement_jump_chance_high_pref_jump) == NULL)
         return;
     if(CU_add_test(suite, "movement jump chance: high difficulty no pref jump",
                    test_movement_jump_chance_high_diff_no_pref_jump) == NULL)

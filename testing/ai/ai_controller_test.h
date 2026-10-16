@@ -8,12 +8,12 @@
 #ifndef AI_CONTROLLER_TEST_H
 #define AI_CONTROLLER_TEST_H
 
-#include "game/ai/ai_decision_engine.h"
 #include "formats/pilot.h"
+#include "game/ai/ai_decision_engine.h"
 #include "utils/allocator.h"
 #include "utils/random.h"
-#include <string.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef struct {
     sd_pilot pilot_data;

@@ -4,14 +4,14 @@
 
 #include "game/ai/ai_tactic_engine.h"
 
-#include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_core_config.h"
+#include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_utils.h"
 #include "game/game_state.h"
 #include "game/objects/har.h"
-#include "resources/resource_files.h"
 #include "resources/ids.h"
+#include "resources/resource_files.h"
 #include "utils/allocator.h"
 #include "utils/log.h"
 #include "utils/path.h"
@@ -295,8 +295,8 @@ static const char *find_matching_brace(const char *start) {
     return NULL;
 }
 
-static bool parse_json_string_field(const char *obj_start, const char *obj_end, const char *field,
-                                    char *dst, size_t dst_size) {
+static bool parse_json_string_field(const char *obj_start, const char *obj_end, const char *field, char *dst,
+                                    size_t dst_size) {
     if(obj_start == NULL || obj_end == NULL || field == NULL || dst == NULL || dst_size == 0) {
         return false;
     }
@@ -333,8 +333,8 @@ static bool parse_json_string_field(const char *obj_start, const char *obj_end, 
     return true;
 }
 
-static int parse_json_string_array_field(const char *obj_start, const char *obj_end, const char *field,
-                                         char dst[][40], int max_items) {
+static int parse_json_string_array_field(const char *obj_start, const char *obj_end, const char *field, char dst[][40],
+                                         int max_items) {
     if(obj_start == NULL || obj_end == NULL || field == NULL || dst == NULL || max_items <= 0) {
         return 0;
     }
@@ -574,8 +574,8 @@ static void warn_unsupported_tactic_tokens(int tactic_type) {
 
     const char *attack_token = g_tactic_attack_type[tactic_type];
     if(attack_token[0] != '\0' && !attack_type_token_supported(attack_token)) {
-        log_warn("Unsupported attack_type '%s' for tactic %s (%d); using legacy fallback behavior", attack_token,
-                 name, tactic_type);
+        log_warn("Unsupported attack_type '%s' for tactic %s (%d); using legacy fallback behavior", attack_token, name,
+                 tactic_type);
     }
 
     int n_conditions = g_tactic_condition_count[tactic_type];
@@ -701,7 +701,7 @@ static bool tactic_conditions_match_context(int tactic_type, const ai *a, const 
 }
 
 bool ai_tactic_should_use_shoot(const ai *a, const har *h, int enemy_range, bool needs_projectiles_check,
-                               bool needs_sniper_pref_check, bool needs_enemy_not_cramped_check) {
+                                bool needs_sniper_pref_check, bool needs_enemy_not_cramped_check) {
     if(a == NULL || a->pilot == NULL || h == NULL) {
         return false;
     }
@@ -940,11 +940,10 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             // Avoid double-gating when an equivalent condition token is configured.
             bool needs_projectiles_check = !ai_tactic_config_has_condition(TACTIC_SHOOT, "has_projectiles");
             bool needs_sniper_pref_check = !ai_tactic_config_has_condition(TACTIC_SHOOT, "pref_sniper");
-            bool needs_enemy_not_cramped_check =
-                !ai_tactic_config_has_condition(TACTIC_SHOOT, "enemy_not_cramped");
+            bool needs_enemy_not_cramped_check = !ai_tactic_config_has_condition(TACTIC_SHOOT, "enemy_not_cramped");
 
             if(ai_tactic_should_use_shoot(a, h, enemy_range, needs_projectiles_check, needs_sniper_pref_check,
-                                         needs_enemy_not_cramped_check)) {
+                                          needs_enemy_not_cramped_check)) {
                 return true;
             }
             break;
@@ -972,7 +971,8 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
                 return true;
             }
 
-            bool needs_quick_enemy_not_cramped_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "enemy_not_cramped");
+            bool needs_quick_enemy_not_cramped_check =
+                !ai_tactic_config_has_condition(TACTIC_QUICK, "enemy_not_cramped");
             bool needs_quick_pref_sniper_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "pref_sniper");
             bool needs_quick_pref_hyper_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "pref_hyper");
             bool needs_quick_pref_normal_check = !ai_tactic_config_has_condition(TACTIC_QUICK, "pref_normal");
@@ -1037,8 +1037,7 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             bool needs_fly_pref_jump_check = !ai_tactic_config_has_condition(TACTIC_FLY, "pref_jump");
 
             if(((!needs_fly_pref_jump_check || roll_pref(a->pilot->att_jump)) ||
-                (a->shot > MAX_TIMES_SHOT && learning_moment(a)) ||
-                (h->id == HAR_GARGOYLE || h->id == HAR_PYROS)) &&
+                (a->shot > MAX_TIMES_SHOT && learning_moment(a)) || (h->id == HAR_GARGOYLE || h->id == HAR_PYROS)) &&
                ((wall_close && roll_chance(2)) || roll_chance(4))) {
                 return true;
             }
@@ -1053,7 +1052,8 @@ bool ai_tactic_likes_it(const controller *ctrl, int tactic_type) {
             bool needs_push_pref_hyper_check = !ai_tactic_config_has_condition(TACTIC_PUSH, "pref_hyper");
             bool needs_push_pref_def_check = !ai_tactic_config_has_condition(TACTIC_PUSH, "pref_def");
 
-            if((enemy_range <= RANGE_CLOSE || ((h->id == HAR_THORN || h->id == HAR_KATANA) && enemy_range <= RANGE_MID)) &&
+            if((enemy_range <= RANGE_CLOSE ||
+                ((h->id == HAR_THORN || h->id == HAR_KATANA) && enemy_range <= RANGE_MID)) &&
                (((!needs_push_has_push_check || har_has_push(h->id)) && smart_usually(a)) &&
                 (((!needs_push_pref_hyper_check || roll_pref(pilot->att_hyper)) && roll_chance(2)) ||
                  ((!needs_push_pref_def_check || roll_pref(pilot->att_def)) && roll_chance(4)) ||

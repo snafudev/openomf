@@ -18,10 +18,10 @@ bool roll_pref(int pref_val) {
 }
 
 bool smart_usually(const ai *a) {
-    if (a->difficulty >= 6) {
+    if(a->difficulty >= 6) {
         // at highest difficulty 92% chance to be smart
         return !roll_chance(12);
-    } else if (a->difficulty >= 3) {
+    } else if(a->difficulty >= 3) {
         return roll_chance(7 - a->difficulty);
     } else {
         return false;
@@ -29,11 +29,11 @@ bool smart_usually(const ai *a) {
 }
 
 bool dumb_usually(const ai *a) {
-    if (a->difficulty == 1) {
+    if(a->difficulty == 1) {
         // at lowest difficulty 92% chance to be dumb
         return !roll_chance(12);
     }
-    if (a->difficulty <= 2) {
+    if(a->difficulty <= 2) {
         return roll_chance(a->difficulty + 1);
     } else {
         return false;
@@ -41,7 +41,7 @@ bool dumb_usually(const ai *a) {
 }
 
 bool smart_sometimes(const ai *a) {
-    if (a->difficulty >= 2) {
+    if(a->difficulty >= 2) {
         return roll_chance(10 - a->difficulty);
     } else {
         return false;
@@ -49,7 +49,7 @@ bool smart_sometimes(const ai *a) {
 }
 
 bool dumb_sometimes(const ai *a) {
-    if (a->difficulty <= 2) {
+    if(a->difficulty <= 2) {
         return roll_chance(a->difficulty + 2);
     } else {
         return false;

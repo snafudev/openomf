@@ -65,14 +65,13 @@ void test_parse_move_array_empty(void) {
 }
 
 void test_parse_move_array_single_move(void) {
-    const char *json =
-        "{\"charge_moves\":[{"
-        "\"name\":\"test\","
-        "\"sequence\":[\"D\",\"DF\",\"F+P\"],"
-        "\"range_min\":\"MID\","
-        "\"conditions\":[\"special_preferred\",\"high_difficulty\"],"
-        "\"follow_up_tactics\":[\"grab\",\"push\"]"
-        "}]}";
+    const char *json = "{\"charge_moves\":[{"
+                       "\"name\":\"test\","
+                       "\"sequence\":[\"D\",\"DF\",\"F+P\"],"
+                       "\"range_min\":\"MID\","
+                       "\"conditions\":[\"special_preferred\",\"high_difficulty\"],"
+                       "\"follow_up_tactics\":[\"grab\",\"push\"]"
+                       "}]}";
 
     ai_move_def moves[AI_MAX_MOVES_PER_TYPE] = {0};
     uint8_t count = 0;
@@ -92,15 +91,26 @@ void test_parse_move_array_single_move(void) {
 }
 
 void ai_move_parser_test_suite(CU_pSuite suite) {
-    if(CU_add_test(suite, "parser: token F", test_token_forward) == NULL) return;
-    if(CU_add_test(suite, "parser: token DB+K", test_token_down_back_kick) == NULL) return;
-    if(CU_add_test(suite, "parser: token unknown", test_token_unknown) == NULL) return;
-    if(CU_add_test(suite, "parser: condition diff_scale", test_condition_diff_scale) == NULL) return;
-    if(CU_add_test(suite, "parser: condition special_preferred", test_condition_special_pref) == NULL) return;
-    if(CU_add_test(suite, "parser: condition enemy_stunned", test_condition_enemy_stunned) == NULL) return;
-    if(CU_add_test(suite, "parser: condition unknown", test_condition_unknown) == NULL) return;
-    if(CU_add_test(suite, "parser: tactic grab", test_tactic_grab) == NULL) return;
-    if(CU_add_test(suite, "parser: tactic unknown", test_tactic_unknown) == NULL) return;
-    if(CU_add_test(suite, "parser: empty move array", test_parse_move_array_empty) == NULL) return;
-    if(CU_add_test(suite, "parser: single move", test_parse_move_array_single_move) == NULL) return;
+    if(CU_add_test(suite, "parser: token F", test_token_forward) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: token DB+K", test_token_down_back_kick) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: token unknown", test_token_unknown) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: condition diff_scale", test_condition_diff_scale) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: condition special_preferred", test_condition_special_pref) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: condition enemy_stunned", test_condition_enemy_stunned) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: condition unknown", test_condition_unknown) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: tactic grab", test_tactic_grab) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: tactic unknown", test_tactic_unknown) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: empty move array", test_parse_move_array_empty) == NULL)
+        return;
+    if(CU_add_test(suite, "parser: single move", test_parse_move_array_single_move) == NULL)
+        return;
 }

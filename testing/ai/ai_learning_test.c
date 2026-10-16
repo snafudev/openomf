@@ -5,9 +5,9 @@
  *        ai_learning_maybe_forget
  */
 
+#include "CUnit/CUnit.h"
 #include "game/ai/ai_learning.h"
 #include "game/ai/ai_state.h"
-#include "CUnit/CUnit.h"
 #include <string.h>
 
 /* Helpers --------------------------------------------------------------- */
@@ -17,8 +17,8 @@ static void make_ai_with_difficulty(ai *a, sd_pilot *p, tactic_state *t, int dif
     memset(p, 0, sizeof(sd_pilot));
     memset(t, 0, sizeof(tactic_state));
     p->pilot_id = 0;
-    p->learning = 8.0f;   // rand_int(8) gives 0..7, all <= 8 → learning_moment always true
-    p->forget = 0.0f;     // never forgets by default
+    p->learning = 8.0f; // rand_int(8) gives 0..7, all <= 8 → learning_moment always true
+    p->forget = 0.0f;   // never forgets by default
     a->pilot = p;
     a->difficulty = difficulty;
     a->tactic = t;
@@ -102,7 +102,7 @@ void test_learning_throw_no_adjustment_low_difficulty(void) {
     sd_pilot p;
     tactic_state t;
     make_ai_with_difficulty(&a, &p, &t, 1); // low difficulty — learning_moment usually false
-    p.learning = 0.0f; // guarantees learning_moment returns false
+    p.learning = 0.0f;                      // guarantees learning_moment returns false
     p.att_def = 95;
 
     a.thrown = MAX_TIMES_THROWN - 1;
@@ -276,8 +276,8 @@ void test_learning_forget_resets_counters_when_triggered(void) {
     sd_pilot p;
     tactic_state t;
     make_ai_with_difficulty(&a, &p, &t, 6);
-    p.pilot_id = 0;      // valid pilot id so reset_pilot_personality works
-    p.forget = 1.0f;     // very high forget value → forgetful() highly likely
+    p.pilot_id = 0;  // valid pilot id so reset_pilot_personality works
+    p.forget = 1.0f; // very high forget value → forgetful() highly likely
 
     a.thrown = 5;
     a.shot = 4;
@@ -329,18 +329,14 @@ void test_learning_forget_does_not_trigger_when_forget_zero(void) {
  * -------------------------------------------------------------------- */
 
 void ai_learning_test_suite(CU_pSuite suite) {
-    CU_add_test(suite, "throw counter is incremented on each call",
-                test_learning_throw_increments_counter);
+    CU_add_test(suite, "throw counter is incremented on each call", test_learning_throw_increments_counter);
     CU_add_test(suite, "throw: no personality adjustment below threshold",
                 test_learning_throw_no_adjustment_below_threshold);
-    CU_add_test(suite, "throw: pilot personality adjusted at threshold",
-                test_learning_throw_adjusts_at_threshold);
-    CU_add_test(suite, "throw: defence not capped when already low",
-                test_learning_throw_defence_not_capped_when_low);
+    CU_add_test(suite, "throw: pilot personality adjusted at threshold", test_learning_throw_adjusts_at_threshold);
+    CU_add_test(suite, "throw: defence not capped when already low", test_learning_throw_defence_not_capped_when_low);
     CU_add_test(suite, "throw: no adjustment at low difficulty (learning=0)",
                 test_learning_throw_no_adjustment_low_difficulty);
-    CU_add_test(suite, "projectile counter is incremented on each call",
-                test_learning_projectile_increments_counter);
+    CU_add_test(suite, "projectile counter is incremented on each call", test_learning_projectile_increments_counter);
     CU_add_test(suite, "projectile: no personality adjustment below threshold",
                 test_learning_projectile_no_adjustment_below_threshold);
     CU_add_test(suite, "projectile: pilot personality adjusted at threshold",
@@ -355,8 +351,7 @@ void ai_learning_test_suite(CU_pSuite suite) {
                 test_pressure_burst_cooldown_blocks_repeat_charge);
     CU_add_test(suite, "pressure burst: cooldown expires and resets burst",
                 test_pressure_cooldown_expires_and_resets_burst);
-    CU_add_test(suite, "forget: resets counters when triggered",
-                test_learning_forget_resets_counters_when_triggered);
+    CU_add_test(suite, "forget: resets counters when triggered", test_learning_forget_resets_counters_when_triggered);
     CU_add_test(suite, "forget: never triggers when forget value is zero",
                 test_learning_forget_does_not_trigger_when_forget_zero);
 }

@@ -2,10 +2,10 @@
  * Unit tests for AI tactic and pilot state helpers
  */
 
-#include "game/ai/ai_state.h"
-#include "game/ai/ai_core_config.h"
-#include "game/common_defines.h"
 #include "CUnit/CUnit.h"
+#include "game/ai/ai_core_config.h"
+#include "game/ai/ai_state.h"
+#include "game/common_defines.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -216,13 +216,25 @@ void test_ai_core_config_progression_matches_difficulty_expectations(void) {
 }
 
 void ai_state_test_suite(CU_pSuite suite) {
-    if(CU_add_test(suite, "reset tactic state: clears active tactic", test_reset_tactic_state_clears_active_tactic) == NULL) return;
-    if(CU_add_test(suite, "reset tactic state: no active tactic", test_reset_tactic_state_with_no_active_tactic) == NULL) return;
-    if(CU_add_test(suite, "reset act timer: difficulty one", test_reset_act_timer_for_difficulty_one) == NULL) return;
-    if(CU_add_test(suite, "reset pilot personality: crystal", test_reset_pilot_personality_for_crystal) == NULL) return;
-    if(CU_add_test(suite, "reset pilot personality: raven", test_reset_pilot_personality_for_raven) == NULL) return;
-    if(CU_add_test(suite, "reset pilot personality: kreissack", test_reset_pilot_personality_for_kreissack) == NULL) return;
-    if(CU_add_test(suite, "ai core config: difficulty override", test_ai_core_config_loads_difficulty_override) == NULL) return;
-    if(CU_add_test(suite, "ai core config: veteran is baseline", test_ai_core_config_veteran_is_baseline) == NULL) return;
-    if(CU_add_test(suite, "ai core config: difficulty progression follows expectations", test_ai_core_config_progression_matches_difficulty_expectations) == NULL) return;
+    if(CU_add_test(suite, "reset tactic state: clears active tactic", test_reset_tactic_state_clears_active_tactic) ==
+       NULL)
+        return;
+    if(CU_add_test(suite, "reset tactic state: no active tactic", test_reset_tactic_state_with_no_active_tactic) ==
+       NULL)
+        return;
+    if(CU_add_test(suite, "reset act timer: difficulty one", test_reset_act_timer_for_difficulty_one) == NULL)
+        return;
+    if(CU_add_test(suite, "reset pilot personality: crystal", test_reset_pilot_personality_for_crystal) == NULL)
+        return;
+    if(CU_add_test(suite, "reset pilot personality: raven", test_reset_pilot_personality_for_raven) == NULL)
+        return;
+    if(CU_add_test(suite, "reset pilot personality: kreissack", test_reset_pilot_personality_for_kreissack) == NULL)
+        return;
+    if(CU_add_test(suite, "ai core config: difficulty override", test_ai_core_config_loads_difficulty_override) == NULL)
+        return;
+    if(CU_add_test(suite, "ai core config: veteran is baseline", test_ai_core_config_veteran_is_baseline) == NULL)
+        return;
+    if(CU_add_test(suite, "ai core config: difficulty progression follows expectations",
+                   test_ai_core_config_progression_matches_difficulty_expectations) == NULL)
+        return;
 }

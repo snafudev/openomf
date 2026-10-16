@@ -14,7 +14,7 @@
 
 int ai_move_def_score(const ai_move_def *move, int enemy_range, bool enemy_stunned, const ai *ai_data);
 const ai_move_def *ai_har_select_best_move(const ai_move_def *moves, uint8_t move_count, int enemy_range,
-                                          bool enemy_stunned, const ai *ai_data);
+                                           bool enemy_stunned, const ai *ai_data);
 bool ai_har_execute_charge(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev);
 bool ai_har_execute_push(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev);
 bool ai_har_execute_projectile(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev);

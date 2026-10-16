@@ -15,17 +15,17 @@
  * and by the integration tests.
  */
 
+#include "CUnit/CUnit.h"
+#include "controller/ai_controller.h"
+#include "controller/controller.h"
 #include "game/ai/ai_core_config.h"
 #include "game/ai/ai_event.h"
 #include "game/ai/ai_state.h"
 #include "game/ai/ai_tactic_engine.h"
 #include "game/ai/ai_types.h"
-#include "controller/ai_controller.h"
-#include "controller/controller.h"
 #include "game/objects/har.h"
 #include "resources/af_move.h"
 #include "resources/ids.h"
-#include "CUnit/CUnit.h"
 #include <string.h>
 
 /* -----------------------------------------------------------------------
@@ -47,7 +47,7 @@ static void make_mock_ai(ai *a, sd_pilot *p, tactic_state *t) {
     memset(t, 0, sizeof(tactic_state));
 
     p->pilot_id = 0;
-    p->forget = 0.0f;     // never forgets — keeps tests deterministic
+    p->forget = 0.0f; // never forgets — keeps tests deterministic
     p->att_def = 50;
     p->att_sniper = 50;
     p->att_hyper = 50;
@@ -55,7 +55,7 @@ static void make_mock_ai(ai *a, sd_pilot *p, tactic_state *t) {
     p->att_normal = 50;
     p->learning = 2.0f;
 
-    a->difficulty = 6;    // high difficulty → smart_usually() usually true
+    a->difficulty = 6; // high difficulty → smart_usually() usually true
     a->pilot = p;
     a->tactic = t;
 }
@@ -107,7 +107,7 @@ void test_event_cancel_block_resets_close_tactic(void) {
     make_move(&m, 1, CAT_BASIC);
     make_event(&ev, HAR_EVENT_BLOCK, &m);
 
-    t.tactic_type = TACTIC_CLOSE;  // not in whitelist → should be reset
+    t.tactic_type = TACTIC_CLOSE; // not in whitelist → should be reset
     t.chain_hit_on = 0;
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
@@ -127,7 +127,7 @@ void test_event_cancel_block_keeps_counter_tactic(void) {
     make_move(&m, 1, CAT_BASIC);
     make_event(&ev, HAR_EVENT_BLOCK, &m);
 
-    t.tactic_type = TACTIC_COUNTER;  // whitelisted
+    t.tactic_type = TACTIC_COUNTER; // whitelisted
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
     CU_ASSERT_TRUE(still_queued);
@@ -237,8 +237,8 @@ void test_event_cancel_block_chain_hit_on_keeps_tactic(void) {
     make_move(&m, 1, CAT_MEDIUM);
     make_event(&ev, HAR_EVENT_BLOCK, &m);
 
-    t.tactic_type = TACTIC_CLOSE;  // would normally be reset
-    t.chain_hit_on = CAT_MEDIUM;   // but chain_hit_on matches → keep
+    t.tactic_type = TACTIC_CLOSE; // would normally be reset
+    t.chain_hit_on = CAT_MEDIUM;  // but chain_hit_on matches → keep
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
     CU_ASSERT_TRUE(still_queued);
@@ -293,7 +293,7 @@ void test_event_cancel_take_hit_keeps_grab_tactic(void) {
     make_move(&m, 1, CAT_BASIC);
     make_event(&ev, HAR_EVENT_TAKE_HIT, &m);
 
-    t.tactic_type = TACTIC_GRAB;  // not in reset list for TAKE_HIT
+    t.tactic_type = TACTIC_GRAB; // not in reset list for TAKE_HIT
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
     CU_ASSERT_TRUE(still_queued);
@@ -312,7 +312,7 @@ void test_event_cancel_take_hit_resets_turtle_when_no_def(void) {
     make_event(&ev, HAR_EVENT_TAKE_HIT, &m);
 
     t.tactic_type = TACTIC_TURTLE;
-    p.att_def = 0;  // no defensive preference → reset turtle
+    p.att_def = 0; // no defensive preference → reset turtle
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
     CU_ASSERT_FALSE(still_queued);
@@ -331,7 +331,7 @@ void test_event_cancel_take_hit_keeps_turtle_with_def(void) {
     make_event(&ev, HAR_EVENT_TAKE_HIT, &m);
 
     t.tactic_type = TACTIC_TURTLE;
-    p.att_def = 70;  // has defensive preference → keep turtle
+    p.att_def = 70; // has defensive preference → keep turtle
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
     CU_ASSERT_TRUE(still_queued);
@@ -406,7 +406,7 @@ void test_event_cancel_enemy_stun_resets_non_shoot_non_grab(void) {
     memset(&ev, 0, sizeof(ev));
     ev.type = HAR_EVENT_ENEMY_STUN;
 
-    t.tactic_type = TACTIC_ESCAPE;  // not GRAB/CLOSE/TRIP/SHOOT → reset
+    t.tactic_type = TACTIC_ESCAPE; // not GRAB/CLOSE/TRIP/SHOOT → reset
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
 
     CU_ASSERT_FALSE(still_queued);
@@ -453,7 +453,7 @@ void test_event_cancel_other_events_leave_tactic_unchanged(void) {
     make_mock_ai(&a, &p, &t);
     make_mock_ctrl(&ctrl, &a);
     memset(&ev, 0, sizeof(ev));
-    ev.type = HAR_EVENT_LAND;  // not handled in cancel switch
+    ev.type = HAR_EVENT_LAND; // not handled in cancel switch
 
     t.tactic_type = TACTIC_SPAM;
     bool still_queued = ai_event_check_cancel_tactic(&ctrl, ev);
@@ -705,7 +705,7 @@ void test_event_enemy_block_ignores_repeat_block(void) {
     make_move(&m, 5, CAT_BASIC);
     make_event(&ev, HAR_EVENT_ENEMY_BLOCK, &m);
 
-    a.blocked = 1;  // already blocked — second call should be a no-op
+    a.blocked = 1; // already blocked — second call should be a no-op
     a.move_stats[5].value = 3;
 
     ai_event_on_enemy_block(&ctrl, ev, true);
@@ -754,7 +754,7 @@ void test_event_block_no_counter_when_attack_on_mismatch(void) {
     make_event(&ev, HAR_EVENT_BLOCK, &m);
 
     t.tactic_type = TACTIC_COUNTER;
-    t.attack_on = HAR_EVENT_LAND;  // different trigger → no immediate counter
+    t.attack_on = HAR_EVENT_LAND; // different trigger → no immediate counter
     t.move_timer = 15;
 
     // has_queued_tactic=true but attack_on doesn't match → early exit
@@ -843,7 +843,7 @@ void test_event_take_hit_does_not_increment_shot_for_close_hit(void) {
     ai_event_on_take_hit(&ctrl, ev, true);
 
     CU_ASSERT_EQUAL(a.shot, 0);
-    CU_ASSERT_EQUAL(a.thrown, 1);  // only thrown incremented
+    CU_ASSERT_EQUAL(a.thrown, 1); // only thrown incremented
 }
 
 /* -----------------------------------------------------------------------
@@ -862,7 +862,7 @@ void test_event_land_resets_act_timer(void) {
     ev.type = HAR_EVENT_LAND;
 
     a.act_timer = 99;
-    t.attack_on = 0;  // no pending land attack
+    t.attack_on = 0; // no pending land attack
 
     // has_queued_tactic=false, attack_on=0 → act_timer reset path
     // (smart_usually at difficulty 6 with high att_* → may queue tactic via
@@ -887,7 +887,7 @@ void test_event_land_queued_tactic_without_attack_on_resets_act_timer(void) {
 
     a.act_timer = 50;
     t.tactic_type = TACTIC_GRAB;
-    t.attack_on = 0;  // queued tactic but not waiting for land event
+    t.attack_on = 0; // queued tactic but not waiting for land event
 
     ai_event_on_land(&ctrl, ev, true);
 
@@ -921,30 +921,19 @@ void test_event_land_without_game_state_does_not_crash(void) {
 
 void ai_event_test_suite(CU_pSuite suite) {
     // ai_event_check_cancel_tactic
-    CU_add_test(suite, "cancel: no tactic → returns false",
-                test_event_cancel_no_tactic_returns_false);
-    CU_add_test(suite, "cancel: BLOCK resets CLOSE tactic",
-                test_event_cancel_block_resets_close_tactic);
-    CU_add_test(suite, "cancel: BLOCK keeps COUNTER tactic",
-                test_event_cancel_block_keeps_counter_tactic);
-    CU_add_test(suite, "cancel: BLOCK keeps TURTLE tactic",
-                test_event_cancel_block_keeps_turtle_tactic);
-    CU_add_test(suite, "cancel: BLOCK keeps TRIP tactic",
-                test_event_cancel_block_keeps_trip_tactic);
-    CU_add_test(suite, "cancel: BLOCK keeps PUSH tactic",
-                test_event_cancel_block_keeps_push_tactic);
-    CU_add_test(suite, "cancel: BLOCK keeps FLY tactic",
-                test_event_cancel_block_keeps_fly_tactic);
-    CU_add_test(suite, "cancel: BLOCK keeps SPAM tactic",
-                test_event_cancel_block_keeps_spam_tactic);
+    CU_add_test(suite, "cancel: no tactic → returns false", test_event_cancel_no_tactic_returns_false);
+    CU_add_test(suite, "cancel: BLOCK resets CLOSE tactic", test_event_cancel_block_resets_close_tactic);
+    CU_add_test(suite, "cancel: BLOCK keeps COUNTER tactic", test_event_cancel_block_keeps_counter_tactic);
+    CU_add_test(suite, "cancel: BLOCK keeps TURTLE tactic", test_event_cancel_block_keeps_turtle_tactic);
+    CU_add_test(suite, "cancel: BLOCK keeps TRIP tactic", test_event_cancel_block_keeps_trip_tactic);
+    CU_add_test(suite, "cancel: BLOCK keeps PUSH tactic", test_event_cancel_block_keeps_push_tactic);
+    CU_add_test(suite, "cancel: BLOCK keeps FLY tactic", test_event_cancel_block_keeps_fly_tactic);
+    CU_add_test(suite, "cancel: BLOCK keeps SPAM tactic", test_event_cancel_block_keeps_spam_tactic);
     CU_add_test(suite, "cancel: BLOCK with chain_hit_on match keeps tactic",
                 test_event_cancel_block_chain_hit_on_keeps_tactic);
-    CU_add_test(suite, "cancel: TAKE_HIT resets CLOSE tactic",
-                test_event_cancel_take_hit_resets_close_tactic);
-    CU_add_test(suite, "cancel: TAKE_HIT resets FLY tactic",
-                test_event_cancel_take_hit_resets_fly_tactic);
-    CU_add_test(suite, "cancel: TAKE_HIT keeps GRAB tactic",
-                test_event_cancel_take_hit_keeps_grab_tactic);
+    CU_add_test(suite, "cancel: TAKE_HIT resets CLOSE tactic", test_event_cancel_take_hit_resets_close_tactic);
+    CU_add_test(suite, "cancel: TAKE_HIT resets FLY tactic", test_event_cancel_take_hit_resets_fly_tactic);
+    CU_add_test(suite, "cancel: TAKE_HIT keeps GRAB tactic", test_event_cancel_take_hit_keeps_grab_tactic);
     CU_add_test(suite, "cancel: TAKE_HIT resets TURTLE when att_def=0",
                 test_event_cancel_take_hit_resets_turtle_when_no_def);
     CU_add_test(suite, "cancel: TAKE_HIT keeps TURTLE when att_def>0",
@@ -969,24 +958,16 @@ void ai_event_test_suite(CU_pSuite suite) {
                 test_har_event_hazard_punched_respects_difficulty_toggle);
 
     // ai_event_on_land_hit
-    CU_add_test(suite, "land_hit: increments move value",
-                test_event_land_hit_increments_move_value);
-    CU_add_test(suite, "land_hit: clamps move value at 10",
-                test_event_land_hit_clamps_move_value_at_10);
-    CU_add_test(suite, "land_hit: updates last_move_id",
-                test_event_land_hit_updates_last_move_id);
-    CU_add_test(suite, "land_hit: updates max_hit_dist",
-                test_event_land_hit_updates_max_hit_dist);
-    CU_add_test(suite, "land_hit: updates min_hit_dist",
-                test_event_land_hit_updates_min_hit_dist);
+    CU_add_test(suite, "land_hit: increments move value", test_event_land_hit_increments_move_value);
+    CU_add_test(suite, "land_hit: clamps move value at 10", test_event_land_hit_clamps_move_value_at_10);
+    CU_add_test(suite, "land_hit: updates last_move_id", test_event_land_hit_updates_last_move_id);
+    CU_add_test(suite, "land_hit: updates max_hit_dist", test_event_land_hit_updates_max_hit_dist);
+    CU_add_test(suite, "land_hit: updates min_hit_dist", test_event_land_hit_updates_min_hit_dist);
 
     // ai_event_on_enemy_block
-    CU_add_test(suite, "enemy_block: sets blocked flag",
-                test_event_enemy_block_sets_blocked_flag);
-    CU_add_test(suite, "enemy_block: decrements move value",
-                test_event_enemy_block_decrements_move_value);
-    CU_add_test(suite, "enemy_block: ignores repeat block events",
-                test_event_enemy_block_ignores_repeat_block);
+    CU_add_test(suite, "enemy_block: sets blocked flag", test_event_enemy_block_sets_blocked_flag);
+    CU_add_test(suite, "enemy_block: decrements move value", test_event_enemy_block_decrements_move_value);
+    CU_add_test(suite, "enemy_block: ignores repeat block events", test_event_enemy_block_ignores_repeat_block);
 
     // ai_event_on_block
     CU_add_test(suite, "block: counter trigger resets move_timer to 0",
@@ -1005,10 +986,8 @@ void ai_event_test_suite(CU_pSuite suite) {
                 test_event_take_hit_does_not_increment_shot_for_close_hit);
 
     // ai_event_on_land
-    CU_add_test(suite, "land: resets act_timer (no attack_on, difficulty 1)",
-                test_event_land_resets_act_timer);
+    CU_add_test(suite, "land: resets act_timer (no attack_on, difficulty 1)", test_event_land_resets_act_timer);
     CU_add_test(suite, "land: resets act_timer when tactic queued but not waiting for land",
                 test_event_land_queued_tactic_without_attack_on_resets_act_timer);
-    CU_add_test(suite, "land: no game state does not crash",
-                test_event_land_without_game_state_does_not_crash);
+    CU_add_test(suite, "land: no game state does not crash", test_event_land_without_game_state_does_not_crash);
 }

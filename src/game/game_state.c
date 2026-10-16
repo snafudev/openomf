@@ -1212,7 +1212,7 @@ void reconfigure_controller(game_state *gs) {
 }
 
 static int _demo_override_or_random(const engine_init_flags *init_flags, int value, int fallback, int min, int max,
-                                   const char *label) {
+                                    const char *label) {
     if(init_flags == NULL) {
         return fallback;
     }
@@ -1238,12 +1238,12 @@ void game_state_init_demo(game_state *gs) {
         sd_pilot *pl = game_player_get_pilot(player);
 
         int demo_pilot = _demo_override_or_random(gs->init_flags, gs->init_flags ? gs->init_flags->demo_pilot : -1,
-                                                 default_pilot, 0, NUMBER_OF_PILOT_TYPES - 1, "demo pilot");
+                                                  default_pilot, 0, NUMBER_OF_PILOT_TYPES - 1, "demo pilot");
         int demo_har = _demo_override_or_random(gs->init_flags, gs->init_flags ? gs->init_flags->demo_har : -1,
-                                               default_har, 0, NUMBER_OF_HAR_TYPES - 1, "demo HAR");
-        int demo_difficulty = _demo_override_or_random(gs->init_flags, gs->init_flags ? gs->init_flags->demo_difficulty : -1,
-                                                     default_difficulty, AI_DIFFICULTY_PUNCHING_BAG,
-                                                     NUMBER_OF_AI_DIFFICULTY_TYPES - 1, "demo AI difficulty");
+                                                default_har, 0, NUMBER_OF_HAR_TYPES - 1, "demo HAR");
+        int demo_difficulty = _demo_override_or_random(
+            gs->init_flags, gs->init_flags ? gs->init_flags->demo_difficulty : -1, default_difficulty,
+            AI_DIFFICULTY_PUNCHING_BAG, NUMBER_OF_AI_DIFFICULTY_TYPES - 1, "demo AI difficulty");
 
         // select configured or random pilot and har
         player->pilot->pilot_id = demo_pilot;

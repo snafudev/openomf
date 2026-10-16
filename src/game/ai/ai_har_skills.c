@@ -103,7 +103,7 @@ static bool can_start_ground_attack(controller *ctrl, har *h, ctrl_event **ev) {
 }
 
 const ai_move_def *ai_har_select_best_move(const ai_move_def *moves, uint8_t move_count, int enemy_range,
-                                          bool enemy_stunned, const ai *ai_data) {
+                                           bool enemy_stunned, const ai *ai_data) {
     if(moves == NULL || move_count == 0 || ai_data == NULL || ai_data->pilot == NULL) {
         return NULL;
     }
@@ -171,8 +171,8 @@ const ai_move_def *ai_har_select_best_move(const ai_move_def *moves, uint8_t mov
     return best_move;
 }
 
-static bool ai_har_execute_move_list(controller *ctrl, object *o, ai *a, const ai_move_def *moves,
-                                      uint8_t move_count, int enemy_range, ctrl_event **ev) {
+static bool ai_har_execute_move_list(controller *ctrl, object *o, ai *a, const ai_move_def *moves, uint8_t move_count,
+                                     int enemy_range, ctrl_event **ev) {
     const bool enemy_stunned = enemy_is_stunned_or_stasis(ctrl);
     const ai_move_def *move = ai_har_select_best_move(moves, move_count, enemy_range, enemy_stunned, a);
     if(move == NULL) {
@@ -225,8 +225,7 @@ bool ai_har_execute_charge(controller *ctrl, const ai_har_config *char_cfg, ctrl
     }
 
     int enemy_range = get_enemy_range(ctrl);
-    return ai_har_execute_move_list(ctrl, o, a, char_cfg->charge_moves, char_cfg->charge_move_count, enemy_range,
-                                     ev);
+    return ai_har_execute_move_list(ctrl, o, a, char_cfg->charge_moves, char_cfg->charge_move_count, enemy_range, ev);
 }
 
 bool ai_har_execute_push(controller *ctrl, const ai_har_config *char_cfg, ctrl_event **ev) {
@@ -272,8 +271,7 @@ bool ai_har_execute_trip(controller *ctrl, const ai_har_config *char_cfg, ctrl_e
         ai *a = ctrl->data;
         if(a != NULL) {
             int enemy_range = get_enemy_range(ctrl);
-            if(ai_har_execute_move_list(ctrl, o, a, char_cfg->trip_moves, char_cfg->trip_move_count, enemy_range,
-                                       ev)) {
+            if(ai_har_execute_move_list(ctrl, o, a, char_cfg->trip_moves, char_cfg->trip_move_count, enemy_range, ev)) {
                 return true;
             }
         }
@@ -316,5 +314,5 @@ bool ai_har_execute_projectile(controller *ctrl, const ai_har_config *char_cfg, 
     }
 
     return ai_har_execute_move_list(ctrl, o, a, char_cfg->projectile_moves, char_cfg->projectile_move_count,
-                                     enemy_range, ev);
+                                    enemy_range, ev);
 }

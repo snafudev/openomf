@@ -49,14 +49,7 @@ static const char *level_colors[] = {
 // Keep the legacy "tactic" alias accepted for compatibility, but prefer the more
 // specific "ai-tactics" label for the AI decision brain channel.
 static const char *module_names[] = {
-    "ai",
-    "ai-tactics",
-    "har",
-    "rec",
-    "move",
-    "movement",
-    "learning",
-    "config",
+    "ai", "ai-tactics", "har", "rec", "move", "movement", "learning", "config",
 };
 
 #define MODULE_NAME_COUNT (sizeof(module_names) / sizeof(module_names[0]))

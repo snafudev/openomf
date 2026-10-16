@@ -282,8 +282,8 @@ int main(int argc, char **argv) {
         }
         ai_pilot_stats_test_suite(ai_pilot_stats_suite);
     } else {
-        fprintf(stderr,
-                "Skipping AI pilot deterministic test suites. Set OPENOMF_RUN_DETERMINISTIC_TESTS=1 to enable while actively tuning AI pilot behavior.\n");
+        fprintf(stderr, "Skipping AI pilot deterministic test suites. Set OPENOMF_RUN_DETERMINISTIC_TESTS=1 to enable "
+                        "while actively tuning AI pilot behavior.\n");
     }
 
     // Run tests

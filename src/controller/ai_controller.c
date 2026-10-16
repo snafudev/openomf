@@ -1,17 +1,17 @@
 #include "controller/ai_controller.h"
-#include "game/ai/ai_decision_engine.h"
-#include "game/ai/ai_har_skills.h"
-#include "game/ai/ai_event.h"
-#include "game/ai/ai_learning.h"
-#include "game/ai/ai_movement.h"
-#include "game/ai/ai_state.h"
-#include "game/ai/ai_skills_config_loader.h"
-#include "game/ai/ai_tactic_engine.h"
-#include "game/ai/ai_utils.h"
-#include "game/ai/ai_move_selector.h"
-#include "game/ai/ai_core_config.h"
 #include "controller/controller.h"
 #include "formats/pilot.h"
+#include "game/ai/ai_core_config.h"
+#include "game/ai/ai_decision_engine.h"
+#include "game/ai/ai_event.h"
+#include "game/ai/ai_har_skills.h"
+#include "game/ai/ai_learning.h"
+#include "game/ai/ai_move_selector.h"
+#include "game/ai/ai_movement.h"
+#include "game/ai/ai_skills_config_loader.h"
+#include "game/ai/ai_state.h"
+#include "game/ai/ai_tactic_engine.h"
+#include "game/ai/ai_utils.h"
 #include "game/game_state.h"
 #include "game/objects/har.h"
 #include "game/objects/projectile.h"
@@ -25,8 +25,6 @@
 #include "utils/random.h"
 #include "utils/vec.h"
 #include <math.h>
-
-
 
 #define BACK (o->direction == OBJECT_FACE_RIGHT ? ACT_LEFT : ACT_RIGHT)
 #define DOWNBACK (o->direction == OBJECT_FACE_RIGHT ? ACT_LEFT : ACT_RIGHT) | ACT_DOWN
@@ -55,7 +53,6 @@ void chain_controller_cmd(controller *ctrl, int commands[], size_t n_commands, c
         controller_cmd(ctrl, commands[i], ev);
     }
 }
-
 
 /**
  * \brief Determine whether the AI would like to use the specified tactic.
@@ -93,7 +90,6 @@ void queue_tactic(controller *ctrl, int tactic_type) {
 void chain_consider_tactics(controller *ctrl, int tactics[], size_t n_tactics) {
     ai_tactic_consider_list(ctrl, tactics, n_tactics);
 }
-
 
 /**
  * \brief Determine whether a pilot dislikes a move. Used for random attacks.
@@ -344,10 +340,10 @@ bool assign_move_by_cat(controller *ctrl, int category, bool highest_damage) {
         .highest_damage = highest_damage,
         .difficulty = a->difficulty,
         .pilot = *a->pilot,
-        .enemy_range = 0,  // Not used in assign_move_by_cat
+        .enemy_range = 0, // Not used in assign_move_by_cat
         .last_move_id = a->last_move_id,
-        .damage_divisor = 3,  // assign_move_by_cat uses damage/3
-        .force_allow_projectile = true,  // assign_move_by_cat force-allows projectiles
+        .damage_divisor = 3,            // assign_move_by_cat uses damage/3
+        .force_allow_projectile = true, // assign_move_by_cat force-allows projectiles
     };
 
     // Select best move from candidates
@@ -539,8 +535,7 @@ void handle_movement(controller *ctrl, ctrl_event **ev) {
                 break;
             case MOVE_DIR_STILL:
             default:
-                if(smart_usually(a) || roll_pref(a->pilot->att_def) ||
-                   ((int)rand_int(100) < config->block_chance)) {
+                if(smart_usually(a) || roll_pref(a->pilot->att_def) || ((int)rand_int(100) < config->block_chance)) {
                     // crouch and block
                     a->cur_act = DOWNBACK;
                     jump_chance = 0;
@@ -627,8 +622,8 @@ bool attempt_attack(controller *ctrl, bool highest_damage) {
         .pilot = *a->pilot,
         .enemy_range = enemy_range,
         .last_move_id = a->last_move_id,
-        .damage_divisor = 4,  // attempt_attack uses damage/4
-        .force_allow_projectile = false,  // attempt_attack does not force-allow projectiles
+        .damage_divisor = 4,             // attempt_attack uses damage/4
+        .force_allow_projectile = false, // attempt_attack does not force-allow projectiles
     };
 
     // Select best move from candidates
@@ -1117,8 +1112,8 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     ai_pressure_tick(a);
 
     // Compact per-frame decision trace for analysis tooling (M6).
-    log_debug_m(LOG_MODULE_AI, "tick=%u state=%d tactic=%d move=%d attack=%d last_move=%d", ctrl->gs->tick,
-                h->state, a->tactic->tactic_type, a->tactic->move_type, a->tactic->attack_type, a->last_move_id);
+    log_debug_m(LOG_MODULE_AI, "tick=%u state=%d tactic=%d move=%d attack=%d last_move=%d", ctrl->gs->tick, h->state,
+                a->tactic->tactic_type, a->tactic->move_type, a->tactic->attack_type, a->last_move_id);
 
     // Grab all projectiles on screen
     vector_clear(&a->active_projectiles);
@@ -1192,8 +1187,8 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     const ai_core_config *config = ai_core_config_get_for_difficulty(a->difficulty);
 
     // attempt a random attack
-    if((roll_chance(config->random_attack_chance) || diff_scale(a)) && (enemy_range <= RANGE_CLOSE || dumb_sometimes(a)) &&
-       attempt_attack(ctrl, false)) {
+    if((roll_chance(config->random_attack_chance) || diff_scale(a)) &&
+       (enemy_range <= RANGE_CLOSE || dumb_sometimes(a)) && attempt_attack(ctrl, false)) {
         // log_debug("Random attack: %d", h->id);
         // reset movement act timer
         reset_act_timer(a);
@@ -1207,10 +1202,11 @@ int ai_controller_poll(controller *ctrl, ctrl_event **ev) {
     // log_debug("=== POLL === handle_movement");
 
     // queue a random tactic for next poll
-    if((a->last_move_id == 0 || a->tactic->tactic_type == 0 || (roll_chance(config->random_attack_chance) && diff_scale(a))) &&
+    if((a->last_move_id == 0 || a->tactic->tactic_type == 0 ||
+        (roll_chance(config->random_attack_chance) && diff_scale(a))) &&
        can_move) {
         // log_debug("Attempt to queue random tactic[0m");
-        int tacs[] = {TACTIC_SHOOT,  TACTIC_CLOSE, TACTIC_FLY,  TACTIC_PUSH,
+        int tacs[] = {TACTIC_SHOOT, TACTIC_CLOSE, TACTIC_FLY,   TACTIC_PUSH,
                       TACTIC_TRIP,  TACTIC_GRAB,  TACTIC_QUICK, TACTIC_COUNTER};
         // COUNTER is an advanced tactic: only consider it when the difficulty
         // config opts into aggressive tactics. Basic list is unchanged otherwise.

@@ -5,9 +5,9 @@
  */
 
 #include "game/ai/ai_learning.h"
+#include "formats/pilot.h"
 #include "game/ai/ai_decision_engine.h"
 #include "game/ai/ai_state.h"
-#include "formats/pilot.h"
 #include "utils/log.h"
 
 void ai_learning_adjust_from_throw(ai *a) {
